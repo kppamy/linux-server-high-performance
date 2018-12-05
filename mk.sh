@@ -36,3 +36,4 @@ g++ 14-5-thread-handle-signal.c -o threadhandlesignal -lpthread
 g++ processpool.h 15-2-process-pool-cgi.c -o process-pool-cgi
 
 g++ fork_test.c -o fork_test
+g++ file-test.h file-test.cpp mmap.c
