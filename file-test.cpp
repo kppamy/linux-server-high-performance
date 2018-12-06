@@ -7,7 +7,7 @@
 #include <fcntl.h>
 
 void FileTest::testMmap(){
-    int fd = open("test",O_RDWR|O_CREAT, S_IRWXU);
+    int fd = open("./test",O_RDWR|O_CREAT, S_IRWXU);
     if(fd<0){
         printf("open file failed \n");
     }else{
@@ -22,5 +22,10 @@ void FileTest::testMmap(){
     void* shm;
     if((shm = mmap(NULL,fst.st_size,PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0))== MAP_FAILED){
         printf(" map file error \n");
+    }
+    snprintf((char *)shm, 4 , "test");
+    msync(shm, fst.st_size, MS_ASYNC);
+    if(munmap(shm, fst.st_size) < 0 ){
+        printf("munmap wrong");
     }
 }
