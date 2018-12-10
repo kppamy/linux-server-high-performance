@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <unistd.h>
 #include <errno.h>
+#include <string.h>
 
 int main(int argc, char const *argv[])
 {
@@ -38,6 +39,16 @@ int main(int argc, char const *argv[])
         {
             printf(" ETIMEOUT \n");
         }
+    }else{
+        const char* data= "hello, how are you?";
+        int len=send(sock, data, strlen(data),0);
+        printf("send data to server len: %d\n", len);
+        const char* oob= "Ergency!!!!!!!!";
+        len=send(sock, oob, strlen(oob),MSG_OOB);
+        printf("send data to server len: %d\n", len);
+        const char* data2= "hello, how do you do?";
+        len=send(sock, data2, strlen(data2),0);
+        printf("send data to server len: %d\n", len);
     }
     close(sock);
     return 0;

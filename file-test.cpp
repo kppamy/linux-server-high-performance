@@ -108,17 +108,41 @@ void FileTest::testSocket(int argc, const char *argv[])
         char remote[INET_ADDRSTRLEN];
         printf("connected with ip: %s, port: %d\n",
                inet_ntop(AF_INET, &client.sin_addr, remote, INET_ADDRSTRLEN), ntohs(client.sin_port));
+        char buf[256];
+        int len = -2;
+        int oob = -2;
+        while (true)
+        {
+            printf("waiting .............\n");
+            oob = sockatmark(conn);
+            if (oob == 1)
+            {
+                len = recv(conn, buf, sizeof(buf), MSG_OOB);
+                printf("recv OOB data \n");
+            }
+            else
+            {
+                len = recv(conn, buf, sizeof(buf), 0);
+            }
+            if (len <= 0)
+            {
+                printf("errno: %d \n", errno);
+                break;
+            }
+            else
+            {
+                printf("recv data len = %d :%s\n", len, buf);
+            }
+        }
         close(conn);
     }
     close(sock);
 }
 
-
-
 int main(int argc, char const *argv[])
 {
     /* code */
-    //FileTest::testMmap(); 
+    //FileTest::testMmap();
     // FileTest::testMmapFamily();
     FileTest::testSocket(argc, argv);
     return 0;
