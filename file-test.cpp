@@ -2,7 +2,6 @@
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -78,65 +77,96 @@ void FileTest::testSocket(int argc, const char *argv[])
 
     const char *ip = argv[1];
     int port = atoi(argv[2]);
+    struct sockaddr_in server = transSockAddr(ip, port);
+
+    int sock = getListenFd(server, 5);
+
+    struct sockaddr_in client;
+    int conn = getConnectFd(&client, sock);
+    char buf[256];
+    int len = -2;
+    int oob = -2;
+    while (true)
+    {
+        printf("waiting .............\n");
+        oob = sockatmark(conn);
+        if (oob == 1)
+        {
+            len = recv(conn, buf, sizeof(buf), MSG_OOB);
+            printf("recv OOB data \n");
+        }
+        else
+        {
+            len = recv(conn, buf, sizeof(buf), 0);
+        }
+        if (len <= 0)
+        {
+            printf("errno: %d \n", errno);
+            break;
+        }
+        else
+        {
+            printf("recv data len = %d :%s\n", len, buf);
+        }
+    }
+    close(conn);
+    close(sock);
+}
+
+void FileTest::testDup(int argc, char const *argv[])
+{
+    if(argc < 2){
+        printf("Usage: IP PORT");
+        return;
+    }
+    sockaddr_in server = transSockAddr(argv[1], atoi(argv[2]));
+    int lisfd= getListenFd(server, 5);
+
+    sockaddr_in client;
+    int conn = getConnectFd(&client,lisfd);
+    close(STDOUT_FILENO);
+    int dfd = dup(conn);
+    printf("i am test dup call\n");
+    char buf[256];
+    int len= recv(dfd, buf, sizeof(buf),0);
+    printf("recv something form cient: %s\n", buf);
+    close(conn);
+    close(lisfd);
+
+}
+
+struct sockaddr_in FileTest::transSockAddr(const char *ip, const int port)
+{
     struct sockaddr_in address;
     bzero(&address, sizeof(address));
     address.sin_family = AF_INET;
     inet_pton(sizeof(address.sin_addr), ip, &address.sin_addr);
     address.sin_port = htons(port);
+    return address;
+}
 
+int FileTest::getListenFd(sockaddr_in address, int num)
+{
     int sock = socket(PF_INET, SOCK_STREAM, 0);
-    if (sock < 0)
-    {
-        printf("create socket failure \n ");
-        return;
-    }
+    assert(sock != -1);
+
     int ret = bind(sock, (const sockaddr *)&address, sizeof(address));
-
-    assert(ret != -1);
-    ret = listen(sock, 2);
     assert(ret != -1);
 
-    struct sockaddr_in client;
+    ret = listen(sock, num);
+    assert(ret != -1);
+    return sock;
+}
+
+int FileTest::getConnectFd(struct sockaddr_in *client,int sock)
+{
     socklen_t len = sizeof(client);
-    int conn = accept(sock, (struct sockaddr *)&client, &len);
-    if (conn < 0)
-    {
-        printf("accept link failure, error: %d\n ", errno);
-    }
-    else
-    {
-        char remote[INET_ADDRSTRLEN];
-        printf("connected with ip: %s, port: %d\n",
-               inet_ntop(AF_INET, &client.sin_addr, remote, INET_ADDRSTRLEN), ntohs(client.sin_port));
-        char buf[256];
-        int len = -2;
-        int oob = -2;
-        while (true)
-        {
-            printf("waiting .............\n");
-            oob = sockatmark(conn);
-            if (oob == 1)
-            {
-                len = recv(conn, buf, sizeof(buf), MSG_OOB);
-                printf("recv OOB data \n");
-            }
-            else
-            {
-                len = recv(conn, buf, sizeof(buf), 0);
-            }
-            if (len <= 0)
-            {
-                printf("errno: %d \n", errno);
-                break;
-            }
-            else
-            {
-                printf("recv data len = %d :%s\n", len, buf);
-            }
-        }
-        close(conn);
-    }
-    close(sock);
+    int conn = accept(sock, (struct sockaddr *)client, &len);
+    assert(conn != -1);
+    char remote[INET_ADDRSTRLEN];
+    printf("connected with ip: %s, port: %d\n",
+           inet_ntop(AF_INET,&client->sin_addr, remote, INET_ADDRSTRLEN), ntohs(client->sin_port));
+    return conn;
 }
 
 int main(int argc, char const *argv[])
@@ -144,6 +174,7 @@ int main(int argc, char const *argv[])
     /* code */
     //FileTest::testMmap();
     // FileTest::testMmapFamily();
-    FileTest::testSocket(argc, argv);
+    // FileTest::testSocket(argc, argv);
+    FileTest::testDup(argc, argv);
     return 0;
 }
