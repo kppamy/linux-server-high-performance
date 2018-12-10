@@ -135,6 +135,34 @@ void FileTest::testDup(int argc, char const *argv[])
 
 }
 
+void FileTest::testPipe(){
+    int fd[2];
+    int ret=pipe(fd);
+    assert(ret != -1);
+    ret = fork();
+    assert(ret != -1);
+    if(ret==0){
+        close(fd[1]);
+        char buf[256];
+        int len=read(fd[0],buf,sizeof(buf));
+        if(len == -1){
+            printf("errno: %d\n", errno);
+        }else
+            printf("recv someting form father len=%d\n, %s\n", len, buf);
+        close(fd[0]);
+    }else{
+        close(fd[0]);
+        const char *data= "hello, child? i am using pip \n";
+        fcntl(fd[0],O_NONBLOCK);
+        int len=write(fd[1], data, strlen(data));
+       if(len == -1){
+            printf("errno: %d\n", errno);
+        }else
+            printf("send message to child len=%d\n", len);
+        close(fd[1]);
+    }
+}
+
 struct sockaddr_in FileTest::transSockAddr(const char *ip, const int port)
 {
     struct sockaddr_in address;
@@ -175,6 +203,7 @@ int main(int argc, char const *argv[])
     //FileTest::testMmap();
     // FileTest::testMmapFamily();
     // FileTest::testSocket(argc, argv);
-    FileTest::testDup(argc, argv);
+    // FileTest::testDup(argc, argv);
+    FileTest::testPipe();
     return 0;
 }
