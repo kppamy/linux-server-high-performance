@@ -108,9 +108,12 @@ void FileTest::testSocket(int argc, const char *argv[])
         char remote[INET_ADDRSTRLEN];
         printf("connected with ip: %s, port: %d\n",
                inet_ntop(AF_INET, &client.sin_addr, remote, INET_ADDRSTRLEN), ntohs(client.sin_port));
+        close(conn);
     }
     close(sock);
 }
+
+
 
 int main(int argc, char const *argv[])
 {
