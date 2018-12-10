@@ -115,52 +115,99 @@ void FileTest::testSocket(int argc, const char *argv[])
 
 void FileTest::testDup(int argc, char const *argv[])
 {
-    if(argc < 2){
+    if (argc < 2)
+    {
         printf("Usage: IP PORT");
         return;
     }
     sockaddr_in server = transSockAddr(argv[1], atoi(argv[2]));
-    int lisfd= getListenFd(server, 5);
+    int lisfd = getListenFd(server, 5);
 
     sockaddr_in client;
-    int conn = getConnectFd(&client,lisfd);
+    int conn = getConnectFd(&client, lisfd);
     close(STDOUT_FILENO);
     int dfd = dup(conn);
     printf("i am test dup call\n");
     char buf[256];
-    int len= recv(dfd, buf, sizeof(buf),0);
+    int len = recv(dfd, buf, sizeof(buf), 0);
     printf("recv something form cient: %s\n", buf);
     close(conn);
     close(lisfd);
-
 }
 
-void FileTest::testPipe(){
+void FileTest::testPipe()
+{
     int fd[2];
-    int ret=pipe(fd);
+    int ret = pipe(fd);
     assert(ret != -1);
     ret = fork();
     assert(ret != -1);
-    if(ret==0){
+    if (ret == 0)
+    {
         close(fd[1]);
         char buf[256];
-        int len=read(fd[0],buf,sizeof(buf));
-        if(len == -1){
+        int len = read(fd[0], buf, sizeof(buf));
+        if (len == -1)
+        {
             printf("errno: %d\n", errno);
-        }else
+        }
+        else
             printf("recv someting form father len=%d\n, %s\n", len, buf);
         close(fd[0]);
-    }else{
+    }
+    else
+    {
         close(fd[0]);
-        const char *data= "hello, child? i am using pip \n";
-        fcntl(fd[0],O_NONBLOCK);
-        int len=write(fd[1], data, strlen(data));
-       if(len == -1){
+        const char *data = "hello, child? i am using pip \n";
+        fcntl(fd[0], O_NONBLOCK);
+        int len = write(fd[1], data, strlen(data));
+        if (len == -1)
+        {
             printf("errno: %d\n", errno);
-        }else
+        }
+        else
             printf("send message to child len=%d\n", len);
         close(fd[1]);
     }
+}
+
+void FileTest::testSockPair()
+{
+    int fd[2];
+    int ret = socketpair(PF_UNIX, SOCK_STREAM, 0, fd);
+    assert(ret != -1);
+    ret = fork();
+    if (ret == 0)
+    {
+        char data[256] = "i am child\n";
+        write(fd[1], data, strlen(data));
+        sleep(1);
+        memset(data, '\0', strlen(data));
+        int ret = read(fd[0], data, sizeof(data));
+        if (ret == -1)
+        {
+            printf("errno: %d\n", errno);
+        }else{
+            printf("read something from father: %s\n", data);
+        }
+    }
+    else
+    {
+        char data[256];
+        memset(data, '\0', strlen(data));
+        read(fd[0], data, sizeof(data));
+        printf("read something from child: %s\n", data);
+        const char *word = "i am father \n";
+        int ret = write(fd[1], word, strlen(word));
+        if (ret == -1)
+        {
+            printf("errno: %d\n", errno);
+        }else{
+             printf("wite message to pipe len=%d\n", ret);
+        }
+    }
+        close(fd[0]);
+        close(fd[1]);
 }
 
 struct sockaddr_in FileTest::transSockAddr(const char *ip, const int port)
@@ -186,14 +233,14 @@ int FileTest::getListenFd(sockaddr_in address, int num)
     return sock;
 }
 
-int FileTest::getConnectFd(struct sockaddr_in *client,int sock)
+int FileTest::getConnectFd(struct sockaddr_in *client, int sock)
 {
     socklen_t len = sizeof(client);
     int conn = accept(sock, (struct sockaddr *)client, &len);
     assert(conn != -1);
     char remote[INET_ADDRSTRLEN];
     printf("connected with ip: %s, port: %d\n",
-           inet_ntop(AF_INET,&client->sin_addr, remote, INET_ADDRSTRLEN), ntohs(client->sin_port));
+           inet_ntop(AF_INET, &client->sin_addr, remote, INET_ADDRSTRLEN), ntohs(client->sin_port));
     return conn;
 }
 
@@ -204,6 +251,7 @@ int main(int argc, char const *argv[])
     // FileTest::testMmapFamily();
     // FileTest::testSocket(argc, argv);
     // FileTest::testDup(argc, argv);
-    FileTest::testPipe();
+    // FileTest::testPipe();
+    FileTest::testSockPair();
     return 0;
 }

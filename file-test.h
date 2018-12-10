@@ -6,6 +6,7 @@ class FileTest{
     static void testSocket(int argc, const char* argv[]);
     static void testDup(int argc, const char* argv[]);
     static void testPipe();
+    static void testSockPair();
   private:
     static struct sockaddr_in transSockAddr(const char* ip, const int port);
     static int getListenFd(struct sockaddr_in address, int num);
