@@ -65,6 +65,7 @@ int main(int argc, char const *argv[])
             }
         }
     }
+    sleep(20);
     close(sock);
     return 0;
 }

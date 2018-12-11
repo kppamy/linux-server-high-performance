@@ -5,6 +5,9 @@ class FileTest{
     static void testMmapFamily();
     static void testSocket(int argc, const char* argv[]);
     static void testDup(int argc, const char* argv[]);
+    static void testSyncC10K(int argc, const char* argv[]);
+    static void testAsyncC10K(int argc, const char* argv[]);
+    static void testSelect(int argc, const char* argv[]);
     static void testPipe();
     static void testSockPair();
   private:

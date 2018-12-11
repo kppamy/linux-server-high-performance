@@ -1,16 +1,19 @@
 #include "file-test.h"
 #include <sys/mman.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <errno.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <pthread.h>
+#include <sys/select.h>
 
 void FileTest::testMmap()
 {
@@ -27,10 +30,6 @@ void FileTest::testMmap()
     if (fstat(fd, &fst) < 0)
     {
         printf(" file status error \n");
-    }
-    else
-    {
-        printf(" file status: %d\n ", fst);
     }
     void *shm;
     if ((shm = mmap(NULL, fst.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)) == MAP_FAILED)
@@ -51,7 +50,7 @@ void FileTest::testMmapFamily()
     fa = (char *)mmap(NULL, 100, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     if (fork() == 0)
     {
-        printf(" this is a son in pid:  %d,  %d \n ", getpid(), &fa);
+        printf(" this is a son in pid:  %d \n ", getpid());
         sprintf(fa, "%s", " hello, father, how are you? \n  ");
         sleep(2);
         printf(" Son gets message: %s\n ", fa);
@@ -61,7 +60,7 @@ void FileTest::testMmapFamily()
     else
     {
         sleep(1);
-        printf("I am father in pid: %d,  %d\n ", getpid(), &fa);
+        printf("I am father in pid: %d\n ", getpid());
         printf("father got message: %s\n ", fa);
         sprintf(fa, "%s", " Fine, thanks, son \n  ");
         munmap(fa, 100);
@@ -187,7 +186,9 @@ void FileTest::testSockPair()
         if (ret == -1)
         {
             printf("errno: %d\n", errno);
-        }else{
+        }
+        else
+        {
             printf("read something from father: %s\n", data);
         }
     }
@@ -202,12 +203,14 @@ void FileTest::testSockPair()
         if (ret == -1)
         {
             printf("errno: %d\n", errno);
-        }else{
-             printf("wite message to pipe len=%d\n", ret);
+        }
+        else
+        {
+            printf("wite message to pipe len=%d\n", ret);
         }
     }
-        close(fd[0]);
-        close(fd[1]);
+    close(fd[0]);
+    close(fd[1]);
 }
 
 struct sockaddr_in FileTest::transSockAddr(const char *ip, const int port)
@@ -244,6 +247,146 @@ int FileTest::getConnectFd(struct sockaddr_in *client, int sock)
     return conn;
 }
 
+void FileTest::testSyncC10K(int argc, const char *argv[])
+{
+    if (argc < 2)
+    {
+        printf(" Usage:  IP port \n ");
+        return;
+    }
+
+    const char *ip = argv[1];
+    int port = atoi(argv[2]);
+    struct sockaddr_in server = transSockAddr(ip, port);
+
+    const int CLIENT_MAX = 60000;
+    int sock = getListenFd(server, CLIENT_MAX);
+    int count = 0;
+    char buf[256];
+    while (count < CLIENT_MAX)
+    {
+        sockaddr_in client;
+        int conn = getConnectFd(&client, sock);
+        printf(" connect with client %d\n", count + 1);
+        printf(" connect with client in thread: %ld\n", pthread_self());
+        memset(buf, '\0', sizeof(buf));
+        int len = recv(conn, buf, sizeof(buf), 0);
+        printf(" Recv from client %d, %s\n", count + 1, buf);
+        count++;
+        close(conn);
+    }
+    close(sock);
+}
+
+void FileTest::testAsyncC10K(int argc, const char *argv[])
+{
+    if (argc < 2)
+    {
+        printf(" Usage:  IP port \n ");
+        return;
+    }
+
+    const char *ip = argv[1];
+    int port = atoi(argv[2]);
+    struct sockaddr_in server = transSockAddr(ip, port);
+
+    const int CLIENT_MAX = 60000;
+    int sock = getListenFd(server, CLIENT_MAX);
+    int count = 0;
+    char buf[256];
+    while (count < CLIENT_MAX)
+    {
+        sockaddr_in client;
+        int conn = getConnectFd(&client, sock);
+        printf(" connect with client %d\n", count + 1);
+        memset(buf, '\0', sizeof(buf));
+        int len = recv(conn, buf, sizeof(buf), 0);
+        printf(" Recv from client %d, %s\n", count + 1, buf);
+        count++;
+        close(conn);
+    }
+    close(sock);
+}
+
+void FileTest::testSelect(int argc, const char *argv[])
+{
+    if (argc < 2)
+    {
+        printf(" Usage:  IP port \n ");
+        return;
+    }
+
+    const char *ip = argv[1];
+    int port = atoi(argv[2]);
+    struct sockaddr_in server = transSockAddr(ip, port);
+
+    const int CLIENT_MAX = 500;
+
+    fd_set readfd;
+    fd_set writefd;
+    fd_set excepfd;
+
+    int sock = getListenFd(server, CLIENT_MAX);
+
+    sockaddr_in client;
+
+    int conn = -1;
+    char buf[256];
+    conn = getConnectFd(&client, sock);
+    
+    while (true)
+    {
+        FD_SET(sock, &readfd);
+        FD_SET(sock, &excepfd);
+        FD_SET(sock, &writefd);
+        FD_SET(conn, &readfd);
+        FD_SET(conn, &excepfd);
+        // FD_SET(conn, &writefd);
+        int ret = select(conn + 1, &readfd, &writefd, &excepfd, NULL);
+        if(ret == -1){
+            printf("select failure !!! \n");
+            break;
+        }
+        if (FD_ISSET(conn, &readfd))
+        {
+            printf(" get conn read signal in thread: %ld\n\n", pthread_self());
+            memset(buf, '\0', sizeof(buf));
+            int len = recv(conn, buf, sizeof(buf), 0);
+            if(len == 0){
+                printf("client is off, quit ourself \n"); 
+                break;
+            }
+            send(conn, "hello, child ", 10, 0);
+            printf(" Recv from client  %s\n", buf);
+        }
+        else if (FD_ISSET(conn, &writefd))
+        {
+            printf(" get conn write signal in thread :%ld\n\n", pthread_self());
+        }
+        else if (FD_ISSET(conn, &excepfd))
+        {
+            printf(" get conn exception signal\n\n");
+        }
+        else if (FD_ISSET(sock, &readfd))
+        {
+            printf(" get listfd read signal\n\n");
+            sockaddr_in client;
+            conn = getConnectFd(&client, sock);
+        }
+        else if (FD_ISSET(sock, &excepfd))
+        {
+            printf(" get listfd exception signal\n\n");
+        }
+        else
+        {
+            printf(" dont know what we get\n\n");
+        }
+    }
+
+    close(conn);
+    close(sock);
+}
+
 int main(int argc, char const *argv[])
 {
     /* code */
@@ -252,6 +395,9 @@ int main(int argc, char const *argv[])
     // FileTest::testSocket(argc, argv);
     // FileTest::testDup(argc, argv);
     // FileTest::testPipe();
-    FileTest::testSockPair();
+    // FileTest::testSockPair();
+    // FileTest::testSyncC10K(argc,argv);
+    //FileTest::testAsyncC10K(argc, argv);
+    FileTest::testSelect(argc, argv);
     return 0;
 }
