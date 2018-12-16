@@ -333,7 +333,7 @@ void FileTest::testSelect(int argc, const char *argv[])
     int conn = -1;
     char buf[256];
     conn = getConnectFd(&client, sock);
-    
+
     while (true)
     {
         FD_SET(sock, &readfd);
@@ -343,7 +343,8 @@ void FileTest::testSelect(int argc, const char *argv[])
         FD_SET(conn, &excepfd);
         // FD_SET(conn, &writefd);
         int ret = select(conn + 1, &readfd, &writefd, &excepfd, NULL);
-        if(ret == -1){
+        if (ret == -1)
+        {
             printf("select failure !!! \n");
             break;
         }
@@ -352,8 +353,9 @@ void FileTest::testSelect(int argc, const char *argv[])
             printf(" get conn read signal in thread: %ld\n\n", pthread_self());
             memset(buf, '\0', sizeof(buf));
             int len = recv(conn, buf, sizeof(buf), 0);
-            if(len == 0){
-                printf("client is off, quit ourself \n"); 
+            if (len == 0)
+            {
+                printf("client is off, quit ourself \n");
                 break;
             }
             send(conn, "hello, child ", 10, 0);
@@ -387,6 +389,102 @@ void FileTest::testSelect(int argc, const char *argv[])
     close(sock);
 }
 
+#include <sys/sem.h>
+#include <sys/shm.h>
+
+void FileTest::testProducerConsumer()
+{
+    const static int BUF_SIZE = 5;
+    int products[BUF_SIZE];
+
+    int keyp = semget(IPC_PRIVATE, 3, 0666);
+
+    union semun sem_un;
+    unsigned short arr[3] = {BUF_SIZE, 1, 0};
+    sem_un.array = arr;
+    semctl(keyp, 0, SETALL, sem_un);
+
+    int shmid = shmget(IPC_PRIVATE, BUF_SIZE, 0666);
+
+    int ret = fork();
+    if (ret == 0)
+    {
+        printf(" start to consume products\n ");
+        runConsumer(keyp, shmid);
+    }
+    else if (ret > 0)
+    {
+        printf(" start to  produce products\n");
+        runProducer(keyp, shmid, BUF_SIZE);
+    }
+}
+
+void FileTest::runProducer(const int semid, int shmid, const int bufsize)
+{
+    char *products = (char *)shmat(shmid, NULL, 0);
+    while (true)
+    {
+        int sem = PV(semid, 0, -1);
+        PV(semid, 1, -1);
+        int item = bufsize - sem - 1;
+        products[item] = item;
+        printf(" produce products[%d] =  %d \n", item, products[item]);
+        PV(semid, 1, 1);
+        int con = PV(semid, 2, 1);
+        // sleep(1);
+        //    printf(" consumer could read  %d  products\n", con);
+    }
+    shmdt(products);
+    shmctl(shmid, IPC_RMID, NULL);
+}
+
+int FileTest::PV(int semid, int idx, int op)
+{
+    struct sembuf buf;
+    buf.sem_num = idx;
+    buf.sem_op = op;
+    buf.sem_flg = SEM_UNDO;
+    semop(semid, &buf, 1);
+    semun_t un;
+    int val = semctl(semid, idx, GETVAL, &un);
+    assert(val != -1);
+    return val;
+}
+
+void FileTest::runConsumer(const int semid, int shmid)
+{
+    int i = 0;
+    char *products = (char *)shmat(shmid, NULL, 0);
+    while (true)
+    {
+        int num = semctl(semid, 2, GETVAL, NULL);
+        int sem ;
+        if(num > 0){
+            sem = PV(semid, 2, -1 * num);
+        }else if (num == 0){
+            // sem = PV(semid, 2, -1 );
+            continue;
+        }else {
+            printf(" consumer semaphor:  %d\n ", num);
+        }
+
+        PV(semid, 1, -1);
+        int pos = i;
+        printf("\n\n eat %d products: ", num);
+        for(int j=0;j<num;j++){
+            printf("%d ", products[j]);
+        }
+        // printf("\n %d products remain \n\n", sem);
+        PV(semid, 1, 1);
+        PV(semid, 0, num);
+        i++;
+        if(i == 5) break;
+        sleep(1);
+    }
+    shmdt(products);
+    shmctl(shmid, IPC_RMID, NULL);
+}
+
 int main(int argc, char const *argv[])
 {
     /* code */
@@ -398,6 +496,7 @@ int main(int argc, char const *argv[])
     // FileTest::testSockPair();
     // FileTest::testSyncC10K(argc,argv);
     //FileTest::testAsyncC10K(argc, argv);
-    FileTest::testSelect(argc, argv);
+    // FileTest::testSelect(argc, argv);
+    FileTest::testProducerConsumer();
     return 0;
 }

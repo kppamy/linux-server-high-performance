@@ -8,7 +8,7 @@
         "type": "shell",
         "command": "g++",
         "args": [
-            "-g", "-Wall", "fork_test.c", "-o","fork_test"],
+            "-g", "-Wall", "file-test.cpp", "-o","file-test"],
         "group": {
             "kind": "build",
             "isDefault": true
