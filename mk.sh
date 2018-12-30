@@ -39,3 +39,5 @@ g++ fork_test.c -o fork_test
 g++ file-test.cpp -o file-test
 g++ socket_client.c -o socket_client
 g++ sort.cpp -o sort
+g++ methodpointer.c -o methodpointer
+g++ methond_p.cpp -o methodp
