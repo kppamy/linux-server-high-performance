@@ -494,7 +494,7 @@ int main(int argc, char const *argv[])
     // FileTest::testDup(argc, argv);
     // FileTest::testPipe();
     // FileTest::testSockPair();
-    // FileTest::testSyncC10K(argc,argv);
+    // FileTest::testSyncCsort.cpp10K(argc,argv);
     //FileTest::testAsyncC10K(argc, argv);
     // FileTest::testSelect(argc, argv);
     FileTest::testProducerConsumer();

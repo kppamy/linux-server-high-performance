@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
 class Sort
@@ -10,13 +11,10 @@ public:
   void mergeSort(int input[], int size);
   void combine(int input[], int split, int size);
   void quickSort(int input[], int start, int end);
-  int partition(int input[],  int start, int end);
-  void exchange(int input[],  int i, int j);
-
-public:
-  void printInput(int input[]);
+  int partition(int input[], int start, int end);
+  void exchange(int input[], int i, int j);
+  void mergeSortedArray(vector<int> &vec1, int m, vector<int> &vec2, int n);
 };
-
 
 class InsertSort : Sort
 {

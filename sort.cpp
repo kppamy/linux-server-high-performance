@@ -1,20 +1,11 @@
 #include "sort.h"
-
+#include "common.h"
 int INPUT_SIZE = 10;
 
 template <class T>
 int getArrayLen(T &array)
 {
     return sizeof(array) / sizeof(array[0]);
-}
-
-void Sort::printInput(int input[])
-{
-    for (int i = 0; i < INPUT_SIZE; i++)
-    {
-        cout << input[i] << " ";
-    }
-    cout << endl;
 }
 
 void Sort::mergeSort(int input[], int size)
@@ -67,7 +58,7 @@ int Sort::partition(int input[], int start, int end)
         }
     }
     exchange(input, i, end);
-    printInput(input);
+     printInput(input, INPUT_SIZE);
     return i;
 }
 
@@ -81,7 +72,7 @@ void Sort::exchange(int input[], int i, int j)
 void InsertSort::doSort(int input[])
 {
     cout << "original array: ";
-    printInput(input);
+     printInput(input, INPUT_SIZE);
     for (int i = 1; i < INPUT_SIZE; i++)
     {
         int key = input[i];
@@ -93,22 +84,57 @@ void InsertSort::doSort(int input[])
         input[j + 1] = key;
     }
     cout << "sorted array: ";
-    printInput(input);
+    printInput(input, INPUT_SIZE);
 }
+
+// vec1 size enough to take both vector members
+void Sort::mergeSortedArray(vector<int> &vec1, int m, vector<int> &vec2, int n)
+{
+    int size1 = vec1.size();
+    int size2 = vec2.size();
+    vector<int>::reverse_iterator out{vec1.rbegin()};
+    vector<int>::reverse_iterator ri1{vec1.begin()+m};
+    vector<int>::reverse_iterator ri2{vec2.rbegin()};
+    int current;
+    while (ri1 != vec1.rend() && ri2 != vec2.rend())
+    {
+        *out++= (*ri1 >= *ri2) ? *ri1++ : *ri2++;
+    }
+    while (ri1 != vec1.rend())
+    {
+       *out++ = *(ri1++);
+    }
+    while (ri2 != vec2.rend())
+    {
+         *out++= *(ri2++);
+        
+    }
+    for(int i=0;i<m+n; i++){
+        cout<<vec1[i]<<" ";
+    }
+    cout<<endl;
+    // printVector;(vec1);
+}
+
 
 int main(int arc, const char *argv[])
 {
-    int input[INPUT_SIZE];
-    for (int i = 0; i < INPUT_SIZE; i++)
-    {
-        input[i] = rand() % 11;
-    }
+
     Sort sort;
-    sort.printInput(input);
+    // int input[INPUT_SIZE];
+    // for (int i = 0; i < INPUT_SIZE; i++)
+    // {
+    //     input[i] = rand() % 11;
+    // }
+    // sort.printInput(input);
 
     // InsertSort is;
     // is.doSort(input);
     // sort.mergeSort(input, INPUT_SIZE);
-    sort.quickSort(input, 0, INPUT_SIZE - 1);
-    sort.printInput(input);
+    // sort.quickSort(input, 0, INPUT_SIZE - 1);
+    // sort.printInput(input);
+
+    vector<int> vec1{1, 4, 0, 0, 0,0};
+    vector<int> vec2{2, 3, 6};
+    sort.mergeSortedArray(vec1, 2, vec2, 3);
 }
