@@ -58,7 +58,7 @@ int Sort::partition(int input[], int start, int end)
         }
     }
     exchange(input, i, end);
-     printInput(input, INPUT_SIZE);
+    printInput(input, INPUT_SIZE);
     return i;
 }
 
@@ -72,7 +72,7 @@ void Sort::exchange(int input[], int i, int j)
 void InsertSort::doSort(int input[])
 {
     cout << "original array: ";
-     printInput(input, INPUT_SIZE);
+    printInput(input, INPUT_SIZE);
     for (int i = 1; i < INPUT_SIZE; i++)
     {
         int key = input[i];
@@ -93,29 +93,79 @@ void Sort::mergeSortedArray(vector<int> &vec1, int m, vector<int> &vec2, int n)
     int size1 = vec1.size();
     int size2 = vec2.size();
     vector<int>::reverse_iterator out{vec1.rbegin()};
-    vector<int>::reverse_iterator ri1{vec1.begin()+m};
+    vector<int>::reverse_iterator ri1{vec1.begin() + m};
     vector<int>::reverse_iterator ri2{vec2.rbegin()};
     int current;
     while (ri1 != vec1.rend() && ri2 != vec2.rend())
     {
-        *out++= (*ri1 >= *ri2) ? *ri1++ : *ri2++;
+        *out++ = (*ri1 >= *ri2) ? *ri1++ : *ri2++;
     }
     while (ri1 != vec1.rend())
     {
-       *out++ = *(ri1++);
+        *out++ = *(ri1++);
     }
     while (ri2 != vec2.rend())
     {
-         *out++= *(ri2++);
-        
+        *out++ = *(ri2++);
     }
-    for(int i=0;i<m+n; i++){
-        cout<<vec1[i]<<" ";
+    for (int i = 0; i < m + n; i++)
+    {
+        cout << vec1[i] << " ";
     }
-    cout<<endl;
+    cout << endl;
     // printVector;(vec1);
 }
 
+void bunbleSort(vector<int> &arr, int size)
+{
+    int tmp;
+    while (size >= 1)
+    {
+        for (int i = 0; i < size; ++i)
+        {
+            if (arr[i] > arr[i + 1])
+            {
+                tmp = arr[i + 1];
+                arr[i + 1] = arr[i];
+                arr[i] = tmp;
+            }
+        }
+        // printVector(arr);
+        size--;
+    }
+}
+
+void cocktailSort(vector<int> &arr, int size)
+{
+    int max = INT_MIN, min = INT_MAX;
+    int index_max, index_min = -1;
+    int j = 0;
+    while (j < size / 2)
+    {
+        cout<<j<<endl;
+        int i = j;
+        for (; i < size - j; ++i)
+        {
+            if (arr[i] > max)
+            {
+                max = arr[i];
+                index_max = i;
+            }
+            else if (arr[i] < min)
+            {
+                min = arr[i];
+                index_min = i;
+            }
+        }
+        swap(arr[i], arr[index_min]);
+        swap(arr[size - i - 1], arr[index_max]);
+        max = INT_MIN, min = INT_MAX;
+        index_max = -1;
+        index_min = -1;
+        ++j;
+        printVector(arr);
+    }
+}
 
 int main(int arc, const char *argv[])
 {
@@ -134,7 +184,17 @@ int main(int arc, const char *argv[])
     // sort.quickSort(input, 0, INPUT_SIZE - 1);
     // sort.printInput(input);
 
-    vector<int> vec1{1, 4, 0, 0, 0,0};
-    vector<int> vec2{2, 3, 6};
-    sort.mergeSortedArray(vec1, 2, vec2, 3);
+    // vector<int> vec1{1, 4, 0, 0, 0,0};
+    // vector<int> vec2{2, 3, 6};
+    // sort.mergeSortedArray(vec1, 2, vec2, 3);
+
+    vector<int> arr = generateArray(10, 10);
+    printVector(arr);
+
+    int start = clock();
+    // bunbleSort(arr, 10);
+    cocktailSort(arr, 10);
+    int end = clock();
+    double elaps = (static_cast<float>(end - start)) / CLOCKS_PER_SEC;
+    cout << "elaps: " << elaps * 1000 << " ms" << endl;
 }
