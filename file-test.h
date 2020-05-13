@@ -26,5 +26,5 @@ class FileTest{
     static void runConsumer(const int semid, int shmid);
     static int  PV(int semid, int idx, int op);
   private:
-     pthread_mutex_t mutex_a;
+
 };
