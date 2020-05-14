@@ -25,4 +25,6 @@ public:
         delete data;
     };
     void deleteNode(ListNode *node);
+    ListNode* removeEndNthNode(ListNode *head, int n);
+
 };

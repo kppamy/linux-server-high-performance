@@ -40,14 +40,32 @@ void LinkedList::deleteNode(ListNode *node){
      delete nn;
 }
 
- 
+ListNode *LinkedList::removeEndNthNode(ListNode *head, int n)
+{
+    ListNode *sp = head;
+    for (int i = 0; i < n; i++)
+    {
+      sp = sp->next;
+    }
+    if (sp == NULL)
+      return head->next;
+    ListNode *ep = sp;
+    sp = head;
+    while (ep != NULL && ep->next != NULL)
+    {
+      ep = ep->next;
+      sp = sp->next;
+    }
+    sp->next = sp->next->next;
+    return sp;
+}
 
 int main() {
     vector<int> input{1, 2, 3, 4, 5,6, 7};
     ListNode* list = vectorToListNode(input);
     prettyPrintLinkedList(list); 
     LinkedList ll;
-    ll.deleteNode(list->next->next);
-    prettyPrintLinkedList(list); 
+    // ll.deleteNode(list->next->next);
+    prettyPrintLinkedList(ll.removeEndNthNode(list,7)); 
     return 0;
 }

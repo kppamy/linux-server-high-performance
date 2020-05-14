@@ -29,6 +29,21 @@ int TreeTest::maxDepth(TreeNode *root)
     }
 }
 
+bool TreeTest::validateBST(TreeNode *node){
+    if(node == NULL)
+        return true;
+    if((node->left != NULL) && node->val < node->left->val){
+        return false;
+    }else if( node->right !=NULL && node->val > node->right->val){
+        return false;
+    }
+    if(!validateBST(node->left))
+        return false;
+    if(!validateBST(node->right))
+        return false;
+    return true;
+}
+
 void getLine(const TreeNode *root, int depth, vector<int> &vals)
 {
     if (depth <= 0 && root != nullptr)
@@ -62,6 +77,8 @@ void printRow(const TreeNode *p, const int height, int depth)
                     cout << "/"<< "   ";
                 else
                     cout << "\\"<< "   ";
+            }else{
+                cout << "   ";
             }
             toggle = !toggle;
         }
@@ -70,8 +87,11 @@ void printRow(const TreeNode *p, const int height, int depth)
     }
     for (int v : vec)
     {
-        if (v != -2)
-            cout << v << "   ";
+        if (v != -2){
+            cout << v << "   ";    
+            }else
+                cout << "   ";
+            
     }
     cout << endl;
 }
@@ -92,10 +112,12 @@ int main(int argc, char const *argv[])
     cout << "please input the tree nodes" << endl;
     // right tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
     // left tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
+    // 3 1 -1 -1 5 4 -1 -1  1 -1 -1     
     TreeNode *root = buildTree();
     TreeTest tt;
     int dpt= tt.maxDepth(root);
     prettyPrintTree(root,dpt);
     cout<< "depth of the tree: " <<dpt<< endl;
+    cout<< "is BST ? "<<tt.validateBST(root)<<endl;
     return 0;
 }

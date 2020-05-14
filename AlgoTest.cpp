@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <math.h>
 
 
 using namespace std;
@@ -53,6 +54,19 @@ void reverseString(char input[], int size){
     printString(input, size);
 }
 
+int reverseInteger(int x){
+   int digits = round(log10(x));
+   int res = 0;
+   int i=0;
+   while(digits > -1){
+       int high = (int) pow(10,digits--);
+       res = res + x/high * pow(10, i++);
+       x = x - x/high * high;
+   }
+   return res;
+}
+
+
 
 
 
@@ -95,8 +109,12 @@ int main(int argc, char** argv){
     // removeDup(arr, 7);
     // vector<int> vec{1,1,1,2,3,3,4,4, 5, 7,7};
     // removeDup(vec);
-    char input[7]="123456";
-    reverseString(input,6);
+    // char input[7]="123456";
+    // reverseString(input,6);
+    int a=12345;
+    cout<<"before operation: "<<a<<endl;
+    int res=reverseInteger(a);
+    cout<<"after operation: "<<res<<endl;
     return 0;
 }
 

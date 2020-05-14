@@ -17,5 +17,6 @@ class TreeTest{
         TreeTest(){};
         ~TreeTest(){};
         int maxDepth(TreeNode* node);
+        bool validateBST(TreeNode* root);
 
 };
