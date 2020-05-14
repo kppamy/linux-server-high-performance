@@ -142,7 +142,6 @@ void cocktailSort(vector<int> &arr, int size)
     int j = 0;
     while (j < size / 2)
     {
-        cout<<j<<endl;
         int i = j;
         for (; i < size - j; ++i)
         {
@@ -157,14 +156,44 @@ void cocktailSort(vector<int> &arr, int size)
                 index_min = i;
             }
         }
-        swap(arr[i], arr[index_min]);
-        swap(arr[size - i - 1], arr[index_max]);
+        swap(arr[j], arr[index_min]);
+        if(j == index_max){
+            int new_max = index_min;
+            swap(arr[size - j - 1], arr[new_max]);
+        }else
+        {
+            swap(arr[size - j - 1], arr[index_max]);
+
+        }
+        
         max = INT_MIN, min = INT_MAX;
         index_max = -1;
         index_min = -1;
         ++j;
         printVector(arr);
     }
+}
+
+void  split(vector<int> &arr, int start, int end){
+    int j = start;
+    int i = j+1;
+    int key=arr[start];
+    for(;i< end;++i){
+        if(arr[i]<key){
+            swap(arr[i],arr[j]);
+            j++;
+        }
+    }
+    if(end - start <= 1){
+        return;
+    }
+    split(arr,0,j);
+    split(arr,j+1,end);
+}
+
+
+void quickSort(vector<int> &arr, int size){
+    split(arr, 0, size-1);
 }
 
 int main(int arc, const char *argv[])
@@ -192,8 +221,13 @@ int main(int arc, const char *argv[])
     printVector(arr);
 
     int start = clock();
+
     // bunbleSort(arr, 10);
-    cocktailSort(arr, 10);
+    // cocktailSort(arr, 10);
+    quickSort(arr, 10);
+    
+    printVector(arr);
+
     int end = clock();
     double elaps = (static_cast<float>(end - start)) / CLOCKS_PER_SEC;
     cout << "elaps: " << elaps * 1000 << " ms" << endl;
