@@ -16,17 +16,18 @@
                 // "TreeTest.cpp",
                 // "Sort.cpp",
                 // "DynamicProgramming.cpp",
-                "ArrayTest.cpp",
+                // "ArrayTest.cpp",
+                "EffectiveC.cpp",
                 "-o",
                 // "AlgoTest",
-                // "LinkedList",
+                "LeetCode",
                 // "TreeTest"
                 // "Sort"
-                "ArrayTest"
+                // "ArrayTest"
             ],
             "group": {
                 "kind": "build",
-                "isDefault": true
+                "isDefault":true
             }
         }
     ]
