@@ -48,7 +48,6 @@ int Sort::partition(int input[], int start, int end)
     int i = start;
     int j = start;
     int pivot = input[end];
-    int tmp;
     for (; j < end; j++)
     {
         if (input[j] <= pivot)
@@ -90,12 +89,9 @@ void InsertSort::doSort(int input[])
 // vec1 size enough to take both vector members
 void Sort::mergeSortedArray(vector<int> &vec1, int m, vector<int> &vec2, int n)
 {
-    int size1 = vec1.size();
-    int size2 = vec2.size();
     vector<int>::reverse_iterator out{vec1.rbegin()};
     vector<int>::reverse_iterator ri1{vec1.begin() + m};
     vector<int>::reverse_iterator ri2{vec2.rbegin()};
-    int current;
     while (ri1 != vec1.rend() && ri2 != vec2.rend())
     {
         *out++ = (*ri1 >= *ri2) ? *ri1++ : *ri2++;
@@ -178,7 +174,7 @@ void  split(vector<int> &arr, int start, int end){
     int j = start;
     int i = j+1;
     int key=arr[start];
-    for(;i< end;++i){
+    for(;i<= end;++i){
         if(arr[i]<key){
             swap(arr[i],arr[j]);
             j++;
