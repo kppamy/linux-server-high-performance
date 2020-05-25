@@ -6,9 +6,12 @@
 using namespace std;
 
 void printVector(vector<int> &input){
-    for(int v:input){
-        cout<<v<<" ";
-    }
+    for_each(input.begin(),input.end(),[](int i){
+        cout<<i<<" ";
+    });
+    // for(int v:input){
+    //     cout<<v<<" ";
+    // }
     cout<<endl;
 }
 
