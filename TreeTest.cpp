@@ -1,26 +1,28 @@
 #include "TreeTest.h"
+#include "BinaryTree.h"
 #include <iomanip>
+#include <math.h>
 
-TreeNode *buildTree()
+TreeNode<int> *buildTree()
 {
-    int val;
-    cin >> val;
-    if (val == -1)
+    int node;
+    cin >> node;
+    if (node == -1)
         return NULL;
-    TreeNode *root = new TreeNode(val);
+    TreeNode<int> *root = new TreeNode<int>(node);
     root->left = buildTree();
     root->right = buildTree();
     return root;
 }
 
-int TreeTest::maxDepth(TreeNode *root)
+int Tree::maxDepth(const TreeNode<int> *root)
 {
     if (root->left == NULL && root->right == NULL)
         return 1;
     else if (root->left == NULL)
-        return (maxDepth(root->right)+1);
+        return (maxDepth(root->right) + 1);
     else if (root->right == NULL)
-        return (maxDepth(root->left)+1);
+        return (maxDepth(root->left) + 1);
     else
     {
         int left = maxDepth(root->left);
@@ -29,22 +31,26 @@ int TreeTest::maxDepth(TreeNode *root)
     }
 }
 
-bool TreeTest::validateBST(TreeNode *node){
-    if(node == NULL)
+bool Tree::validateBST(TreeNode<int> *node)
+{
+    if (node == NULL)
         return true;
-    if((node->left != NULL) && node->val < node->left->val){
-        return false;
-    }else if( node->right !=NULL && node->val > node->right->val){
+    if ((node->left != NULL) && node->val < node->left->val)
+    {
         return false;
     }
-    if(!validateBST(node->left))
+    else if (node->right != NULL && node->val > node->right->val)
+    {
         return false;
-    if(!validateBST(node->right))
+    }
+    if (!validateBST(node->left))
+        return false;
+    if (!validateBST(node->right))
         return false;
     return true;
 }
 
-void getLine(const TreeNode *root, int depth, vector<int> &vals)
+void getLine(const TreeNode<int> *root, int depth, vector<int> &vals)
 {
     if (depth <= 0 && root != nullptr)
     {
@@ -61,7 +67,7 @@ void getLine(const TreeNode *root, int depth, vector<int> &vals)
         vals.push_back(-2);
 }
 
-void printRow(const TreeNode *p, const int height, int depth)
+void printRow(const TreeNode<int> *p, const int height, int depth)
 {
     vector<int> vec;
     getLine(p, depth, vec);
@@ -74,10 +80,14 @@ void printRow(const TreeNode *p, const int height, int depth)
             if (v != -2)
             {
                 if (toggle)
-                    cout << "/"<< "   ";
+                    cout << "/"
+                         << "   ";
                 else
-                    cout << "\\"<< "   ";
-            }else{
+                    cout << "\\"
+                         << "   ";
+            }
+            else
+            {
                 cout << "   ";
             }
             toggle = !toggle;
@@ -87,17 +97,18 @@ void printRow(const TreeNode *p, const int height, int depth)
     }
     for (int v : vec)
     {
-        if (v != -2){
-            cout << v << "   ";    
-            }else
-                cout << "   ";
-            
+        if (v != -2)
+        {
+            cout << v << "   ";
+        }
+        else
+            cout << "   ";
     }
     cout << endl;
 }
 
 // create a pretty vertical tree
-void prettyPrintTree(TreeNode *p, int hgt)
+void prettyPrintTree(TreeNode<int> *p, int hgt)
 {
     //   int height = getHeight(p) * 2;
     int height = hgt;
@@ -107,17 +118,101 @@ void prettyPrintTree(TreeNode *p, int hgt)
     }
 }
 
+void BinaryTree::printBinaryTree(const TreeNode<int> *root)
+{
+    int dept = maxDepth(root);
+    vector<vector<string>> out(dept, vector<string>(pow(2, dept) - 1, " "));
+    printNode(root, dept, out);
+    cout<<"Print  binary tree: "<<endl;
+    for(int i=0;i<dept;i++){
+        for(string node:out[i])
+            cout<<node;
+        cout<<endl;
+    }
+}
+
+void BinaryTree::printNode(const TreeNode<int> *root, int dept, vector<vector<string>> &out)
+{
+    int rp = static_cast<int>(pow(2, dept - 1)) - 1;
+    int distance = static_cast<int>(pow(2, dept)) - 1;
+    static int cur = 0;
+    static bool left = true;
+    if (left)
+    {
+        out[cur][rp] = to_string(root->val);
+    }
+    else
+    {
+        out[cur][rp + distance + 1] = to_string(root->val);
+    }
+    if(root->left != nullptr||root->right != nullptr){
+        cur++;
+    }
+    if (root->left != nullptr)
+    {
+        left = true;
+        printNode(root->left, dept - 1, out);
+    }
+
+    if (root->right != nullptr)
+    {
+        left = false;
+        printNode(root->right, dept - 1, out);
+    }
+
+}
+
+
+template<typename T>
+void BSTree<T>::insert(TreeNode<T>* &tree,T node)
+{
+    TreeNode<T>* parent = NULL;
+    TreeNode<T>* temp = tree;
+
+    //寻找插入点
+    while(temp!=NULL)
+    {
+        parent= temp;
+        if(node>temp->val)
+            temp= temp->right;
+        else 
+            temp=temp->left;
+    }
+    // z->_parent = parent;
+    TreeNode<T>* nd = new TreeNode<T>(node);
+    if(parent==NULL) //如果树本来就是空树，则直接把z节点插入根节点
+        tree = nd;
+    else if(node>parent->val) //如果z的值大于其双亲，则z为其双亲的右孩
+        parent->right = nd;
+    else                          
+        parent->left = nd;
+}
+
+
 int main(int argc, char const *argv[])
 {
     cout << "please input the tree nodes" << endl;
     // right tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
     // left tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
-    // 3 1 -1 -1 5 4 -1 -1  1 -1 -1     
-    TreeNode *root = buildTree();
-    TreeTest tt;
-    int dpt= tt.maxDepth(root);
-    prettyPrintTree(root,dpt);
-    cout<< "depth of the tree: " <<dpt<< endl;
-    cout<< "is BST ? "<<tt.validateBST(root)<<endl;
+    // 3 1 -1 -1 5 4 -1 -1 1 -1 -1
+    // 1 2 -1 -1 -1
+    // 1 2 -1 4 -1 -1 3 -1 -1
+    // TreeNode *root = buildTree();
+    // Tree tt;
+    // int dpt = tt.maxDepth(root);
+    // prettyPrintTree(root, dpt);
+    // cout << "depth of the tree: " << dpt << endl;
+    // cout << "is BST ? " << tt.validateBST(root) << endl;
+    // BinaryTree bt;
+
+    // bt.printBinaryTree(root);
+    BSTree<int> bst;
+    TreeNode<int>* root;
+    vector<int> nodes{7,2,4,6,3,1,5};
+    for(int val:nodes){
+        bst.insert(root,val);
+    }
+    bst.printBinaryTree(root);
     return 0;
+
 }
