@@ -18,9 +18,10 @@
                 // "DynamicProgramming.cpp",
                 // "ArrayTest.cpp",
                 // "EffectiveC.cpp",
-                "saima.cpp"
+                // "saima.cpp"
                 // "todo.cpp"
                 // "lamada.cpp"
+                "StringTest.cpp"
                 "-o",
                 // "AlgoTest",
                 "LeetCode",
