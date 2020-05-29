@@ -43,44 +43,48 @@ public:
     int lengthOfLongestSubstringWithKRepeates(string s, int k)
     {
         int len = s.length();
-        if (len < k)
+        if (k == 1)
+        {
+            return len;
+        }
+        else if (len < k)
         {
             return 0;
         }
-        int max = 0;
-        int j;
-        int i = j + 1;
-        int cout[26] = {0};
-        for (int j = 0; j < len; j++)
+
+        int couter[26] = {0};
+        int j = 0;
+
+        for (j = 0; j < len; j++)
         {
-            for (int q = i; q < j; q++)
+            int pos = (s[j] - 'a');
+            couter[pos]++;
+        }
+        bool bad[26] = {false};
+        for (int i = 0; i < 26; i++)
+        {
+            if (couter[i] < k)
             {
-                int pos = s[q] - 'a';
-                cout[pos]++;
-                if (cout[pos] == k)
-                {
-                    max++;
-                }
-                else
-                {
-                    bool restart = false;
-                    for (int q = 0; q < k - cout[pos]; q++)
-                    {
-                        if (s[q] != s[j])
-                        {
-                            restart = true;
-                            i = j + 1;
-                            break;
-                        }
-                    }
-                    if (!restart)
-                    {
-                        max = max + k;
-                        i = j + k - cout[pos] + 1;
-                    }
-                }
+                bad[i] = 1;
             }
         }
+        bool allgood = true;
+        int max = 0;
+        for (int i = 0; i < len; i++)
+        {
+            if (bad[s[i] - 'a'])
+            {
+                allgood = false;
+                int sub0 = 0;
+                if (i > 0)
+                    sub0 = lengthOfLongestSubstringWithKRepeates(s.substr(0, i), k);
+                int sub1 = lengthOfLongestSubstringWithKRepeates(s.substr(i + 1), k);
+                max = sub0 > sub1 ? sub0 : sub1;
+            }
+        }
+        if (allgood)
+            max = max >= len ? max : len;
+        return max;
     }
 };
 
@@ -88,13 +92,13 @@ int main(int argc, char const *argv[])
 {
     StringTest st;
     string input;
-    cout << " a is" << static_cast<int>('a') << endl;
-    // while(true){
-    // cin>>input;
-    // if(input=="q"){
-    //     break;
-    // }
+    while(true){
+    cin>>input;
+    if(input=="q"){
+        break;
+    }
     // cout<< "longest of "<<input<<" is "<<st.lengthOfLongestSubstring(input)<<endl;
-    // }
+    cout<< "lengthOfLongestSubstringWithKRepeates of "<<input<<" is "<<st.lengthOfLongestSubstringWithKRepeates(input,3)<<endl;
+    }
     return 0;
 }
