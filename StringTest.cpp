@@ -86,19 +86,71 @@ public:
             max = max >= len ? max : len;
         return max;
     }
+
+    // 1143. Longest Common Subsequence
+    int longestCommonSubstring(string text1, string text2)
+    {
+        int len1 = text1.length();
+        int len2 = text2.length();
+        if (len1 * len2 == 0)
+        {
+            return 0;
+        }
+
+        if (text1 == text2)
+        {
+            return len1;
+        }
+        int max1 = 0;
+        max1 = longestCommonSubsequence(text1.substr(0, len1 - 1), text2);
+        int max2 = longestCommonSubsequence(text1.substr(0, len1 - 1), text2.substr(0, len2 - 1));
+        max1 = max1 > max2 ? max1 : max2;
+        int max3 = longestCommonSubsequence(text1, text2.substr(0, len2 - 1));
+        max1 = max1 > max3 ? max1 : max3;
+        return max1;
+    }
+
+    // 1143. Longest Common Subsequence DP
+    int longestCommonSubsequence(string text1, string text2)
+    {
+        int len1 = text1.length();
+        int len2 = text2.length();
+        if (len1 * len2 == 0)
+        {
+            return 0;
+        }
+
+        if (text1[len1-1] == text2[len2-1])
+        {
+            return (longestCommonSubsequence(text1.substr(0,len1-1),text2.substr(0, len2 - 1))+1);
+        }
+
+        int max1 = 0;
+        max1 = longestCommonSubsequence(text1.substr(0, len1 - 1), text2);
+        int max3 = longestCommonSubsequence(text1, text2.substr(0, len2 - 1));
+        max1 = max1 > max3 ? max1 : max3;
+        return max1;
+    }
 };
 
 int main(int argc, char const *argv[])
 {
     StringTest st;
     string input;
-    while(true){
-    cin>>input;
-    if(input=="q"){
-        break;
-    }
-    // cout<< "longest of "<<input<<" is "<<st.lengthOfLongestSubstring(input)<<endl;
-    cout<< "lengthOfLongestSubstringWithKRepeates of "<<input<<" is "<<st.lengthOfLongestSubstringWithKRepeates(input,3)<<endl;
+    while (true)
+    {
+        cin >> input;
+
+        if (input == "q")
+        {
+            break;
+        }
+        // cout<< "longest of "<<input<<" is "<<st.lengthOfLongestSubstring(input)<<endl;
+        // cout << "lengthOfLongestSubstringWithKRepeates of " << input << " is " << st.lengthOfLongestSubstringWithKRepeates(input, 3) << endl;
+        string input2;
+        cin >> input2;
+        cout << "longestCommonSubsequence of " << input << " and  " << input2 << " is "
+             << st.longestCommonSubsequence(input, input2) << endl;
     }
     return 0;
 }
