@@ -120,9 +120,9 @@ public:
             return 0;
         }
 
-        if (text1[len1-1] == text2[len2-1])
+        if (text1[len1 - 1] == text2[len2 - 1])
         {
-            return (longestCommonSubsequence(text1.substr(0,len1-1),text2.substr(0, len2 - 1))+1);
+            return (longestCommonSubsequence(text1.substr(0, len1 - 1), text2.substr(0, len2 - 1)) + 1);
         }
 
         int max1 = 0;
@@ -130,6 +130,28 @@ public:
         int max3 = longestCommonSubsequence(text1, text2.substr(0, len2 - 1));
         max1 = max1 > max3 ? max1 : max3;
         return max1;
+    }
+
+    // 214. Shortest Palindrome
+    string shortestPalindrome(const string &s)
+    {
+        int len = s.length();
+        if (len <= 1)
+            return s;
+        int i = 0;
+        int j = len - 1;
+        int counter=0;
+        string ns = s;
+        while (counter < j)
+        {
+            if (ns[i] != s[j])
+                ns = ns.substr(0, i) + s[j] + s.substr(counter,len-counter);
+            else
+                counter++;
+            i++;
+            j--;
+        }
+        return ns;
     }
 };
 
@@ -147,10 +169,12 @@ int main(int argc, char const *argv[])
         }
         // cout<< "longest of "<<input<<" is "<<st.lengthOfLongestSubstring(input)<<endl;
         // cout << "lengthOfLongestSubstringWithKRepeates of " << input << " is " << st.lengthOfLongestSubstringWithKRepeates(input, 3) << endl;
-        string input2;
-        cin >> input2;
-        cout << "longestCommonSubsequence of " << input << " and  " << input2 << " is "
-             << st.longestCommonSubsequence(input, input2) << endl;
+        // string input2;
+        // cin >> input2;
+        // cout << "longestCommonSubsequence of " << input << " and  " << input2 << " is "
+        //      << st.longestCommonSubsequence(input, input2) << endl;
+
+        cout << "shortestPalindrome of " << input << " is  " << st.shortestPalindrome(input) << endl;
     }
     return 0;
 }
