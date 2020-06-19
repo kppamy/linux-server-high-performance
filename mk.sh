@@ -33,7 +33,9 @@ g++ 13-5-send-fd.c -o send-fd
 g++ 14-1-dead-lock.c -o dea-lock -lpthread
 g++ 14-3-multi-thread-fork.c -o multi-thread-fork -lpthread
 g++ 14-5-thread-handle-signal.c -o threadhandlesignal -lpthread
+g++ -g 15-5-http_conn.cpp 15-6-web-main.cpp -o webserver -lpthread
 g++ processpool.h 15-2-process-pool-cgi.c -o process-pool-cgi
+g++ -g 16-4-stresstest.cpp  -lpthread -o stresstest
 
 g++ fork_test.c -o fork_test
 g++ file-test.cpp -o file-test
