@@ -55,9 +55,11 @@ public:
     
     //nonblock write
     bool write();
+
+       void init();
     
 private:
-    void init();
+ 
     
     //parse http request
     HTTP_CODE process_read();

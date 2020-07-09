@@ -82,7 +82,7 @@ void start_conn(int epoll_fd, int num, const char *ip, int port)
     address.sin_port = htons(port);
     for (int i = 0; i<num; ++i)
     {
-        sleep(1);
+        // sleep(1);
         int sockfd = socket(PF_INET, SOCK_STREAM, 0);
         printf("create 1 sock\n");
         if (sockfd<0)
@@ -118,6 +118,7 @@ int main(int argc, char *argv[])
             int sockfd = events[i].data.fd;
             if (events[i].events&EPOLLIN)
             {
+            printf("epollin %d\n", i);
                 if (!read_once(sockfd, buffer, 2048))
                 {
                     close_conn(epoll_fd, sockfd);
@@ -129,6 +130,7 @@ int main(int argc, char *argv[])
             }
             else if (events[i].events&EPOLLOUT)
             {
+            printf("epollout %d\n", i);
                 if (!write_nbytes(sockfd, request, strlen(request)))
                 {
                     close_conn(epoll_fd, sockfd);
@@ -140,6 +142,8 @@ int main(int argc, char *argv[])
             }
             else if (events[i].events&EPOLLERR)
             {
+            printf("epollERR %d\n", i);
+            continue;
                 close_conn(epoll_fd, sockfd);
             }
         }

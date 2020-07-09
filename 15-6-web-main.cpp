@@ -18,13 +18,15 @@
 
 extern int addfd(int epollfd, int fd, bool one_shot);
 extern int removefd(int epollfd, int fd);
+extern void threadId(const char* tag);
+
 
 void addsig(int sig, void(handler)(int), bool restart = true)
 {
     struct sigaction sa;
     memset(&sa, '\0', sizeof(sa));
     sa.sa_handler = handler;
-    if (restart) 
+    if (restart)
     {
         sa.sa_flags |= SA_RESTART;
     }
@@ -32,7 +34,7 @@ void addsig(int sig, void(handler)(int), bool restart = true)
     assert(sigaction(sig, &sa, NULL) != -1);
 }
 
-void show_error(int connfd, const char * info)
+void show_error(int connfd, const char *info)
 {
     fprintf(stderr, "%s", info);
     send(connfd, info, strlen(info), 0);
@@ -41,7 +43,7 @@ void show_error(int connfd, const char * info)
 
 int main(int argc, char *argv[])
 {
-    if (argc <=2) 
+    if (argc <= 2)
     {
         fprintf(stdout, "usage: %s ip_address port_number\n", basename(argv[0]));
         return 1;
@@ -49,7 +51,7 @@ int main(int argc, char *argv[])
 
     const char *ip = argv[1];
     int port = atoi(argv[2]);
-    
+
     //ignore SIGPIPE signal
     addsig(SIGPIPE, SIG_IGN);
 
@@ -59,18 +61,18 @@ int main(int argc, char *argv[])
     {
         pool = new threadpool<http_conn>;
     }
-    catch(...)
+    catch (...)
     {
         return 1;
     }
 
     //inital allocate a http_conn for each client connection
-    http_conn * users = new http_conn[MAX_FD];
+    http_conn *users = new http_conn[MAX_FD];
     assert(users);
 
     int listenfd = socket(PF_INET, SOCK_STREAM, 0);
     assert(listenfd >= 0);
-    struct linger tmp = {1,0};
+    struct linger tmp = {1, 0};
     setsockopt(listenfd, SOL_SOCKET, SO_LINGER, &tmp, sizeof(tmp));
 
     int ret = 0;
@@ -92,61 +94,72 @@ int main(int argc, char *argv[])
     addfd(epollfd, listenfd, false);
     http_conn::m_epollfd = epollfd;
 
-    while(true)
+    while (true)
     {
         int number = epoll_wait(epollfd, events, MAX_EVENT_NUMBER, -1);
-        if ((number < 0) && (errno != EINTR)) 
+        if ((number < 0) && (errno != EINTR))
         {
             fprintf(stderr, "epoll failure\n");
             break;
         }
 
-        for (int i = 0; i < number; i ++)
+        for (int i = 0; i < number; i++)
         {
+            fprintf(stdout, "event NO.%d\n", i);
+            threadId("web main before epoll event");
             int sockfd = events[i].data.fd;
-            if (sockfd == listenfd) 
+            if (sockfd == listenfd)
             {
                 struct sockaddr_in client_address;
                 socklen_t client_addrlength = sizeof(client_address);
                 int connfd = accept(listenfd, (struct sockaddr *)&client_address, &client_addrlength);
-                if (connfd < 0) 
+                if (connfd < 0)
                 {
                     fprintf(stderr, "errno is: %d", errno);
                     continue;
                 }
-                if (http_conn::m_user_count >= MAX_FD) 
+                if (http_conn::m_user_count >= MAX_FD)
                 {
                     show_error(connfd, "Internal server busy");
                     continue;
                 }
+                fprintf(stdout, "accepy client connection connfd: %d\n", connfd);
 
                 //initial client conneciton
                 users[connfd].init(connfd, client_address);
             }
 
-            else if (events[i].events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)) 
+            else if (events[i].events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))
             {
                 //if abnormal, close close connection directly
+                fprintf(stdout, "EPOLLRDHUP | EPOLLHUP | EPOLLERR %d\n", events[i].events);
+
                 users[sockfd].close_conn();
             }
-            else if (events[i].events & EPOLLIN) 
+            else if (events[i].events & EPOLLIN)
             {
-                if (users[sockfd].read()) 
+                fprintf(stdout, "EPOLLIN %d\n", EPOLLIN);
+                if (users[sockfd].read())
                 {
                     pool->append(users + sockfd);
+                    fprintf(stdout, "read successfully\n");
+
                 }
                 else
                 {
                     users[sockfd].close_conn();
                 }
             }
-            else if (events[i].events & EPOLLOUT) 
+            else if (events[i].events & EPOLLOUT)
             {
                 //
-                if (!users[sockfd].write()) 
+                fprintf(stdout, "EPOLLOUT %d\n", EPOLLOUT);
+
+                if (!users[sockfd].write())
                 {
                     users[sockfd].close_conn();
-                }
+                }else
+                 fprintf(stdout, "write successfully \n");
             }
             else
             {
@@ -155,7 +168,7 @@ int main(int argc, char *argv[])
     }
     close(epollfd);
     close(listenfd);
-    delete [] users;
+    delete[] users;
     delete pool;
     return 0;
 }
