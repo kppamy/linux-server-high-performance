@@ -1,0 +1,9 @@
+#!/bin/sh
+if [ -n "$1" ]; then
+    st=$(date +%s) 
+    $1
+    echo "time consume" `expr  $(date +%s) - $st`'s' 
+else
+    echo  "Please provide cmd you want to time\n"
+fi
+
