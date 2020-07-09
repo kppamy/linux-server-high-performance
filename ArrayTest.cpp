@@ -245,28 +245,68 @@ void maxProfitCoolDownSM(const vector<int> &prices)
          << " is: " << max(sold[len - 1], cooldown[len - 1]) << endl;
 }
 
+// 1248. Count Number of Nice Subarrays
+int numberOfSubarrays(vector<int> &nums, int k)
+{
+    //count pre-sub
+    int len = nums.size();
+    if (len < k)
+        return 0;
+    vector<int> counter(len + 2, 0);
+    int sum = 0;
+    counter[0] = 1;
+    int res = 0;
+    for (auto val : nums)
+    {
+        if (val % 2)
+            sum++;
+        counter[sum]++;
+        if (sum >= k)
+            res += counter[sum - k];
+    }
+    return res;
+}
+
+void testNiceArray()
+{
+    vector<int> input{1, 1, 2, 1, 1};
+    int k = 0;
+    //  vector<int> input{2,4,6};
+    // int k = 1;
+    //  vector<int> input{2,2,2,1,2,2,1,2,2,2};
+    // int k = 2;
+    printVector(input);
+    cout << "numberOfSubarrays:  " << numberOfSubarrays(input, k)<<endl;
+}
+
+void testRotateArray()
+{
+    ArrayTest at;
+    vector<int> prices = generateArray(10, 10);
+    cout << "before rotate:" << endl;
+    printVector(prices);
+    int k = 5;
+    cout << "after rotate " << k << " k" << endl;
+    at.rotateArraySwitch(prices, k);
+    printVector(prices);
+}
+
+void testMaxProfit()
+{
+    ArrayTest at;
+    vector<int> prices{4, 3, 8, 9, 3, 7, 7, 4, 9, 1};
+    int max = at.maxProfit(prices);
+    cout << " max profit is: " << max << endl;
+    printVector(prices);
+    maxProfitDP(prices, 2);
+    maxProfit2chances(prices);
+    maxProfitCoolDownSM(prices);
+}
+
 int main(int argc, char const *argv[])
 {
-    /* code */
-    ArrayTest at;
-    // vector<int> prices{4 ,3, 8, 9 ,3 ,7, 7 ,4 ,9 ,1};
-    vector<int> prices = generateArray(10, 10);
-    // int max = at.maxProfit(prices);
-    // cout<<" max profit is: "<<max<<endl;
-    // cout << "before rotate:" << endl;
-    // printVector(prices);
-    // int k = 5;
-    // cout << "after rotate " << k << " k" << endl;
-    // at.rotateArraySwitch(prices, k);
-    printVector(prices);
-    int start = clock();
 
-    // maxProfitDP(prices, 2);
-    // maxProfit2chances(prices);
-    maxProfitCoolDownSM(prices);
-
-    int end = clock();
-    double elaps = (static_cast<float>(end - start)) / CLOCKS_PER_SEC;
-    cout << "elaps: " << elaps * 1000 << " ms" << endl;
+timeit(testNiceArray);
+    // testNiceArray();
     return 0;
 }
