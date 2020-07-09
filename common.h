@@ -3,7 +3,17 @@
 #include <time.h>
 #include <limits.h>
 #include <random>
+#include "Timer.h"
 using namespace std;
+
+void timeit(std::function<void()> func){
+    Timer t;
+    t.start();
+    func();
+    t.stop();
+    std::cout<<"time cost: "<<t.miniSeconds()<<" ms"<<endl;
+}
+
 
 void printVector(vector<int> &input){
     for_each(input.begin(),input.end(),[](int i){
