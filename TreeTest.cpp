@@ -123,11 +123,12 @@ void BinaryTree::printBinaryTree(const TreeNode<int> *root)
     int dept = maxDepth(root);
     vector<vector<string>> out(dept, vector<string>(pow(2, dept) - 1, " "));
     printNode(root, dept, out);
-    cout<<"Print  binary tree: "<<endl;
-    for(int i=0;i<dept;i++){
-        for(string node:out[i])
-            cout<<node;
-        cout<<endl;
+    cout << "Print  binary tree: " << endl;
+    for (int i = 0; i < dept; i++)
+    {
+        for (string node : out[i])
+            cout << node;
+        cout << endl;
     }
 }
 
@@ -145,7 +146,8 @@ void BinaryTree::printNode(const TreeNode<int> *root, int dept, vector<vector<st
     {
         out[cur][rp + distance + 1] = to_string(root->val);
     }
-    if(root->left != nullptr||root->right != nullptr){
+    if (root->left != nullptr || root->right != nullptr)
+    {
         cur++;
     }
     if (root->left != nullptr)
@@ -159,35 +161,120 @@ void BinaryTree::printNode(const TreeNode<int> *root, int dept, vector<vector<st
         left = false;
         printNode(root->right, dept - 1, out);
     }
-
 }
 
-
-template<typename T>
-void BSTree<T>::insert(TreeNode<T>* &tree,T node)
+const TreeNode<int> *BinaryTree::nextValInMidOrder(const TreeNode<int> *root, int val) const
 {
-    TreeNode<T>* parent = NULL;
-    TreeNode<T>* temp = tree;
+    static bool begin = false;
+    if (root)
+    {
+        midOrder(root->left);
+        if (begin)
+        {
+            return root;
+        }
+        cout << " " << root->val << " ";
+        if (root->val == val)
+        {
+            begin = true;
+            cout << " find " << val << " at " << root << endl;
+        }
+
+        midOrder(root->right);
+    }
+}
+
+void BinaryTree::midOrder(const TreeNode<int> *root) const
+{
+    if (!root)
+        return;
+    midOrder(root->left);
+    cout << " " << root->val << " ";
+    midOrder(root->right);
+}
+
+template <typename T>
+void BSTree<T>::insert(TreeNode<T> *&tree, T node)
+{
+    TreeNode<T> *parent = NULL;
+    TreeNode<T> *temp = tree;
 
     //寻找插入点
-    while(temp!=NULL)
+    while (temp != NULL)
     {
-        parent= temp;
-        if(node>temp->val)
-            temp= temp->right;
-        else 
-            temp=temp->left;
+        parent = temp;
+        if (node > temp->val)
+            temp = temp->right;
+        else
+            temp = temp->left;
     }
     // z->_parent = parent;
-    TreeNode<T>* nd = new TreeNode<T>(node);
-    if(parent==NULL) //如果树本来就是空树，则直接把z节点插入根节点
+    TreeNode<T> *nd = new TreeNode<T>(node);
+    if (parent == NULL) //如果树本来就是空树，则直接把z节点插入根节点
         tree = nd;
-    else if(node>parent->val) //如果z的值大于其双亲，则z为其双亲的右孩
+    else if (node > parent->val) //如果z的值大于其双亲，则z为其双亲的右孩
         parent->right = nd;
-    else                          
+    else
         parent->left = nd;
 }
 
+template <typename T>
+void BSTree<T>::del(TreeNode<T> *&root, T val)
+{
+    TreeNode<T> *parent = root;
+    TreeNode<T> *tmp = root;
+    TreeNode<T> *target = nullptr;
+    while (tmp)
+    {
+        parent = tmp;
+        if (val > tmp->val)
+        {
+            parent = tmp->right;
+        }
+        else if (val < tmp->val)
+        {
+            parent = tmp->left;
+        }
+        else if (val == tmp->val)
+        {
+            target = tmp;
+        }
+    }
+
+    if (target == nullptr)
+    {
+        return;
+    }
+    if (!target->left && !target->right)
+    {
+        delete target;
+    }
+    else if (target->left && target->right)
+    {
+
+        //   next val in midOder
+        TreeNode<int>* next=nextValInMidOrder(target,target->val);
+    }
+    else
+    {
+        TreeNode<T> *node = nullptr;
+        if (target->right)
+        {
+            node = target->right;
+        }
+        else if (target->left)
+        {
+            node = target->left;
+        }
+        if (val > parent->val)
+            parent->right = node;
+        else if (val < parent->val)
+        {
+            parent->left = node;
+        }
+        delete target;
+    }
+}
 
 int main(int argc, char const *argv[])
 {
@@ -206,13 +293,16 @@ int main(int argc, char const *argv[])
     // BinaryTree bt;
 
     // bt.printBinaryTree(root);
+    int a=0;
+    cout<<((a=0)==0)<<endl;
     BSTree<int> bst;
-    TreeNode<int>* root;
-    vector<int> nodes{7,2,4,6,3,1,5};
-    for(int val:nodes){
-        bst.insert(root,val);
+    TreeNode<int> *root;
+    // vector<int> nodes{7, 2, 4, 6, 3, 1, 5};
+    vector<int> nodes{4, 2, 1, 3, 6, 5, 7};
+    for (int val : nodes)
+    {
+        bst.insert(root, val);
     }
     bst.printBinaryTree(root);
     return 0;
-
 }
