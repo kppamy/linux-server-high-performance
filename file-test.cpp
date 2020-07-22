@@ -223,6 +223,7 @@
         return address;
     }
 
+
     int FileTest::getListenFd(sockaddr_in address, int num)
     {
         int sock = socket(PF_INET, SOCK_STREAM, 0);
@@ -491,13 +492,15 @@
 
     pthread_mutex_t mutex_a;
     pthread_mutex_t mutex_b;
+    pthread_cond_t cond;
+
 
     void *heart(void *arg){
         //  pthread_mutex_lock(&mutex_a);
-            pthread_mutex_lock(&mutex_b);
+         pthread_mutex_lock(&mutex_b);
 
         float x, y;
-        cout<<" i am in heart " << pthread_self();
+        cout<<"Coco Coco Coco Coco Coco Coco Coco Coco Coco Coco Coco";
         for (y = 1.5f; y >-1.5f; y -= 0.1f)
         {
             for (x = -1.5f; x <1.5f; x += 0.05f)
@@ -514,13 +517,46 @@
     }
 
     void *interupt(void *arg){
-        int ret = pthread_mutex_lock(&mutex_b);
-        cout<<"i am in interupt "<<pthread_self()<<endl;
+        // int ret = pthread_mutex_lock(&mutex_b);
+         cout<<"Cay Cay Cay Cay Cay Cay Cay Cay Cay Cay Cay Cay Cay Cay"<<endl;
             for(int i=0; i< 100;i++){
-            cout<<" i="<<i;
+            // cout<<" i="<<i;
         }
-        cout<<endl;
-         pthread_mutex_unlock(&mutex_b);
+         cout<<endl;
+        //  pthread_mutex_unlock(&mutex_b);
+    }
+
+    void* cond1(void *arg){
+        cout<<"Cay talking: "<<endl;
+        sleep(3);
+        cout<<"Cay over, Coco talks"<<endl;
+        pthread_cond_signal(&cond);        
+    }
+
+
+    void* cond2(void *arg){
+        cout<<"Coco begin, can i talk?"<<endl;
+        pthread_mutex_lock(&mutex_a);
+        pthread_cond_wait(&cond,&mutex_a);
+        cout<<"Coco Coco Coco Coco Coco Coco Coco Coco Coco Coco Coco"<<endl;
+    }
+
+
+    void testCondtition(){
+        pthread_mutex_init(&mutex_a, NULL);
+        pthread_cond_init(&cond,NULL);
+
+        pthread_t first;
+        pthread_create(&first, NULL, cond1, NULL);
+        
+        pthread_t second;
+        pthread_create(&second, NULL, cond2, NULL);
+
+        pthread_join(first, NULL);
+        pthread_join(second, NULL);
+
+        pthread_mutex_destroy(&mutex_a);
+        pthread_cond_destroy(&cond);
     }
 
 
@@ -529,39 +565,30 @@
         pthread_mutex_init(&mutex_a, NULL);
         pthread_mutex_init(&mutex_b, NULL);
 
+        pthread_mutex_lock(&mutex_b);
+
         pthread_t first;
         pthread_create(&first, NULL, heart, NULL);
-
         pthread_t second;
-        pthread_create(&second, NULL, interupt, first);
+        pthread_create(&second, NULL, interupt, NULL);
 
-        pthread_join(first, NULL);
+        cout<<endl;
+        cout<<endl;
+        cout<<endl;
+
+          pthread_mutex_unlock(&mutex_b);
+
+        // pthread_join(first, NULL);
+
         pthread_join(second, NULL);
+        cout<<endl;
+        cout<<endl;
+        cout<<endl;
+
         pthread_mutex_destroy(&mutex_a);
         pthread_mutex_destroy(&mutex_b);
-
+        cout<<"main thread exit "<<pthread_self()<<endl;
     }
-
-    int main(int argc, char const *argv[])
-    {
-        /* code */
-        //FileTest::testMmap();
-        // FileTest::testMmapFamily();
-        // FileTest::testSocket(argc, argv);
-        // FileTest::testDup(argc, argv);
-        // FileTest::testPipe();
-        // FileTest::testSockPair();
-        // FileTest::testSyncC10K(argc,argv);
-        //FileTest::testAsyncC10K(argc, argv);
-        // FileTest::testSelect(argc, argv);
-        // FileTest::testProducerConsumer();
-        FileTest ft;
-        ft.testThread();
-        return 0;
-    }
-    shmdt(products);
-    shmctl(shmid, IPC_RMID, NULL);
-}
 
 int main(int argc, char const *argv[])
 {
@@ -575,6 +602,9 @@ int main(int argc, char const *argv[])
     // FileTest::testSyncCsort.cpp10K(argc,argv);
     //FileTest::testAsyncC10K(argc, argv);
     // FileTest::testSelect(argc, argv);
-    FileTest::testProducerConsumer();
+    // FileTest::testProducerConsumer();
+    //   FileTest ft;
+    // ft.testThread();
+    testCondtition();
     return 0;
 }
