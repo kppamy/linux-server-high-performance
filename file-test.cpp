@@ -14,6 +14,9 @@
     #include <sys/types.h>
     #include <pthread.h>
     #include <sys/select.h>
+    #include <sys/sem.h>
+    #include <sys/shm.h>
+    #include "Timer.h"
 
     void FileTest::testMmap()
     {
@@ -390,8 +393,11 @@
         close(sock);
     }
 
-    #include <sys/sem.h>
-    #include <sys/shm.h>
+
+
+    const short IDX_EMPTY = 0;
+    const short IDX_SYNC_RW = 1;
+    const short IDX_FULL = 2;
 
     void FileTest::testProducerConsumer()
     {
@@ -401,7 +407,7 @@
         int keyp = semget(IPC_PRIVATE, 3, 0666);
 
         union semun sem_un;
-        unsigned short arr[3] = {BUF_SIZE, 1, 0};
+        unsigned short arr[3] = {BUF_SIZE, 1, 0};//{EMPTY, RW,FULL}
         sem_un.array = arr;
         semctl(keyp, 0, SETALL, sem_un);
 
@@ -425,15 +431,15 @@
         char *products = (char *)shmat(shmid, NULL, 0);
         while (true)
         {
-            int sem = PV(semid, 0, -1);
-            PV(semid, 1, -1);
+            int sem = PV(semid, IDX_EMPTY, -1);
+            PV(semid, IDX_SYNC_RW, -1);
             int item = bufsize - sem - 1;
             products[item] = item;
             printf(" produce products[%d] =  %d \n", item, products[item]);
-            PV(semid, 1, 1);
-            int con = PV(semid, 2, 1);
+            PV(semid, IDX_SYNC_RW, 1);
+            int con = PV(semid, IDX_FULL, 1);
             // sleep(1);
-            //    printf(" consumer could read  %d  products\n", con);
+            // printf(" consumer could read  %d  products\n", con);
         }
         shmdt(products);
         shmctl(shmid, IPC_RMID, NULL);
@@ -458,28 +464,30 @@
         char *products = (char *)shmat(shmid, NULL, 0);
         while (true)
         {
-            int num = semctl(semid, 2, GETVAL, NULL);
-            int sem ;
+            int num = semctl(semid, IDX_FULL, GETVAL, NULL);
+            int sem;
             if(num > 0){
-                sem = PV(semid, 2, -1 * num);
+                sem = PV(semid, IDX_FULL, -1 * num);
             }else if (num == 0){
-                // sem = PV(semid, 2, -1 );
-                continue;
+                sem = PV(semid, IDX_FULL, -1 );
+                printf(" empty , consumer after pv num =%d \n ",sem);
+                sleep(1);
+                // continue;
             }else {
                 printf(" consumer semaphor:  %d\n ", num);
             }
-
-            PV(semid, 1, -1);
+            PV(semid, IDX_SYNC_RW, -1);
             int pos = i;
             printf("\n\n eat %d products: ", num);
             for(int j=0;j<num;j++){
                 printf("%d ", products[j]);
             }
+              printf("\n");
             // printf("\n %d products remain \n\n", sem);
-            PV(semid, 1, 1);
-            PV(semid, 0, num);
+            PV(semid, IDX_SYNC_RW, 1);
+            PV(semid, IDX_EMPTY, num); 
             i++;
-            if(i == 5) break;
+            // if(i == 5) break;
             sleep(1);
         }
         shmdt(products);
@@ -533,14 +541,12 @@
         pthread_cond_signal(&cond);        
     }
 
-
     void* cond2(void *arg){
         cout<<"Coco begin, can i talk?"<<endl;
         pthread_mutex_lock(&mutex_a);
         pthread_cond_wait(&cond,&mutex_a);
         cout<<"Coco Coco Coco Coco Coco Coco Coco Coco Coco Coco Coco"<<endl;
     }
-
 
     void testCondtition(){
         pthread_mutex_init(&mutex_a, NULL);
@@ -602,9 +608,9 @@ int main(int argc, char const *argv[])
     // FileTest::testSyncCsort.cpp10K(argc,argv);
     //FileTest::testAsyncC10K(argc, argv);
     // FileTest::testSelect(argc, argv);
-    // FileTest::testProducerConsumer();
+    FileTest::testProducerConsumer();
     //   FileTest ft;
     // ft.testThread();
-    testCondtition();
+    // testCondtition();
     return 0;
 }
