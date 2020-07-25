@@ -104,9 +104,9 @@ void http_conn::init(int sockfd, const sockaddr_in &addr)
     m_sockfd = sockfd;
     m_address = addr;
     //如下两行是为了避免TIME_WAIT状态， 仅用于调试，实际使用时应该去掉
-    int reuse = 1;
-    setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-    addfd(m_epollfd, sockfd, true);
+    // int reuse = 1;
+    // setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+    addfd(m_epollfd, sockfd, false);
     m_user_count++;
     init();
 }

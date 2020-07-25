@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
 
     const char *ip = argv[1];
     int port = atoi(argv[2]);
+    int threads_number = atoi(argv[3]);
 
     //ignore SIGPIPE signal
     addsig(SIGPIPE, SIG_IGN);
@@ -59,7 +60,7 @@ int main(int argc, char *argv[])
     threadpool<http_conn> *pool = NULL;
     try
     {
-        pool = new threadpool<http_conn>;
+        pool = new threadpool<http_conn>(threads_number);
     }
     catch (...)
     {
@@ -93,6 +94,8 @@ int main(int argc, char *argv[])
     assert(epollfd != -1);
     addfd(epollfd, listenfd, false);
     http_conn::m_epollfd = epollfd;
+
+    threadId("main thread: ");
 
     while (true)
     {
