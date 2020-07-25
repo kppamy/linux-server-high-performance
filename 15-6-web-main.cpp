@@ -105,8 +105,6 @@ int main(int argc, char *argv[])
 
         for (int i = 0; i < number; i++)
         {
-            fprintf(stdout, "event NO.%d\n", i);
-            threadId("web main before epoll event");
             int sockfd = events[i].data.fd;
             if (sockfd == listenfd)
             {
@@ -123,8 +121,6 @@ int main(int argc, char *argv[])
                     show_error(connfd, "Internal server busy");
                     continue;
                 }
-                fprintf(stdout, "accepy client connection connfd: %d\n", connfd);
-
                 //initial client conneciton
                 users[connfd].init(connfd, client_address);
             }
@@ -138,7 +134,6 @@ int main(int argc, char *argv[])
             }
             else if (events[i].events & EPOLLIN)
             {
-                fprintf(stdout, "EPOLLIN %d\n", EPOLLIN);
                 if (users[sockfd].read())
                 {
                     pool->append(users + sockfd);
@@ -152,9 +147,6 @@ int main(int argc, char *argv[])
             }
             else if (events[i].events & EPOLLOUT)
             {
-                //
-                fprintf(stdout, "EPOLLOUT %d\n", EPOLLOUT);
-
                 if (!users[sockfd].write())
                 {
                     users[sockfd].close_conn();

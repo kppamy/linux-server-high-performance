@@ -32,7 +32,7 @@ void addfd(int epoll_fd, int fd)
 bool write_nbytes(int sockfd, const char *buffer, int len)
 {
     int bytes_write = 0;
-    printf("write out%d bytes to socket%d\n", len, sockfd);
+    printf("write out %d bytes to socket %d\n", len, sockfd);
     while (1)
     {
         bytes_write = send(sockfd, buffer, len, 0);
@@ -67,7 +67,8 @@ bool read_once(int sockfd, char *buffer, int len)
     {
         return false;
     }
-    printf("read in%d bytes from socket%d with content:%s\n", bytes_read, sockfd, buffer);
+    // printf("read in%d bytes from socket%d with content:%s\n", bytes_read, sockfd, buffer);
+    printf("read in%d bytes from socket %d with content\n", bytes_read, sockfd);
     return true;
 }
 
@@ -118,7 +119,6 @@ int main(int argc, char *argv[])
             int sockfd = events[i].data.fd;
             if (events[i].events&EPOLLIN)
             {
-            printf("epollin %d\n", i);
                 if (!read_once(sockfd, buffer, 2048))
                 {
                     close_conn(epoll_fd, sockfd);
@@ -130,7 +130,6 @@ int main(int argc, char *argv[])
             }
             else if (events[i].events&EPOLLOUT)
             {
-            printf("epollout %d\n", i);
                 if (!write_nbytes(sockfd, request, strlen(request)))
                 {
                     close_conn(epoll_fd, sockfd);

@@ -108,7 +108,6 @@ void http_conn::init(int sockfd, const sockaddr_in &addr)
     setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
     addfd(m_epollfd, sockfd, true);
     m_user_count++;
-
     init();
 }
 
@@ -135,10 +134,8 @@ void http_conn::init()
 http_conn::LINE_STATUS http_conn::parse_line()
 {
     char temp;
-    int cout = 0;
     for (; m_checked_idx < m_read_idx; ++m_checked_idx)
     {
-        cout++;
         temp = m_read_buf[m_checked_idx];
         if (temp == '\r')
         {
@@ -197,7 +194,6 @@ bool http_conn::read()
         }
         m_read_idx += bytes_read;
     }
-    printf("http_conn::read()  finish\n ");
     return true;
 }
 
@@ -601,14 +597,7 @@ bool http_conn::process_write(HTTP_CODE ret)
 //this is interface or HTTP request
 void http_conn::process()
 {
-    threadId("http_conn::process");
-    TimeSpecRange range;
-    int ret = perf_start(&range);
-
     HTTP_CODE read_ret = process_read();
-
-    double ms = perf_end_count_ns(&range);
-    fprintf(stdout, "process_read cost: %0.3fms\n", ms);
 
     if (read_ret == NO_REQUEST)
     {
@@ -617,10 +606,6 @@ void http_conn::process()
     }
 
     bool write_ret = process_write(read_ret);
-
-    double ws = perf_end_count_ns(&range);
-    fprintf(stdout, "process_write cost: %0.3fms\n", ws-ms);
-
     if (!write_ret)
     {
         close_conn();
