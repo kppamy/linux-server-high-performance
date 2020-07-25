@@ -184,13 +184,16 @@ bool http_conn::read()
         {
             if (errno == EAGAIN || errno == EWOULDBLOCK)
             {
+                //there is no data available right now, try again later
+                // this would be trigged when non-blockig io have no data to read
                 break;
             }
             return false;
         }
         else if (bytes_read == 0)
         {
-            return false;
+          printf("oop!  peer close connection?  %d\n", m_sockfd);
+          return false;
         }
         m_read_idx += bytes_read;
     }

@@ -140,12 +140,11 @@ int main(int argc, char *argv[])
                 if (users[sockfd].read())
                 {
                     pool->append(users + sockfd);
-                    fprintf(stdout, "read successfully\n");
-
                 }
                 else
                 {
                     users[sockfd].close_conn();
+                    fprintf(stdout, "read error, close connection: %d\n",sockfd);
                 }
             }
             else if (events[i].events & EPOLLOUT)
@@ -153,8 +152,8 @@ int main(int argc, char *argv[])
                 if (!users[sockfd].write())
                 {
                     users[sockfd].close_conn();
-                }else
-                 fprintf(stdout, "write successfully \n");
+                    fprintf(stdout, "write error, close connection: %d\n",sockfd);
+                }
             }
             else
             {
