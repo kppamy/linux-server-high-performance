@@ -9,8 +9,9 @@
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<string.h>
+#include<errno.h>
 /*每个客户连接不停地向服务器发送这个请求*/
-static const char *request = "GET http://localhost/index.html HTTP/1.1\r\nConnection:keep-alive\r\n\r\nxxxxxxxxxxxx";
+static const char *request = "GET http://localhost/index.html HTTP/1.1\r\nConnection:keep-alive\r\n\r\n";
 int setnonblocking(int fd)
 {
     int old_option = fcntl(fd, F_GETFL);
@@ -61,10 +62,17 @@ bool read_once(int sockfd, char *buffer, int len)
     bytes_read = recv(sockfd, buffer, len, 0);
     if (bytes_read == -1)
     {
+            if (errno == EAGAIN || errno == EWOULDBLOCK)
+            {
+                //there is no data available right now, try again later
+                // this would be trigged when non-blockig io have no data to read
+                return true;
+            }
         return false;
     }
     else if (bytes_read == 0)
     {
+        printf("server close connection? sock %d\n", sockfd);
         return false;
     }
     // printf("read in%d bytes from socket%d with content:%s\n", bytes_read, sockfd, buffer);
@@ -85,7 +93,6 @@ void start_conn(int epoll_fd, int num, const char *ip, int port)
     {
         // sleep(1);
         int sockfd = socket(PF_INET, SOCK_STREAM, 0);
-        printf("create 1 sock\n");
         if (sockfd<0)
         {
             continue;
@@ -122,28 +129,32 @@ int main(int argc, char *argv[])
                 if (!read_once(sockfd, buffer, 2048))
                 {
                     close_conn(epoll_fd, sockfd);
+                    printf("\nclose connection on read error socket %d\n", sockfd);
+                }else{
+                    sleep(1);
+                    struct epoll_event event;
+                    event.events = EPOLLOUT | EPOLLET | EPOLLERR;
+                    event.data.fd = sockfd;
+                    epoll_ctl(epoll_fd, EPOLL_CTL_MOD, sockfd, &event);
                 }
-                struct epoll_event event;
-                event.events = EPOLLOUT | EPOLLET | EPOLLERR;
-                event.data.fd = sockfd;
-                epoll_ctl(epoll_fd, EPOLL_CTL_MOD, sockfd, &event);
             }
             else if (events[i].events&EPOLLOUT)
             {
                 if (!write_nbytes(sockfd, request, strlen(request)))
                 {
                     close_conn(epoll_fd, sockfd);
+                    printf("\nclose connection on write error socket %d\n", sockfd);
+                }else{
+                    struct epoll_event event;
+                    event.events = EPOLLIN | EPOLLET | EPOLLERR;
+                    event.data.fd = sockfd;
+                    epoll_ctl(epoll_fd, EPOLL_CTL_MOD, sockfd, &event);
                 }
-                struct epoll_event event;
-                event.events = EPOLLIN | EPOLLET | EPOLLERR;
-                event.data.fd = sockfd;
-                epoll_ctl(epoll_fd, EPOLL_CTL_MOD, sockfd, &event);
             }
             else if (events[i].events&EPOLLERR)
             {
             printf("epollERR %d\n", i);
-            continue;
-                close_conn(epoll_fd, sockfd);
+            close_conn(epoll_fd, sockfd);
             }
         }
     }
