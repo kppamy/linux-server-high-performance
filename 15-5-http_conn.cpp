@@ -94,6 +94,7 @@ void http_conn::close_conn(bool real_close)
     if (real_close && (m_sockfd != -1))
     {
         removefd(m_epollfd, m_sockfd);
+        printf("close connection sock %d,  %d left\n", m_sockfd, m_user_count);
         m_sockfd = -1;
         m_user_count--; //关闭一个连接时, 将客户总量减一
     }
@@ -106,7 +107,7 @@ void http_conn::init(int sockfd, const sockaddr_in &addr)
     //如下两行是为了避免TIME_WAIT状态， 仅用于调试，实际使用时应该去掉
     // int reuse = 1;
     // setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-    addfd(m_epollfd, sockfd, false);
+    addfd(m_epollfd, sockfd, true);
     m_user_count++;
     init();
 }
@@ -170,7 +171,7 @@ http_conn::LINE_STATUS http_conn::parse_line()
 //循环读取客户数据， 直到无数据可读或者对方关闭连接
 bool http_conn::read()
 {
-    threadId("http_conn::read()");
+    // threadId("http_conn::read()");
     if (m_read_idx >= READ_BUFFER_SIZE)
     {
         return false;
@@ -188,6 +189,7 @@ bool http_conn::read()
                 // this would be trigged when non-blockig io have no data to read
                 break;
             }
+            printf("oop!  peer close  abnormally?  errno = %d\n", errno);
             return false;
         }
         else if (bytes_read == 0)
@@ -196,7 +198,14 @@ bool http_conn::read()
           return false;
         }
         m_read_idx += bytes_read;
+        if(m_read_idx == READ_BUFFER_SIZE){
+            printf("read buffer is overflow??  %d\n", m_sockfd);
+            break;
+        }
+
     }
+
+    printf("read   %d  bytes\n", m_read_idx);
     return true;
 }
 
@@ -228,7 +237,7 @@ http_conn::HTTP_CODE http_conn::parse_request_line(char *text)
 
     *m_version++ = '\0';
     m_version += strspn(m_version, " \t");
-    if (strcasecmp(m_version, "HTTP/1.1") != 0)
+    if (strcasecmp(m_version, "HTTP/1.1") != 0 && strcasecmp(m_version, "HTTP/1.0") != 0)
     {
         return BAD_REQUEST;
     }
@@ -315,16 +324,15 @@ http_conn::HTTP_CODE http_conn::process_read()
     LINE_STATUS line_status = LINE_OK;
     HTTP_CODE ret = NO_REQUEST;
     char *text = 0;
+    
+    // threadId("http_conn::process_read()"); 
 
     while (((m_check_state == CHECK_STATE_CONTENT) && (line_status == LINE_OK)) 
     || ((line_status = parse_line()) == LINE_OK))
     {
-        threadId("http_conn::process_read()");
- 
         text = get_line();
-
         m_start_line = m_checked_idx;
-        fprintf(stdout, "got 1 http line: %s\n", text);
+        // fprintf(stdout, "got 1 http line: %s\n", text);
         switch (m_check_state)
         {
         case CHECK_STATE_REQUESTLINE:
@@ -413,7 +421,7 @@ void http_conn::unmap()
 
 bool http_conn::write()
 {
-    threadId("http_conn::write");
+    // threadId("http_conn::write");
     int temp = 0;
     int bytes_have_send = 0;
     int bytes_to_send = m_write_idx;
@@ -456,6 +464,7 @@ bool http_conn::write()
             else
             {
                 modfd(m_epollfd, m_sockfd, EPOLLIN);
+                printf("close connection as not keep-alive \n");
                 return false;
             }
         }
@@ -485,12 +494,13 @@ bool http_conn::add_response(const char *format, ...)
 
 bool http_conn::add_status_line(int status, const char *title)
 {
-    return add_response("%s %d %s\r\n", "HTTP/1.1", status, title);
+    // return add_response("%s %d %s\r\n", "HTTP/1.1", status, title);
+    return add_response("%s %d %s\r\n", "HTTP/1.0", status, title);
 }
 
 bool http_conn::add_headers(int content_len)
 {
-    add_content_length(content_len);
+    add_content_length(32768);
     add_linger();
     add_blank_line();
     return true;

@@ -97,6 +97,10 @@ int main(int argc, char *argv[])
 
     threadId("main thread: ");
 
+    static int requests=0;
+    static int responses=1;
+
+
     while (true)
     {
         int number = epoll_wait(epollfd, events, MAX_EVENT_NUMBER, -1);
@@ -127,19 +131,12 @@ int main(int argc, char *argv[])
                 //initial client conneciton
                 users[connfd].init(connfd, client_address);
             }
-
-            else if (events[i].events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))
-            {
-                //if abnormal, close close connection directly
-                fprintf(stdout, "EPOLLRDHUP | EPOLLHUP | EPOLLERR %d\n", events[i].events);
-
-                users[sockfd].close_conn();
-            }
             else if (events[i].events & EPOLLIN)
             {
                 if (users[sockfd].read())
                 {
                     pool->append(users + sockfd);
+                    requests++;
                 }
                 else
                 {
@@ -153,12 +150,25 @@ int main(int argc, char *argv[])
                 {
                     users[sockfd].close_conn();
                     fprintf(stdout, "write error, close connection: %d\n",sockfd);
+                }{
+                    responses++;
                 }
+            }
+            else if (events[i].events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))
+            {
+                //if abnormal, close close connection directly
+                fprintf(stdout, "EPOLLRDHUP | EPOLLHUP | EPOLLERR %d\n", events[i].events);
+
+                users[sockfd].close_conn();
             }
             else
             {
+                 fprintf(stdout, "oppos unknown events %d\n", events[i].events);
             }
         }
+
+        printf("handles %d requests, send %d responses:\n", requests, responses);
+
     }
     close(epollfd);
     close(listenfd);
