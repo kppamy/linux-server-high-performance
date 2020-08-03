@@ -146,6 +146,34 @@ void testSubSequence(){
 // 494. Target Sum
 int findTargetSumWays(vector<int> &nums, int S)
 {
+    int MAX = 0;
+    int len = nums.size();
+    for (int i = 0; i < len; i++)
+        MAX += nums[i];
+    if (S > MAX || S < -MAX)
+        return 0;
+    vector<vector<int>> ways(len, vector<int>(2 * MAX + 1, 0));
+    ways[0][nums[0] + MAX] = 1;
+    ways[0][-1 * nums[0] + MAX] = 1;
+    int pos, neg = 0;
+    for (int i = 1; i < len; i++)
+    {
+        for (int j = -MAX; j <= MAX; j++)
+        {
+            ways[i][j + nums[i] + MAX] += ways[i - 1][j + MAX];
+            ways[i][j - nums[i] + MAX] += ways[i - 1][j + MAX];
+        }
+    }
+    return ways[len - 1][S + MAX];
+}
+
+void testFindTargetSumWays(){
+    vector<int> nums{1,1,1,1,1};
+    printVector(nums);
+    int S = 3;
+    while(S<7){
+    cout<<"ways to have "<<S<<" is "<<findTargetSumWays(nums, S++)<<endl;
+    }
 }
 
 // knapsack problems
@@ -296,5 +324,6 @@ int main(int argc, char const *argv[])
 {
     // timeit(testMergeIntervals);
     // timeit(testwaysToChange);
-    timeit(testSubSequence);
+    // timeit(testSubSequence);
+    timeit(testFindTargetSumWays);
 }
