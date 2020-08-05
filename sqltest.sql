@@ -18,7 +18,15 @@ select * from address;
 select DISTINCT person.FirstName,person.LastName,Address.City,Address.State FROM
 person LEFT JOIN Address on Person.PersonId == address.AddressId;
 
-
-
-
-
+-- 176. Second Highest Salary
+DROP TABLE Employee;
+Create table If Not Exists Employee (Id int, Salary int);
+-- Truncate table Employee
+DELETE from Employee;
+insert into Employee (Id, Salary) values ('1', '100');
+insert into Employee (Id, Salary) values ('2', '200');
+insert into Employee (Id, Salary) values ('3', '300');
+-- select * from Employee ORDER BY Salary DESC LIMIT 1,1;
+-- select * from Employee ORDER BY Salary DESC LIMIT 1 OFFSET  1;
+select ifnull((select DISTINCT salary from Employee 
+Order by Salary DESC LIMIT 1,1),null) as  SecondHighestSalary;
