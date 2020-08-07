@@ -42,3 +42,14 @@ insert into Employee (Id, Name, Salary, ManagerId) values ('4', 'Max', '90000', 
 select * from Employee;
 select e1.name from Employee e1, Employee e2 
 where e1.Salary > e2.Salary and e1.ManagerId = e2.Id;
+
+
+-- 182. Duplicate Emails
+DROP TABLE Person;
+Create table If Not Exists Person (Id int, Email varchar(255));
+-- Truncate table Person;
+insert into Person (Id, Email) values ('1', 'a@b.com');
+insert into Person (Id, Email) values ('2', 'c@d.com');
+insert into Person (Id, Email) values ('3', 'a@b.com');
+SELECT * from Person;
+SELECT email from Person group by email HAVING count(*)>1;
