@@ -30,3 +30,15 @@ insert into Employee (Id, Salary) values ('3', '300');
 -- select * from Employee ORDER BY Salary DESC LIMIT 1 OFFSET  1;
 select ifnull((select DISTINCT salary from Employee 
 Order by Salary DESC LIMIT 1,1),null) as  SecondHighestSalary;
+
+-- 181. Employees Earning More Than Their Managers
+DROP TABLE Employee;
+Create table If Not Exists Employee (Id int, Name varchar(255), Salary int, ManagerId int);
+-- Truncate table Employee
+insert into Employee (Id, Name, Salary, ManagerId) values ('1', 'Joe', '70000', '3');
+insert into Employee (Id, Name, Salary, ManagerId) values ('2', 'Henry', '80000', '4');
+insert into Employee (Id, Name, Salary, ManagerId) values ('3', 'Sam', '60000', 'None');
+insert into Employee (Id, Name, Salary, ManagerId) values ('4', 'Max', '90000', 'None');
+select * from Employee;
+select e1.name from Employee e1, Employee e2 
+where e1.Salary > e2.Salary and e1.ManagerId = e2.Id;
