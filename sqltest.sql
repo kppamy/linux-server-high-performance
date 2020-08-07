@@ -53,3 +53,23 @@ insert into Person (Id, Email) values ('2', 'c@d.com');
 insert into Person (Id, Email) values ('3', 'a@b.com');
 SELECT * from Person;
 SELECT email from Person group by email HAVING count(*)>1;
+
+
+
+-- 183. Customers Who Never Order
+DROP TABLE Customers;
+Create table If Not Exists Customers (Id int, Name varchar(255));
+DROP TABLE Orders;
+Create table If Not Exists Orders (Id int, CustomerId int);
+-- Truncate table Customers;
+insert into Customers (Id, Name) values ('1', 'Joe');
+insert into Customers (Id, Name) values ('2', 'Henry');
+insert into Customers (Id, Name) values ('3', 'Sam');
+insert into Customers (Id, Name) values ('4', 'Max');
+-- Truncate table Orders;
+insert into Orders (Id, CustomerId) values ('1', '3');
+insert into Orders (Id, CustomerId) values ('2', '1');
+SELECT * FROM Customers;
+SELECT * FROM Orders;
+SELECT Name FROM Customers  LEFT JOIN Orders  ON Customers.Id = Orders.CustomerId 
+WHERE CustomerId IS NULL;
