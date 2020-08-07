@@ -204,8 +204,47 @@ void testOperPriority()
     cout << "t : " << t << "  y: " << y << endl;
 }
 
+
+class Person {
+public:
+	Person(string sn,string sa):name(sn),address(sa){};
+	virtual ~Person(){};
+    virtual bool validateStudent(){
+        cout<<"father"<<endl;
+            return false;
+        }
+
+public:
+	std::string name = "father";
+	std::string address;
+};
+ 
+class Student: public Person {
+public:
+	Student(string sn,string sa, string name):Person(sn,sa),name(name){};
+	~Student(){};
+    bool validateStudent(){
+        cout<<"child"<<endl;
+    return false;
+}
+
+public:
+	std::string name;
+};
+
+
+
+void testPassByReference(){
+    Student s("1","2","cay");
+    Person& p=s;
+    Person p1=s;
+    p.validateStudent();
+    p1.validateStudent();
+}
+
 int main(int argc, char const *argv[])
 {
-    testAlignMemoryOfStruct();
+    // testAlignMemoryOfStruct();
+    testPassByReference();
     return 0;
 }
