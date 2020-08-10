@@ -1,5 +1,5 @@
 #include <vector>
-#include <queue>
+#include <stack>
 #include <iostream>
 #include <type_traits>
 
@@ -9,9 +9,9 @@ static const int DEAFAULT = -1;
 static const int DISCOVERED = 0;
 static const int FINISHED = 1;
 
-bool dfs(int vertice, int numCourses, vector<int>& color, vector<vector<int>> &graph, queue<int> &que) {
+bool dfs(int vertice, int numCourses, vector<int>& color, vector<vector<int>> &graph, stack<int> &que) {
     if (color[vertice] == DEAFAULT)
-        que.push(0);
+        que.push(vertice);
 
     if (que.empty()||color[vertice]==FINISHED) {
         return true;
@@ -22,8 +22,8 @@ bool dfs(int vertice, int numCourses, vector<int>& color, vector<vector<int>> &g
             if (color[j]==DISCOVERED) {
                 return false;
             }
-            dfs(j, numCourses, color, graph, que);
-            break;
+            if(!dfs(j, numCourses, color, graph, que))
+              return false;
         }
     }
     que.pop();
@@ -32,6 +32,8 @@ bool dfs(int vertice, int numCourses, vector<int>& color, vector<vector<int>> &g
 }
 
 // 207. Course Schedule
+// why can not pass { { 0, 1 }, { 1, 0 } } directly?
+// why the vector value changed if pass by reference to const?
 bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
     // represent the coures adj matrix
     vector<vector<int>> graph(numCourses, vector<int>(numCourses, 0));
@@ -41,7 +43,7 @@ bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
 
     // DFS each vertex
     vector<int> color(numCourses, DEAFAULT);
-    queue<int> que;
+    stack<int> que;
     for (int i=0;i<numCourses;i++) {
         if (!dfs(i,numCourses,color,graph,que))
             return false;
@@ -57,6 +59,8 @@ void testcanFinish() {
     vector<vector<int>> arr={ { 0, 1 } };
     vector<vector<int>> arr2={ { 0, 1 }, { 1, 0 } };
     vector<vector<int>> arr3={ { 1, 0 } };
+    vector<vector<int>> arr4={{1,0},{2,0},{0,2}};
+    cout<<"{1,0},{2,0},{0,2} can "<<(canFinish(3, arr4)?"":" not ")<<"finish"<<endl;
     cout<<"[0,1],[1,0] can "<<(canFinish(2, arr2)?"":" not ")<<"finish"<<endl;
     cout<<"[1,0] can "<<(canFinish(2, arr3)?"":" not ")<<"finish"<<endl;
     cout<<"[0,1] can "<<(canFinish(2, arr)?"":" not ")<<"finish"<<endl;
