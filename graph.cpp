@@ -8,7 +8,8 @@ using namespace std;
 static const int DEAFAULT = -1;
 static const int DISCOVERED = 0;
 static const int FINISHED = 1;
-
+//Runtime: 76 ms, faster than 27.12% of C++ online submissions for Course Schedule.
+// Memory Usage: 82.4 MB, less than 5.01% of C++ online submissions for Course Schedule.
 bool dfs(int vertice, int numCourses, vector<int>& color, vector<vector<int>> &graph, stack<int> &que) {
     if (color[vertice] == DEAFAULT)
         que.push(vertice);
