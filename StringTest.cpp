@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <vector>
 using namespace std;
 class StringTest
 {
@@ -119,18 +120,81 @@ public:
         {
             return 0;
         }
+        vector<vector<int>> lcs(len1, vector<int>(len2, 0));
+        
+      for (int j=0;j<len2-1;j++) {
+          if(text1[0]==text2[j]){
+              lcs[0][j] = 1;
+          }
+          lcs[0][j+1] = lcs[0][j];
+      }
 
-        if (text1[len1 - 1] == text2[len2 - 1])
-        {
-            return (longestCommonSubsequence(text1.substr(0, len1 - 1), text2.substr(0, len2 - 1)) + 1);
+       for (int j=0;j<len1-1;j++) {
+          if(text1[j]==text2[0]){
+              lcs[j][0] = 1;
+          }
+          lcs[j+1][0] = lcs[j][0];
+      }
+
+
+        for (int i=1;i<len1;i++) {
+            for (int j=1;j<len2;j++) {
+                if (text1[i]==text2[j])
+                    lcs[i][j] = lcs[i-1][j-1] + 1;
+                else
+                {
+                    lcs[i][j]=lcs[i-1][j]>lcs[i][j-1]?lcs[i-1][j]:lcs[i][j-1];
+                }
+
+            }
         }
 
-        int max1 = 0;
-        max1 = longestCommonSubsequence(text1.substr(0, len1 - 1), text2);
-        int max3 = longestCommonSubsequence(text1, text2.substr(0, len2 - 1));
-        max1 = max1 > max3 ? max1 : max3;
-        return max1;
+        return lcs[len1-1][len2-1];
+
+        // if (text1[len1 - 1] == text2[len2 - 1])
+        // {
+        //     return (longestCommonSubsequence(text1.substr(0, len1 - 1), text2.substr(0, len2 - 1)) + 1);
+        // }
+
+        // int max1 = 0;
+        // max1 = longestCommonSubsequence(text1.substr(0, len1 - 1), text2);
+        // int max3 = longestCommonSubsequence(text1, text2.substr(0, len2 - 1));
+        // max1 = max1 > max3 ? max1 : max3;
+        // return max1;
     }
+
+
+    void testlongestCommonSubsequence() {
+    StringTest st;
+    string text1 =  "ylqpejqbalahwr", text2 = "yrkzavgdmdgtqpg";
+    cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
+        << st.longestCommonSubsequence(text1, text2) << endl;
+    // cout << "longestCommonString of " << text1 << " and  " << text2 << " is "
+    //     << st.longestCommonSubstring(text1, text2) << endl;
+
+   text1 = "bl",text2="yby";
+
+   cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
+        << st.longestCommonSubsequence(text1, text2) << endl;
+
+    text1 = "abcde", text2 = "ace";
+    cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
+        << st.longestCommonSubsequence(text1, text2) << endl;
+    // cout << "longestCommonString of " << text1 << " and  " << text2 << " is "
+    //     << st.longestCommonSubstring(text1, text2) << endl;
+
+    text1 = "abc", text2 = "abc";
+    cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
+        << st.longestCommonSubsequence(text1, text2) << endl;
+    // cout << "longestCommonString of " << text1 << " and  " << text2 << " is "
+    //     << st.longestCommonSubstring(text1, text2) << endl;
+
+    text1 = "abc", text2 = "def";
+    cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
+        << st.longestCommonSubsequence(text1, text2) << endl;
+    // cout << "longestCommonString of " << text1 << " and  " << text2 << " is "
+    //     << st.longestCommonSubstring(text1, text2) << endl;
+}
 
     // 214. Shortest Palindrome
     string shortestPalindrome(const string &s)
@@ -153,10 +217,56 @@ public:
         }
         return ns;
     }
+
+//    5. Longest Palindromic Substring
+    string longestPalindrome(string s) {
+        //reverse s to t
+        // find longest common str of S
+        int len = s.length();
+        int  max = 0 , begin = 0;
+        for (int m = 0; m < len; m++)
+        {
+            int j = len - 1;
+            int i = m;
+            int sum =0;
+            while (i < len && j >= 0)
+            {
+                if (s[i] != s[j])
+                {
+                    sum = 0;
+                }
+                else 
+                {
+                    i++;
+                    sum++;
+                }
+                j--;
+            }
+            if(sum > max){
+                max = sum;
+                begin = m;
+            }
+
+            if(sum > len - i - 1){
+                break;
+            }
+        }
+
+        if (max <= 1)
+            return "";
+        //constitute the solution
+        return s.substr(begin, max);
+    }
+
+    void testlongestPalindrome(){
+        cout << "longestPalindrome of babad  is " << longestPalindrome("babad")<<endl;
+        cout << "longestPalindrome of cbbd  is " << longestPalindrome("cbbd")<<endl;
+    }
 };
 
-int main(int argc, char const *argv[])
-{
+
+
+void testlengthOfLongestSubstringWithKRepeates() {
     StringTest st;
     string input;
     while (true)
@@ -167,14 +277,18 @@ int main(int argc, char const *argv[])
         {
             break;
         }
-        // cout<< "longest of "<<input<<" is "<<st.lengthOfLongestSubstring(input)<<endl;
-        // cout << "lengthOfLongestSubstringWithKRepeates of " << input << " is " << st.lengthOfLongestSubstringWithKRepeates(input, 3) << endl;
-        // string input2;
-        // cin >> input2;
-        // cout << "longestCommonSubsequence of " << input << " and  " << input2 << " is "
-        //      << st.longestCommonSubsequence(input, input2) << endl;
-
-        cout << "shortestPalindrome of " << input << " is  " << st.shortestPalindrome(input) << endl;
+        cout<< "longest of "<<input<<" is "<<st.lengthOfLongestSubstring(input)<<endl;
+        cout << "lengthOfLongestSubstringWithKRepeates of " << input << " is " << st.lengthOfLongestSubstringWithKRepeates(input, 3) << endl;
     }
+}
+
+
+
+
+int main(int argc, char const *argv[])
+{
+    StringTest st;
+    // st.testlongestPalindrome();
+   st.testlongestCommonSubsequence();
     return 0;
 }
