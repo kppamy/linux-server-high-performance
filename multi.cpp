@@ -122,11 +122,12 @@ void *third(void *ptr)
 void testPrintInOrderModernWay()
 {
     // auto tu = make_tuple(1, 3, 2);
-    auto tu = make_tuple(3, 2, 1);
+    // auto tu = make_tuple(3, 2, 1);
+    auto tu = make_tuple(1, 2, 3);
     void *(*fun[3])(void *) = {first, second, third};
     Foo foo;
     pthread_t ft;
-    pthread_create(&ft, nullptr, fun[get<0>(tu) - 1], (void *)&foo);
+    pthread_create(&ft, nullptr, fun[get<0>(tu) - 1], (void*)&foo);
     pthread_t ft2;
     pthread_create(&ft2, nullptr, fun[get<1>(tu) - 1], (void *)&foo);
     pthread_t ft3;
