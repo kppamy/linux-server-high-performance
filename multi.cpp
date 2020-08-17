@@ -2,58 +2,45 @@
 #include <tuple>
 #include <pthread.h>
 #include <iostream>
+ #include <unistd.h>
+#include "common.h"
 using namespace std;
 class Foo
 {
 public:
     Foo()
     {
-
-        pthread_mutex_init(&lock1, nullptr);
-        pthread_mutex_init(&lock2, nullptr);
-
-        pthread_cond_init(&cond, nullptr);
-        pthread_cond_init(&cond2, nullptr);
     }
-    ~Foo()
-    {
-        pthread_mutex_destroy(&lock1);
-        pthread_mutex_destroy(&lock2);
 
-        pthread_cond_destroy(&cond);
-        pthread_cond_destroy(&cond2);
-    }
 
     void first(function<void()> printFirst)
     {
 
         // printFirst() outputs "printFirst". Do not change or remove this line.
         printFirst();
-        pthread_cond_signal(&cond);
+        who = 2;
     }
 
     void second(function<void()> printSecond)
     {
 
-        pthread_mutex_lock(&lock1);
-        pthread_cond_wait(&cond, &lock1);
+        while(who!=2)
+            usleep(0);
         // printSecond() outputs "printSecond". Do not change or remove this line.
-
         printSecond();
-        pthread_cond_signal(&cond2);
+        who=3;
     }
 
     void third(function<void()> printThird)
     {
-        pthread_mutex_lock(&lock2);
-        pthread_cond_wait(&cond2, &lock2);
+        while(who!=3)
+            usleep(0);
         // printThird() outputs "printThird". Do not change or remove this line.
         printThird();
     }
 
 private:
-    pthread_mutex_t lock1, lock2;
-    pthread_cond_t cond, cond2;
+    int who=0;
 };
 
 pthread_mutex_t lock1, lock2;
@@ -127,7 +114,7 @@ void testPrintInOrderModernWay()
     void *(*fun[3])(void *) = {first, second, third};
     Foo foo;
     pthread_t ft;
-    pthread_create(&ft, nullptr, fun[get<0>(tu) - 1], (void*)&foo);
+    pthread_create(&ft, nullptr, fun[get<0>(tu) - 1], (void *)&foo);
     pthread_t ft2;
     pthread_create(&ft2, nullptr, fun[get<1>(tu) - 1], (void *)&foo);
     pthread_t ft3;
@@ -176,6 +163,6 @@ int main(int argc, char const *argv[])
 {
     /* code */
     // testPrintInOrder();
-    testPrintInOrderModernWay();
+    timeit(testPrintInOrderModernWay);
     return 0;
 }
