@@ -276,33 +276,69 @@ void BSTree<T>::del(TreeNode<T> *&root, T val)
     }
 }
 
-int main(int argc, char const *argv[])
+int square(unsigned int start, unsigned int end, unsigned int num)
 {
-    cout << "please input the tree nodes" << endl;
-    // right tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
-    // left tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
-    // 3 1 -1 -1 5 4 -1 -1 1 -1 -1
-    // 1 2 -1 -1 -1
-    // 1 2 -1 4 -1 -1 3 -1 -1
-    // TreeNode *root = buildTree();
-    // Tree tt;
-    // int dpt = tt.maxDepth(root);
-    // prettyPrintTree(root, dpt);
-    // cout << "depth of the tree: " << dpt << endl;
-    // cout << "is BST ? " << tt.validateBST(root) << endl;
-    // BinaryTree bt;
-
-    // bt.printBinaryTree(root);
-    int a=0;
-    cout<<((a=0)==0)<<endl;
-    BSTree<int> bst;
-    TreeNode<int> *root;
-    // vector<int> nodes{7, 2, 4, 6, 3, 1, 5};
-    vector<int> nodes{4, 2, 1, 3, 6, 5, 7};
-    for (int val : nodes)
+    if (end - start == 1)
+        return start;
+    long long mid = (start + end) / 2;
+    if (mid * mid < num)
+        //  try x/2, 3/4 x
+        return square(mid, end, num);
+    else if (mid * mid == num)
+        return mid;
+    else
     {
-        bst.insert(root, val);
+        //try x/4,x/2
+        return square(start, mid, num);
     }
-    bst.printBinaryTree(root);
-    return 0;
 }
+
+// 69. Sqrt(x)
+int mySqrt(int x)
+{
+    if (x == 1)
+        return 1;
+    else
+        return square(0, x, x);
+}
+
+void testSqrt(){
+    cout<< "mySqrt of INT64_MAX is "<<mySqrt(INT64_MAX)<<endl;
+    cout<< "mySqrt of 1 is "<<mySqrt(1)<<endl;
+    cout<< "mySqrt of 4 is "<<mySqrt(4)<<endl;
+    cout<< "mySqrt of 6 is "<<mySqrt(6)<<endl;
+    cout<< "mySqrt of 8 is "<<mySqrt(8)<<endl;
+    cout<< "mySqrt of 9 is "<<mySqrt(9)<<endl;
+}
+
+    int main(int argc, char const *argv[])
+    {
+        cout << "please input the tree nodes" << endl;
+        // right tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
+        // left tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
+        // 3 1 -1 -1 5 4 -1 -1 1 -1 -1
+        // 1 2 -1 -1 -1
+        // 1 2 -1 4 -1 -1 3 -1 -1
+        // TreeNode *root = buildTree();
+        // Tree tt;
+        // int dpt = tt.maxDepth(root);
+        // prettyPrintTree(root, dpt);
+        // cout << "depth of the tree: " << dpt << endl;
+        // cout << "is BST ? " << tt.validateBST(root) << endl;
+        // BinaryTree bt;
+
+        // bt.printBinaryTree(root);
+        // int a = 0;
+        // cout << ((a = 0) == 0) << endl;
+        // BSTree<int> bst;
+        // TreeNode<int> *root;
+        // // vector<int> nodes{7, 2, 4, 6, 3, 1, 5};
+        // vector<int> nodes{4, 2, 1, 3, 6, 5, 7};
+        // for (int val : nodes)
+        // {
+        //     bst.insert(root, val);
+        // }
+        // bst.printBinaryTree(root);
+        testSqrt();
+        return 0;
+    }
