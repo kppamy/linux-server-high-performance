@@ -71,17 +71,18 @@
     }
     void FileTest::testSocket(int argc, const char *argv[])
     {
-        if (argc < 2)
+        if (argc < 3)
         {
-            printf(" Usage:  IP port \n ");
+            printf(" Usage:  IP port backlog \n ");
             return;
         }
 
         const char *ip = argv[1];
         int port = atoi(argv[2]);
+        int backlog = atoi(argv[3]);
         struct sockaddr_in server = transSockAddr(ip, port);
 
-        int sock = getListenFd(server, 5);
+        int sock = getListenFd(server, backlog);
 
         struct sockaddr_in client;
         int conn = getConnectFd(&client, sock);
@@ -522,6 +523,7 @@
         }
         pthread_mutex_unlock(&mutex_b);
         // pthread_mutex_unlock(&mutex_a);
+        return NULL;
     }
 
     void *interupt(void *arg){
@@ -532,13 +534,15 @@
         }
          cout<<endl;
         //  pthread_mutex_unlock(&mutex_b);
+         return NULL;
     }
 
     void* cond1(void *arg){
         cout<<"Cay talking: "<<endl;
         sleep(3);
         cout<<"Cay over, Coco talks"<<endl;
-        pthread_cond_signal(&cond);        
+        pthread_cond_signal(&cond);  
+        return NULL;
     }
 
     void* cond2(void *arg){
@@ -546,6 +550,7 @@
         pthread_mutex_lock(&mutex_a);
         pthread_cond_wait(&cond,&mutex_a);
         cout<<"Coco Coco Coco Coco Coco Coco Coco Coco Coco Coco Coco"<<endl;
+        return NULL;
     }
 
     void testCondtition(){
@@ -596,19 +601,29 @@
         cout<<"main thread exit "<<pthread_self()<<endl;
     }
 
+void testConditionalCompile(){
+    // #define CAY y
+    #if  CAY != y
+        printf("not defined");
+    #else
+        printf(" defined");
+    #endif
+}
+
 int main(int argc, char const *argv[])
 {
     /* code */
     //FileTest::testMmap();
     // FileTest::testMmapFamily();
-    // FileTest::testSocket(argc, argv);
+    FileTest::testSocket(argc, argv);
     // FileTest::testDup(argc, argv);
     // FileTest::testPipe();
     // FileTest::testSockPair();
     // FileTest::testSyncCsort.cpp10K(argc,argv);
     //FileTest::testAsyncC10K(argc, argv);
     // FileTest::testSelect(argc, argv);
-    FileTest::testProducerConsumer();
+    // FileTest::testProducerConsumer();
+  
     //   FileTest ft;
     // ft.testThread();
     // testCondtition();

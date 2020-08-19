@@ -278,6 +278,7 @@ void BSTree<T>::del(TreeNode<T> *&root, T val)
 
 int square(unsigned int start, unsigned int end, unsigned int num)
 {
+    //recursion faster than iteration ??
     if (end - start == 1)
         return start;
     long long mid = (start + end) / 2;
@@ -310,6 +311,14 @@ void testSqrt(){
     cout<< "mySqrt of 8 is "<<mySqrt(8)<<endl;
     cout<< "mySqrt of 9 is "<<mySqrt(9)<<endl;
 }
+
+
+// 167. Two Sum II - Input array is sorted
+// two sum
+vector<int> twoSum(vector<int>& numbers, int target) {
+        
+}
+
 
     int main(int argc, char const *argv[])
     {
