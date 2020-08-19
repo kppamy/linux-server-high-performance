@@ -43,6 +43,46 @@ private:
     int sv = 0;
 };
 
+#include <semaphore.h>
+class FooSEM
+{
+public:
+    FooSEM()
+    {
+        sem_init(&sem,0,0);
+        sem_init(&sem2,0,0);
+    }
+
+    void first(function<void()> printFirst)
+    {
+
+        // printFirst() outputs "printFirst". Do not change or remove this line.
+        printFirst();
+        sem_post(&sem);
+    }
+
+    void second(function<void()> printSecond)
+    {
+
+        sem_wait(&sem);
+        // printSecond() outputs "printSecond". Do not change or remove this line.
+        printSecond();
+        sem_post(&sem2);
+    }
+
+    void third(function<void()> printThird)
+    {
+        sem_wait(&sem2);
+        // printThird() outputs "printThird". Do not change or remove this line.
+        printThird();
+    }
+
+private:
+    sem_t sem;
+    sem_t sem2;
+};
+
+
 
 
 pthread_mutex_t lock1, lock2;
@@ -91,33 +131,35 @@ void pThird()
 
 void *first(void *ptr)
 {
-    Foo *foo = (Foo *)ptr;
+    // Foo *foo = (Foo *)ptr;
+    FooSEM *foo = (FooSEM *)ptr;
     foo->first(pFirst);
 }
 
 void *second(void *ptr)
 {
-    Foo *foo = (Foo *)ptr;
+    // Foo *foo = (Foo *)ptr;
+    FooSEM *foo = (FooSEM *)ptr;
     foo->second(pSecond);
 }
 
 void *third(void *ptr)
 {
-    Foo *foo = (Foo *)ptr;
+    // Foo *foo = (Foo *)ptr;
+    FooSEM *foo = (FooSEM *)ptr;
     foo->third(pThird);
 }
-
-
 
 
 // 1114. Print in Order
 void testPrintInOrderModernWay()
 {
     // auto tu = make_tuple(1, 3, 2);
-    // auto tu = make_tuple(3, 2, 1);
-    auto tu = make_tuple(1, 2, 3);
+    auto tu = make_tuple(3, 2, 1);
+    // auto tu = make_tuple(1, 2, 3);
     void *(*fun[3])(void *) = {first, second, third};
-    Foo foo;
+    // Foo foo;
+    FooSEM foo;
     pthread_t ft;
     pthread_create(&ft, nullptr, fun[get<0>(tu) - 1], (void *)&foo);
     pthread_t ft2;
@@ -168,7 +210,6 @@ int main(int argc, char const *argv[])
 {
     /* code */
     // testPrintInOrder();
-    // timeit(testPrintInOrderModernWay);
-    timeit(testPrintOrderM);
+    timeit(testPrintInOrderModernWay);
     return 0;
 }
