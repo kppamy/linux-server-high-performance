@@ -220,6 +220,8 @@ int testPtr() {
 #include <condition_variable>
 #include <atomic>
 #include <functional>
+#include <future>
+#include <unistd.h> //for sleep
 
 using namespace std;
 class FooM
@@ -232,7 +234,7 @@ public:
     void first(function<void()> printFirst)
     {
 
-        unique_lock<mutex> lck(mtx); (4)
+        unique_lock<mutex> lck(mtx); //(4)
         // printFirst() outputs "printFirst". Do not change or remove this line.
         printFirst();
         sv = 2; //(2)
@@ -268,6 +270,48 @@ private:
     atomic<int> sv{1};
 };
 
+
+class FooFP
+{
+public:
+    FooFP()
+    {
+    }
+
+    void first(function<void()> printFirst)
+    {
+
+    //    sleep(1);
+        // printFirst() outputs "printFirst". Do not change or remove this line.
+        printFirst();
+        p.set_value(2);
+    }
+
+    void second(function<void()> printSecond)
+    {
+        // sleep(0.5);
+        int val=fu.get();
+        // printSecond() outputs "printSecond". Do not change or remove this line.
+        printSecond();
+        p2.set_value(3);
+    }
+
+    void third(function<void()> printThird)
+    {
+
+        fu2.get();
+        // printThird() outputs "printThird". Do not change or remove this line.
+        printThird();
+    }
+
+private:
+    promise<int> p;
+    future<int> fu=p.get_future();
+    
+    promise<int> p2;
+    future<int> fu2=p2.get_future();
+};
+
 void pFirst()
 {
     // printFirst() outputs "printFirst". Do not change or remove this line.
@@ -297,8 +341,8 @@ void testPrintOrderM()
     auto tu = make_tuple(1, 2, 3);
     FooM fm;
     auto fun = {bind(&FooM::first, &fm, pFirst),
-                                               bind(&FooM::second, &fm, pSecond),
-                                               bind(&FooM::third, &fm, pThird)};
+                bind(&FooM::second, &fm, pSecond),
+                bind(&FooM::third, &fm, pThird)};
     
 
     thread th1(bind(&FooM::third, &fm, pThird));
@@ -308,6 +352,20 @@ void testPrintOrderM()
     function<void(function<void()>)> tt2={pTest};
     // thread th4(*tt);
     // thread th5(tt2);//fail why?
+
+    th1.join();
+    th2.join();
+    th3.join();
+}
+
+
+void testPrintOrderFP()
+{
+    auto tu = make_tuple(1, 2, 3);
+    FooFP fm;
+    thread th1(bind(&FooFP::third, &fm, pThird));
+    thread th2(bind(&FooFP::second, &fm, pSecond));
+    thread th3(bind(&FooFP::first, &fm, pFirst));
 
     th1.join();
     th2.join();
@@ -326,6 +384,7 @@ int main(int argc, char const *argv[])
     // setlocale(LC_ALL, "CHS");
     // testPtr();
     // testRvalue();
-    timeit(testPrintOrderM);
+    // timeit(testPrintOrderM);
+    timeit(testPrintOrderFP);
     return 0;
 }
