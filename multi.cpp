@@ -2,8 +2,9 @@
 #include <tuple>
 #include <pthread.h>
 #include <iostream>
- #include <unistd.h>
+#include <unistd.h>
 #include "common.h"
+
 using namespace std;
 class Foo
 {
@@ -12,87 +13,35 @@ public:
     {
     }
 
-
     void first(function<void()> printFirst)
     {
 
         // printFirst() outputs "printFirst". Do not change or remove this line.
         printFirst();
-        who = 2;
+        sv = 2;
     }
 
     void second(function<void()> printSecond)
     {
 
-        while(who!=2)
+        while (sv != 2)
             usleep(0);
         // printSecond() outputs "printSecond". Do not change or remove this line.
         printSecond();
-        who=3;
+        sv = 3;
     }
 
     void third(function<void()> printThird)
     {
-        while(who!=3)
+        while (sv != 3)
             usleep(0);
         // printThird() outputs "printThird". Do not change or remove this line.
         printThird();
     }
 
 private:
-    int who=0;
+    int sv = 0;
 };
-
-
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-#include <atomic>
-class FooM
-{
-public:
-    FooM()
-    {
-    }
-
-
-    void first(function<void()> printFirst)
-    {
-
-        unique_lock<mutex> lck(mtx);
-        // printFirst() outputs "printFirst". Do not change or remove this line.
-        printFirst();
-        who = 2;
-        cv.notify_one();
-    }
-
-    void second(function<void()> printSecond)
-    {
-        unique_lock<mutex> lck(mtx);
-        while(who!=2){
-            cv.wait(lck);
-        }
-        // printSecond() outputs "printSecond". Do not change or remove this line.
-        printSecond();
-        who=3;
-        cv.notify_one();
-    }
-
-    void third(function<void()> printThird)
-    {
-        unique_lock<mutex> lck(mtx);
-        while(who!=3)
-            cv.wait(lck);
-        // printThird() outputs "printThird". Do not change or remove this line.
-        printThird();
-    }
-
-private:
-    mutex mtx;
-    condition_variable cv;
-    atomic<int>  who(1);
-};
-
 
 
 
@@ -158,33 +107,6 @@ void *third(void *ptr)
     foo->third(pThird);
 }
 
-void firstM(FooM fm)
-{
-    fm.first(pFirst);
-}
-
-void secondM(FooM fm)
-{
-    fm.second(pSecond);
-}
-
-void thirdM(FooM fm)
-{
-    fm.third(pThird);
-}
-
-void tt(FooM fm)
-{}
-
-
-void testPrintOrderM(){
-    auto tu=make_tuple(1,2,3);
-    FooM fm;
-    funtion<void(function<void()>)> fun=bind(&FooM::first, &fm);
-    thread  th1(firstM);
-    th1.join();
-}
-
 
 
 
@@ -246,6 +168,7 @@ int main(int argc, char const *argv[])
 {
     /* code */
     // testPrintInOrder();
-    timeit(testPrintInOrderModernWay);
+    // timeit(testPrintInOrderModernWay);
+    timeit(testPrintOrderM);
     return 0;
 }
