@@ -232,18 +232,19 @@ public:
     void first(function<void()> printFirst)
     {
 
-        unique_lock<mutex> lck(mtx);
+        unique_lock<mutex> lck(mtx); (4)
         // printFirst() outputs "printFirst". Do not change or remove this line.
         printFirst();
-        sv = 2;
+        sv = 2; //(2)
         cv.notify_one();
     }
 
     void second(function<void()> printSecond)
     {
         unique_lock<mutex> lck(mtx);
-        while (sv != 2)
+        while (sv != 2)// (1)
         {
+            // (3)
             cv.wait(lck);
         }
         // printSecond() outputs "printSecond". Do not change or remove this line.
