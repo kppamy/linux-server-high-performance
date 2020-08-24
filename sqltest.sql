@@ -73,3 +73,11 @@ SELECT * FROM Customers;
 SELECT * FROM Orders;
 SELECT Name FROM Customers  LEFT JOIN Orders  ON Customers.Id = Orders.CustomerId 
 WHERE CustomerId IS NULL;
+
+-- 196. Delete Duplicate Emails
+SELECT * from Person;
+-- INSERT INTO Person VALUES(3,'a@b.com');
+-- delete p1 from Person p1, Person p2 where p1.Email = p2.Email and p1.id > p2.id;
+DELETE FROM Person WHERE Id in (SELECT p1.Id from  Person p1, Person p2 WHERE p1.Email == p2.Email AND p1.Id > p2.Id);
+-- DELETE from Person where id = (
+    -- select MAX(ID) from Person group BY Email HAVING COUNT(*)>1);
