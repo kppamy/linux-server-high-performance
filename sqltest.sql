@@ -1,4 +1,6 @@
 
+SELECT * from sqlite_master;
+
 
 -- 175. Combine Two Tables
 Drop TABLE Person;
@@ -82,14 +84,26 @@ DELETE FROM Person WHERE Id in (SELECT p1.Id from  Person p1, Person p2 WHERE p1
 -- DELETE from Person where id = (
     -- select MAX(ID) from Person group BY Email HAVING COUNT(*)>1);
 
-SELECT * from sqlite_master;
+
 
 
 -- 197. Rising Temperature
-
 -- DELETE FROM Weather WHERE ROWID not in (SELECT DISTINCT (id) from Weather);
 SELECT * FROM Weather;
-
 SELECT DATE(RecordDate),DATE(RecordDate,'-1 day') FROM Weather;
 SELECT w1.Id from Weather w1, Weather w2 WHERE w1.Temperature > w2.Temperature 
-AND DATE(w1.RecordDate,'-1 day') == DATE(w2.RecordDate); 
+AND DATE(w1.RecordDate,'-1 day') == DATE(w2.RecordDate);
+
+
+-- -- 595. Big Countries
+-- -- DROP TABLE World;
+Create table If Not Exists World (name varchar(255), continent varchar(255), area int, population int, gdp int);
+-- -- Truncate table World;
+insert into World (name, continent, area, population, gdp) values ('Afghanistan', 'Asia', '652230', '25500100', '20343000000');
+insert into World (name, continent, area, population, gdp) values ('Albania', 'Europe', '28748', '2831741', '12960000000');
+insert into World (name, continent, area, population, gdp) values ('Algeria', 'Africa', '2381741', '37100000', '188681000000');
+insert into World (name, continent, area, population, gdp) values ('Andorra', 'Europe', '468', '78115', '3712000000');
+insert into World (name, continent, area, population, gdp) values ('Angola', 'Africa', '1246700', '20609294', '100990000000');
+SELECT  * FROM World;
+DELETE FROM World WHERE ROWID IN (SELECT ROWID FROM World GROUP BY name HAVING count(*)>1);
+SELECT name,population,area FROM World WHERE area > 3000000 AND population > 25000000;
