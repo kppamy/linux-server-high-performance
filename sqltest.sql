@@ -110,6 +110,17 @@ SELECT name,population,area FROM World WHERE area > 3000000 OR population > 2500
 
 -- 596. Classes More Than 5 Students
 DELETE FROM courses WHERE ROWID not in (SELECT ROWID FROM courses  GROUP BY student,class HAVING count(*)>1);
-SELECT * FROM courses WHERE class == 'English';
+SELECT * FROM courses WHERE class == 'Math';
 INSERT INTO courses VALUES('B','English');
-SELECT  student FROM courses GROUP BY class HAVING count(DISTINCT student)>5 ;
+SELECT  student FROM courses GROUP BY class HAVING count( student)>1 ;
+
+
+-- 620. Not Boring Movies
+Create table If Not Exists cinema (id int, movie varchar(255), description varchar(255), rating float(2, 1));
+-- Truncate table cinema;
+insert into cinema (id, movie, description, rating) values ('1', 'War', 'great 3D', '8.9');
+insert into cinema (id, movie, description, rating) values ('2', 'Science', 'fiction', '8.5');
+insert into cinema (id, movie, description, rating) values ('3', 'irish', 'boring', '6.2');
+insert into cinema (id, movie, description, rating) values ('4', 'Ice song', 'Fantacy', '8.6');
+insert into cinema (id, movie, description, rating) values ('5', 'House card', 'Interesting', '9.1');
+SELECT * FROM cinema WHERE id % 2 != 0 AND description != 'boring' ORDER BY rating DESC;
