@@ -81,3 +81,15 @@ SELECT * from Person;
 DELETE FROM Person WHERE Id in (SELECT p1.Id from  Person p1, Person p2 WHERE p1.Email == p2.Email AND p1.Id > p2.Id);
 -- DELETE from Person where id = (
     -- select MAX(ID) from Person group BY Email HAVING COUNT(*)>1);
+
+SELECT * from sqlite_master;
+
+
+-- 197. Rising Temperature
+
+-- DELETE FROM Weather WHERE ROWID not in (SELECT DISTINCT (id) from Weather);
+SELECT * FROM Weather;
+
+SELECT DATE(RecordDate),DATE(RecordDate,'-1 day') FROM Weather;
+SELECT w1.Id from Weather w1, Weather w2 WHERE w1.Temperature > w2.Temperature 
+AND DATE(w1.RecordDate,'-1 day') == DATE(w2.RecordDate); 
