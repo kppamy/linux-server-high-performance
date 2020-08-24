@@ -106,4 +106,10 @@ insert into World (name, continent, area, population, gdp) values ('Andorra', 'E
 insert into World (name, continent, area, population, gdp) values ('Angola', 'Africa', '1246700', '20609294', '100990000000');
 SELECT  * FROM World;
 DELETE FROM World WHERE ROWID IN (SELECT ROWID FROM World GROUP BY name HAVING count(*)>1);
-SELECT name,population,area FROM World WHERE area > 3000000 AND population > 25000000;
+SELECT name,population,area FROM World WHERE area > 3000000 OR population > 25000000;
+
+-- 596. Classes More Than 5 Students
+DELETE FROM courses WHERE ROWID not in (SELECT ROWID FROM courses  GROUP BY student,class HAVING count(*)>1);
+SELECT * FROM courses WHERE class == 'English';
+INSERT INTO courses VALUES('B','English');
+SELECT  student FROM courses GROUP BY class HAVING count(DISTINCT student)>5 ;
