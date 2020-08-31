@@ -58,24 +58,23 @@ bool canPartition(vector<int> &nums)
 // 322. Coin Change
 int coinChange(vector<int> &coins, int amount)
 {
-  
 }
 
 // 面试题 08.11. 硬币
 int waysToChange(int n)
-{    
+{
     if (n <= 1)
         return n;
     static int mod = 1000000007;
-    static int coins[4]={25, 10, 5, 1};//i
-    vector<int> res(n+1,0);// res[j] 前i-1 个硬币组成j的方案数, res[0,...,j-1] 表示前i个硬币组成j的方案数
+    static int coins[4] = {25, 10, 5, 1}; //i
+    vector<int> res(n + 1, 0);            // res[j] 前i-1 个硬币组成j的方案数, res[0,...,j-1] 表示前i个硬币组成j的方案数
     res[0] = 1;
-    for (int i = 0; i<=3 ; i++)
+    for (int i = 0; i <= 3; i++)
     {
         int j;
         for (j = coins[i]; j <= n; j++)
         {
-            res[j] =(res[j] + res[j - coins[i]])%mod;
+            res[j] = (res[j] + res[j - coins[i]]) % mod;
         }
     }
 
@@ -90,11 +89,11 @@ bool isSubsequence(string s, string t)
     if (m > n)
         return false;
     // f[i][j] 表示s.sub(0,i) 是t.sub(0,j)的子串
-    vector<vector<bool>> f(m, vector<bool>(n, false)); 
+    vector<vector<bool>> f(m, vector<bool>(n, false));
     f[0][0] = 1;
     f[1][0] = 0;
     f[0][1] = 1;
-    
+
     for (int i = 1; i < m; i++)
     {
         for (int j = i; j < n - m + i + 1; j++)
@@ -105,7 +104,7 @@ bool isSubsequence(string s, string t)
             }
             else
             {
-                 f[i][j] = f[i][j - 1];
+                f[i][j] = f[i][j - 1];
             }
         }
     }
@@ -119,27 +118,31 @@ bool isSubsequence(string s, string t, bool two_pointer)
     int n = t.size();
     if (m > n)
         return false;
-    int i,j=0;
-    while(i<m && j<n){
-        if(s[i]==t[j]){
+    int i, j = 0;
+    while (i < m && j < n)
+    {
+        if (s[i] == t[j])
+        {
             i++;
         }
         j++;
     }
-    return i==m;
+    return i == m;
 }
 
-void testwaysToChange(){
-      cout<<" ways to change 5  is "<< waysToChange(5)<<endl; // 2
-      cout<<" ways to change 10 is "<< waysToChange(10)<<endl;// 4
-      cout<<" ways to change 1 is "<< waysToChange(1)<<endl;// 4
+void testwaysToChange()
+{
+    cout << " ways to change 5  is " << waysToChange(5) << endl;  // 2
+    cout << " ways to change 10 is " << waysToChange(10) << endl; // 4
+    cout << " ways to change 1 is " << waysToChange(1) << endl;   // 4
 }
 
-void testSubSequence(){
+void testSubSequence()
+{
     string s = "abc", t = "ahbgdc";
     // string s = "axc", t = "ahbgdc";
     // string s = "axc", t = "axc";
-    cout <<s<<" is "<< (isSubsequence(s,t,true)?"":" not ")<< "subsequence of " << t<<endl;
+    cout << s << " is " << (isSubsequence(s, t, true) ? "" : " not ") << "subsequence of " << t << endl;
 }
 
 // knapsack problems
@@ -167,12 +170,14 @@ int findTargetSumWays(vector<int> &nums, int S)
     return ways[len - 1][S + MAX];
 }
 
-void testFindTargetSumWays(){
-    vector<int> nums{1,1,1,1,1};
+void testFindTargetSumWays()
+{
+    vector<int> nums{1, 1, 1, 1, 1};
     printVector(nums);
     int S = 3;
-    while(S<7){
-    cout<<"ways to have "<<S<<" is "<<findTargetSumWays(nums, S++)<<endl;
+    while (S < 7)
+    {
+        cout << "ways to have " << S << " is " << findTargetSumWays(nums, S++) << endl;
     }
 }
 
@@ -181,8 +186,6 @@ void testFindTargetSumWays(){
 int findMaxForm(vector<string> &strs, int m, int n)
 {
 }
-
-
 
 void exchange(vector<vector<int>> &intervals, int i, int j)
 {
@@ -265,7 +268,7 @@ vector<vector<int>> mergeFast(vector<vector<int>> &intervals)
         if (intervals[merged][1] < intervals[i][0])
         {
             merged++;
-            intervals[merged] =  intervals[i];
+            intervals[merged] = intervals[i];
         }
         else if (intervals[merged][1] < intervals[i][1])
         {
@@ -320,10 +323,49 @@ void testClimbStairs()
     cout << ways << " ways to climb " << stairs << " steps" << endl;
 }
 
+int getMaxLinked(vector<vector<int>> ma, int m, int n)
+{
+    vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+    auto max = [](int a, int b)->int
+    {
+        return (a >= b) ? a : b;
+    };
+    for (int i = 1; i <= m; i++)
+    {
+        for (int j = 1;j <= n; j++)
+        {
+            int t1=0, t2=0, t3=0, t4=0;
+            if (ma[i-1][j-1] == 1)
+            {
+                t1 = dp[i - 1][j] + 1;
+                t3 = dp[i][j - 1] + 1;
+            }
+            else
+            {
+                t2 = dp[i - 1][j];
+                t4 = dp[i][j - 1];
+            }
+            dp[i][j]=max(max(max(t1,t2),t3),t4);
+        }
+    }
+
+    return dp[m][n];
+}
+
+void testML()
+{
+    vector<vector<int>> input={{1, 1, 1, 0, 1, 1, 1, 1},
+                       {1, 1, 1, 0, 1, 0, 1, 1},
+                       {1, 1, 0, 1, 1, 0, 1, 1}};
+   int len= getMaxLinked(input, 3, 8);
+   cout<< "getMaxLinked  "<<len<<endl;
+}
+
 int main(int argc, char const *argv[])
 {
     // timeit(testMergeIntervals);
     // timeit(testwaysToChange);
     // timeit(testSubSequence);
-    timeit(testFindTargetSumWays);
+    // timeit(testFindTargetSumWays);
+    timeit(testML);
 }
