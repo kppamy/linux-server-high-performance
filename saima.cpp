@@ -242,9 +242,31 @@ void testPassByReference(){
     p1.validateStudent();
 }
 
+#include <stdlib.h> 
+void testFloat(){
+    float a = -0.5;
+    char s[10];
+    // itoa(a, s, 2);
+    printf("二进制 -->%f %#x\n", a,a);
+}
+
+void testPointer(){
+    char* cp;
+    int* ip;
+    double* dp;
+    cout<<"sizeof char p "<<sizeof(cp)<<endl;
+    cout<<"sizeof int p "<<sizeof(ip)<<endl;
+    cout<<"sizeof double p "<<sizeof(dp)<<endl;
+
+    long a = (long)(((int *) 0) + 4);
+    printf("%ld \n",a);
+}
+
 int main(int argc, char const *argv[])
 {
     // testAlignMemoryOfStruct();
-    testPassByReference();
+    // testPassByReference();
+    // testFloat();
+    testPointer();
     return 0;
 }
