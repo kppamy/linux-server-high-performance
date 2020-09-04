@@ -49,8 +49,8 @@ class FooSEM
 public:
     FooSEM()
     {
-        sem_init(&sem,0,0);
-        sem_init(&sem2,0,0);
+        sem_init(&sem, 0, 0);
+        sem_init(&sem2, 0, 0);
     }
 
     void first(function<void()> printFirst)
@@ -81,9 +81,6 @@ private:
     sem_t sem;
     sem_t sem2;
 };
-
-
-
 
 pthread_mutex_t lock1, lock2;
 pthread_cond_t cond, cond2;
@@ -150,7 +147,6 @@ void *third(void *ptr)
     foo->third(pThird);
 }
 
-
 // 1114. Print in Order
 void testPrintInOrderModernWay()
 {
@@ -206,10 +202,149 @@ void testPrintInOrder()
     pthread_cond_destroy(&cond2);
 }
 
+#include <thread>
+#include <condition_variable>
+#include <atomic>
+#include <mutex>
+
+class FooBar
+{
+private:
+    condition_variable cv;
+    mutex mtx;
+    atomic<int> who{1};
+    int n;
+
+public:
+    FooBar(int n)
+    {
+        this->n = n;
+    }
+
+    void foo(function<void()> printFoo)
+    {
+
+        for (int i = 0; i < n; i++)
+        {
+
+            // printFoo() outputs "foo". Do not change or remove this line.
+            while (who != 1)
+            {
+                usleep(0.1);
+            }
+            unique_lock<mutex> lck(mtx);
+            printFoo();
+            who = 2;
+            cv.notify_one();
+        }
+    }
+
+    void bar(function<void()> printBar)
+    {
+
+        for (int i = 0; i < n; i++)
+        {
+
+            // printBar() outputs "bar". Do not change or remove this line.
+            unique_lock<mutex> lck(mtx);
+            while (who != 2)
+                cv.wait(lck);
+            printBar();
+            who = 1;
+        }
+    }
+};
+
+class FooBar0Lck
+{
+private:
+    int n;
+    atomic<bool> who{true};
+
+public:
+    FooBar0Lck(int n)
+    {
+        this->n = n;
+    }
+
+    void foo(function<void()> printFoo)
+    {
+
+        for (int i = 0; i < n;i++)
+        {
+
+            // printFoo() outputs "foo". Do not change or remove this line.
+            if (who.load(memory_order_seq_cst))
+            {
+                printFoo();
+                who.store(false,memory_order_seq_cst);
+            }
+            else
+                this_thread::yield();
+        }
+    }
+
+    void bar(function<void()> printBar)
+    {
+
+        for (int i = 0; i < n; i++)
+        {
+
+            // printBar() outputs "bar". Do not change or remove this line.
+            if (!who.load(memory_order_seq_cst))
+            {
+                printBar();
+                who.store(true,memory_order_seq_cst);
+            }
+            else
+                this_thread::yield();
+        }
+    }
+};
+
+void pFoo()
+{
+    cout << "Foo";
+}
+
+void pBar()
+{
+    // printFirst() outputs "printFirst". Do not change or remove this line.
+    cout << "Bar" << endl;
+}
+
+void testPrintFooBar()
+{
+    FooBar fb(1000);
+    cout << "sizeof mutex " << sizeof(mutex) << endl;
+    cout << "sizeof condition_variable " << sizeof(condition_variable) << endl;
+    cout << "sizeof atomic<int> who{1} " << sizeof(atomic<int>) << endl;
+    cout << "sizeof FooBar " << sizeof(FooBar) << endl;
+    thread t1(bind(&FooBar::foo, &fb, &pFoo));
+    thread t2(bind(&FooBar::bar, &fb, &pBar));
+    t1.join();
+    t2.join();
+}
+
+void testPrintFooBar0lck()
+{
+    FooBar0Lck fb(100000);
+    cout << "sizeof mutex " << sizeof(mutex) << endl;
+    cout << "sizeof condition_variable " << sizeof(condition_variable) << endl;
+    cout << "sizeof atomic<int> who{1} " << sizeof(atomic<int>) << endl;
+    cout << "sizeof FooBar0Lck " << sizeof(FooBar0Lck) << endl;
+    thread t1(bind(&FooBar0Lck::foo, &fb, &pFoo));
+    thread t2(bind(& FooBar0Lck::bar, &fb, &pBar));
+    t1.join();
+    t2.join();
+}
+
 int main(int argc, char const *argv[])
 {
     /* code */
     // testPrintInOrder();
-    timeit(testPrintInOrderModernWay);
+    // timeit(testPrintInOrderModernWay);
+    // timeit(testPrintFooBar);
+    timeit(testPrintFooBar0lck);
     return 0;
 }
