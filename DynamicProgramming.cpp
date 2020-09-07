@@ -12,6 +12,37 @@ int DynamicProgramming::climbStairs(int stairs)
     return climbStairs(stairs - 1) + climbStairs(stairs - 2);
 }
 
+// 70. Climbing Stairs
+int climbStairs(int n)
+{
+    // if (n == 1)
+    //     return 1;
+    // else if (n == 2)
+    //     return 2;
+    vector<int> dp(n + 1, 0);
+
+    dp[1] = 1;
+    dp[2] = 2;
+    for (int i = 3; i <= n; i++)
+    {
+        dp[i] = dp[i - 1] + dp[i - 2];
+    }
+    return dp[n];
+}
+
+#include <stdlib.h>
+void testClimbStairs()
+{
+   char* str="sdfsdfjk";
+   free(str);
+    int n = 1;
+    while (n <= 45)
+    {
+        cout << "ways to climbStairs " << n << " is " << climbStairs(n) << endl;
+        n++;
+    }
+}
+
 void DynamicProgramming::shuffleArray(vector<int> &arr)
 {
     int sz = arr.size();
@@ -337,14 +368,6 @@ void testShuffleArray()
     dp.shuffleArray(arr);
 }
 
-void testClimbStairs()
-{
-    DynamicProgramming dp;
-    int stairs = 5;
-    int ways = dp.climbStairs(stairs);
-    cout << ways << " ways to climb " << stairs << " steps" << endl;
-}
-
 int getMaxLinked(vector<vector<int>> ma, int m, int n)
 {
     vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
@@ -387,6 +410,7 @@ int main(int argc, char const *argv[])
     // timeit(testMergeIntervals);
     // timeit(testwaysToChange);
     // timeit(testSubSequence);
-    timeit(testFindTargetSumWays);
+    // timeit(testFindTargetSumWays);
     // timeit(testML);
+    timeit(testClimbStairs);
 }
