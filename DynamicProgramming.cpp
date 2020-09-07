@@ -15,10 +15,10 @@ int DynamicProgramming::climbStairs(int stairs)
 // 70. Climbing Stairs
 int climbStairs(int n)
 {
-    // if (n == 1)
-    //     return 1;
-    // else if (n == 2)
-    //     return 2;
+    if (n == 1)
+        return 1;
+    else if (n == 2)
+        return 2;
     vector<int> dp(n + 1, 0);
 
     dp[1] = 1;
@@ -30,11 +30,8 @@ int climbStairs(int n)
     return dp[n];
 }
 
-#include <stdlib.h>
 void testClimbStairs()
-{
-   char* str="sdfsdfjk";
-   free(str);
+{ 
     int n = 1;
     while (n <= 45)
     {
