@@ -10,18 +10,25 @@
             "args": [
                 "-g",
                 "-Wall",
-                "-std=c++11",
+                "-std=c++14",
+                "-fsanitize=address",
+                "-fno-omit-frame-pointer",
+                "-O1"
                 // "AlgoTest.cpp",
                 // "LinkedList.cpp",
                 // "TreeTest.cpp",
                 // "sort.cpp",
-                // "DynamicProgramming.cpp",
+                "DynamicProgramming.cpp",
                 // "ArrayTest.cpp",
                 // "EffectiveC.cpp",
                 // "saima.cpp"
                 // "todo.cpp"
                 // "lamada.cpp"
-                "StringTest.cpp"
+                // "StringTest.cpp"
+                // "graph.cpp"
+                // "file-test.cpp"
+                // "newFeatures.cpp"
+                //  "multi.cpp"
                 "-o",
                 // "AlgoTest",
                 "LeetCode",
