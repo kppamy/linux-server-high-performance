@@ -155,30 +155,52 @@ int findTargetSumWays(vector<int> &nums, int S)
         MAX += nums[i];
     if (S > MAX || S < -MAX)
         return 0;
-    vector<vector<int>> ways(len, vector<int>(2 * MAX + 1, 0));
-    ways[0][nums[0] + MAX] = 1;
-    ways[0][-1 * nums[0] + MAX] = 1;
+    vector<vector<int>> ways(2, vector<int>(2 * MAX + 1, 0));
+    ways[0][nums[0] + MAX] = 1 + ways[0][nums[0] + MAX] ;
+    ways[0][-1 * nums[0] + MAX] = 1 + ways[0][-1 * nums[0] + MAX];
     int pos, neg = 0;
     for (int i = 1; i < len; i++)
     {
         for (int j = -MAX; j <= MAX; j++)
         {
-            ways[i][j + nums[i] + MAX] += ways[i - 1][j + MAX];
-            ways[i][j - nums[i] + MAX] += ways[i - 1][j + MAX];
+
+            if ((j - nums[i] + MAX) >= 0 && (j + nums[i]) <= MAX)
+                ways[i % 2][j + MAX] = ways[1 - i % 2][j - nums[i] + MAX] + ways[1 - i % 2][j + nums[i] + MAX];
+            else if(j - nums[i] + MAX < 0 && (j + nums[i]) <= MAX)
+            {
+                ways[i % 2][j + MAX] = ways[1 - i % 2][j + nums[i] + MAX];
+            }else if(j - nums[i] + MAX >= 0 && j + nums[i] > MAX){
+                ways[i % 2][j + MAX] = ways[1 - i % 2][j - nums[i] + MAX];
+            }
         }
     }
-    return ways[len - 1][S + MAX];
+   
+    return ways[(len-1) % 2][S + MAX];
 }
 
 void testFindTargetSumWays()
 {
+
+    vector<int> nums2{0,0,0,0,0,0,0,0,1};
+    // vector<int> nums2{0,0,1};
+    printVector(nums2);
+    int S = 0;
+    while (S < 3)
+    {
+        int res = findTargetSumWays(nums2, S++);
+        cout << "ways to have " << S -1 << " is " << res << endl;
+    }
+    
     vector<int> nums{1, 1, 1, 1, 1};
     printVector(nums);
-    int S = 3;
+     S = 3;
     while (S < 7)
     {
-        cout << "ways to have " << S << " is " << findTargetSumWays(nums, S++) << endl;
+        int res = findTargetSumWays(nums, S++);
+        cout << "ways to have " << S -1 << " is " << res << endl;
     }
+
+
 }
 
 // knapsack problems
@@ -326,16 +348,15 @@ void testClimbStairs()
 int getMaxLinked(vector<vector<int>> ma, int m, int n)
 {
     vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
-    auto max = [](int a, int b)->int
-    {
+    auto max = [](int a, int b) -> int {
         return (a >= b) ? a : b;
     };
     for (int i = 1; i <= m; i++)
     {
-        for (int j = 1;j <= n; j++)
+        for (int j = 1; j <= n; j++)
         {
-            int t1=0, t2=0, t3=0, t4=0;
-            if (ma[i-1][j-1] == 1)
+            int t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+            if (ma[i - 1][j - 1] == 1)
             {
                 t1 = dp[i - 1][j] + 1;
                 t3 = dp[i][j - 1] + 1;
@@ -345,7 +366,7 @@ int getMaxLinked(vector<vector<int>> ma, int m, int n)
                 t2 = dp[i - 1][j];
                 t4 = dp[i][j - 1];
             }
-            dp[i][j]=max(max(max(t1,t2),t3),t4);
+            dp[i][j] = max(max(max(t1, t2), t3), t4);
         }
     }
 
@@ -354,11 +375,11 @@ int getMaxLinked(vector<vector<int>> ma, int m, int n)
 
 void testML()
 {
-    vector<vector<int>> input={{1, 1, 1, 0, 1, 1, 1, 1},
-                       {1, 1, 1, 0, 1, 0, 1, 1},
-                       {1, 1, 0, 1, 1, 0, 1, 1}};
-   int len= getMaxLinked(input, 3, 8);
-   cout<< "getMaxLinked  "<<len<<endl;
+    vector<vector<int>> input = {{1, 1, 1, 0, 1, 1, 1, 1},
+                                 {1, 1, 1, 0, 1, 0, 1, 1},
+                                 {1, 1, 0, 1, 1, 0, 1, 1}};
+    int len = getMaxLinked(input, 3, 8);
+    cout << "getMaxLinked  " << len << endl;
 }
 
 int main(int argc, char const *argv[])
@@ -366,6 +387,6 @@ int main(int argc, char const *argv[])
     // timeit(testMergeIntervals);
     // timeit(testwaysToChange);
     // timeit(testSubSequence);
-    // timeit(testFindTargetSumWays);
-    timeit(testML);
+    timeit(testFindTargetSumWays);
+    // timeit(testML);
 }
