@@ -274,10 +274,10 @@ public:
         {
 
             // printFoo() outputs "foo". Do not change or remove this line.
-            if (who.load(memory_order_seq_cst))
+            if (who.load(memory_order_acquire))
             {
                 printFoo();
-                who.store(false,memory_order_seq_cst);
+                who.store(false,memory_order_release);
             }
             else
                 this_thread::yield();
@@ -291,10 +291,10 @@ public:
         {
 
             // printBar() outputs "bar". Do not change or remove this line.
-            if (!who.load(memory_order_seq_cst))
+            if (!who.load(memory_order_acquire))
             {
                 printBar();
-                who.store(true,memory_order_seq_cst);
+                who.store(true,memory_order_release);
             }
             else
                 this_thread::yield();
@@ -313,6 +313,7 @@ void pBar()
     cout << "Bar" << endl;
 }
 
+// 1115. Print FooBar Alternately
 void testPrintFooBar()
 {
     FooBar fb(1000);
@@ -325,7 +326,7 @@ void testPrintFooBar()
     t1.join();
     t2.join();
 }
-
+// 1115. Print FooBar Alternately using pure atomic doesn't work
 void testPrintFooBar0lck()
 {
     FooBar0Lck fb(100000);

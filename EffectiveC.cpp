@@ -67,7 +67,7 @@ class MsgSender<CompanyZ>
 };
 
 
-// method2:  this->
+// method2:  在base class函数被调用前加上“this->”
 template <typename Company>
 class LogMsgSender : public MsgSender<Company>
 {
@@ -81,7 +81,7 @@ public:
 };
 
 
-// method3:  using 基类函数
+// method3:  使用using声明式
 template <typename Company>
 class LogMsgSender : public MsgSender<Company>
 {
@@ -96,7 +96,7 @@ public:
 };
 
 
-// method3: 显示调用（不推荐，可能破坏多态）
+// method3: 明确指出被调用的函数在base class内（::）， 显示调用（不推荐，可能破坏多态）
 template <typename Company>
 class LogMsgSender : public MsgSender<Company>
 {
