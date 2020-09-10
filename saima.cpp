@@ -204,62 +204,123 @@ void testOperPriority()
     cout << "t : " << t << "  y: " << y << endl;
 }
 
-
-class Person {
+class Person
+{
 public:
-	Person(string sn,string sa):name(sn),address(sa){};
-	virtual ~Person(){};
-    virtual bool validateStudent(){
-        cout<<"father"<<endl;
-            return false;
-        }
-
-public:
-	std::string name = "father";
-	std::string address;
-};
- 
-class Student: public Person {
-public:
-	Student(string sn,string sa, string name):Person(sn,sa),name(name){};
-	~Student(){};
-    bool validateStudent(){
-        cout<<"child"<<endl;
-    return false;
-}
+    Person(string sn, string sa) : name(sn), address(sa){};
+    virtual ~Person(){};
+    virtual bool validateStudent()
+    {
+        cout << "father" << endl;
+        return false;
+    }
 
 public:
-	std::string name;
+    std::string name = "father";
+    std::string address;
 };
 
+class Student : public Person
+{
+public:
+    Student(string sn, string sa, string name) : Person(sn, sa), name(name){};
+    ~Student(){};
+    bool validateStudent()
+    {
+        cout << "child" << endl;
+        return false;
+    }
 
+public:
+    std::string name;
+};
 
-void testPassByReference(){
-    Student s("1","2","cay");
-    Person& p=s;
-    Person p1=s;
+void testPassByReference()
+{
+    Student s("1", "2", "cay");
+    Person &p = s;
+    Person p1 = s;
     p.validateStudent();
     p1.validateStudent();
 }
 
-#include <stdlib.h> 
-void testFloat(){
+#include <stdlib.h>
+void testFloat()
+{
     float a = -0.5;
     char s[10];
     // itoa(a, s, 2);
-    printf("二进制 -->%f %#x\n", a,a);
+    printf("二进制 -->%f %#x\n", a, a);
 }
 
-void testPointer(){
-    char* cp;
-    int* ip;
-    double* dp;
-    cout<<"sizeof char p "<<sizeof(cp)<<endl;
-    cout<<"sizeof int p "<<sizeof(ip)<<endl;
-    cout<<"sizeof double p "<<sizeof(dp)<<endl;
+void testPointer()
+{
+    char *cp;
+    int *ip;
+    double *dp;
+    cout << "sizeof char p " << sizeof(cp) << endl;
+    cout << "sizeof int p " << sizeof(ip) << endl;
+    cout << "sizeof double p " << sizeof(dp) << endl;
 
-    long a = (long)(((int *) 0) + 4);
-    printf("%ld \n",a);
+    long a = (long)(((int *)0) + 4);
+    printf("%ld \n", a);
+}
+
+struct Coco
+{
+    int val;
+    Coco *next;
+    Coco() : val(20190827), next(nullptr) {}
+    Coco(int val, Coco *co) : val(20190827), next(co) {}
+};
+
+void testPassByPointer(Coco *co)
+{
+    cout << " after pass by pointer, val: " << co->val << " next: " << co->next << endl;
+    cout << " next val: " << co->next->val << " next: " << co->next->next << endl;
+}
+Coco returnStackObject()
+{
+    Coco co;
+    Coco co2;
+    co.next = &co2;
+    cout << " Before return stack object, val: " << co.val << " next: " << co.next << endl;
+    cout << " next val: " << co.next->val << " next: " << co.next->next << endl;
+    return co;
+}
+
+const Coco returnConstStackObject()
+{
+    Coco co2;
+    const Coco co(20200827, &co2);
+    ;
+    cout << " Before return const stack object, val: " << co.val << " next: " << co.next << endl;
+    cout << " next val: " << co.next->val << " next: " << co.next->next << endl;
+    return co;
+}
+
+void testPassReturn()
+{
+    Coco co = returnStackObject();
+    cout << " Before pass by pointer, val: " << co.val << " next: " << co.next << endl;
+    cout << " next val: " << co.next->val << " next: " << co.next->next << endl;
+    testPassByPointer(&co);
+
+    const Coco coconst = returnConstStackObject();
+    cout << " after returnConstStackObject, val: " << coconst.val << " next: " << coconst.next << endl;
+    cout << " next val: " << coconst.next->val << " next: " << coconst.next->next << endl;
+}
+
+#include <string.h>
+void testSizet()
+{
+    const char* t = "fsfsdf";
+    // for (size_t i = strlen(t) - 1; i >= 0; i--) //infinite loop
+    for (size_t i = strlen(t) - 1; i-- > 0; )
+    {
+        cout << i << endl;
+    }
+
 }
 
 int main(int argc, char const *argv[])
@@ -267,6 +328,7 @@ int main(int argc, char const *argv[])
     // testAlignMemoryOfStruct();
     // testPassByReference();
     // testFloat();
-    testPointer();
+    // testPointer();
+    testSizet();
     return 0;
 }
