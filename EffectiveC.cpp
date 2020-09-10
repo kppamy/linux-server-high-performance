@@ -1,13 +1,87 @@
 #include <iostream>
 using namespace std;
 
-#include <cstring>
+#include <string>
 
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
 
 using namespace std;
+
+// 条款3：尽可能使用const
+class Text
+{
+    char *content;
+    char *const content_cst;
+    // static member doesn't increase class instance memory, it store in global/static mmeory area
+    static char *content_static;
+    mutable const char *content_mutable;
+    mutable char *content_mutable2;
+
+public:
+    Text(char *value) : content_cst(value) // explictly initialize const member
+    {
+        content = value;
+        // content_cst = value; // referece or const member can't be initialized inside constructor
+    }
+
+    const char &operator[](std::size_t idx) const
+    {
+        return content[idx];
+    }
+    // overload, only const difference
+    char &operator[](std::size_t idx)
+    {
+        // return const_cast<char&>(static_cast<const char&>(*this)[idx]); //error
+        return const_cast<char &>(static_cast<const char &>((*this)[idx]));
+    }
+
+    void setContet(char *c) const
+    {
+        // content=c; // const member function can't change non-static member
+        // content_cst = c;
+        content_static = c;
+        content_mutable = c;
+        content_mutable2 = c;
+    }
+
+    void setContet(char *c)
+    {
+        //cannot assign to non-static data member 'content_cst' with const-qualified type 'char *const'
+        // content_cst = c;
+        content_static = c;
+        content_mutable = c;
+        content_mutable2 = c;
+    }
+};
+
+void testConstPointer()
+{
+    char greeting[] = "hello";
+    char *const p1 = greeting; // p1 is const
+                               // p1 = nullptr;  // error
+    const char *p2 = greeting; // p2 could change, *p2 is const, but greeting is still can be modified
+    cout << *p1 << endl;
+    cout << *p2 << endl;
+    // *(p2+1)='j'; //error
+    greeting[0] = 'j';
+    p2 = nullptr;
+
+    const Text text = Text(greeting);
+    const char *p = &text[0];
+    std::cout << text[0] << std::endl;
+}
+
+#include <string.h>
+void testConst()
+{
+    const char *t = "fsfsdf";
+    char *p = const_cast<char *>(t);
+    // *t='c';
+    *p = 'H'; // exception on run time
+    cout << *t << endl;
+}
 
 // 条款43：学习处理模板化基类内的名称
 class CompanyA
@@ -33,21 +107,23 @@ class MsgSender
     void sendClear(const MsgInfo)
     {
         std::string msg;
-        //产生信息        
-        Company c;  
+        //产生信息
+        Company c;
         c.sendClearText(msg);
     }
-    void sendSecret(const MsgInfo &info) { /*...*/} //与sendClear相似
+    void sendSecret(const MsgInfo &info)
+    { /*...*/
+    } //与sendClear相似
 };
 
 template <typename Company>
-class LogMsgSender : public MsgSender<Company>
+class LogMsgSender0 : public MsgSender<Company>
 {
 public:
     void sendClearMsg(const MsgInfo &info)
-    { 
+    {
         // 发送前记录日志
-        sendClear(info);//调用基类函数，会出现编译错误
+        // sendClear(info);//调用基类函数，会出现编译错误, compiler says "undeclared"
         // 发送后记录日志
     }
 };
@@ -59,13 +135,12 @@ public:
 };
 
 // method 1: 全特化
-template <> //全特化
+template <>
 class MsgSender<CompanyZ>
 {
-    public: 
-        void sendSecret(const MsgInfo & info);
+public:
+    void sendSecret(const MsgInfo & info);
 };
-
 
 // method2:  在base class函数被调用前加上“this->”
 template <typename Company>
@@ -80,10 +155,9 @@ public:
     }
 };
 
-
 // method3:  使用using声明式
 template <typename Company>
-class LogMsgSender : public MsgSender<Company>
+class LogMsgSender2 : public MsgSender<Company>
 {
     using MsgSender<Company>::sendClear; //告诉编译器，sendClear在基类中
 public:
@@ -95,10 +169,9 @@ public:
     }
 };
 
-
 // method3: 明确指出被调用的函数在base class内（::）， 显示调用（不推荐，可能破坏多态）
 template <typename Company>
-class LogMsgSender : public MsgSender<Company>
+class LogMsgSender3 : public MsgSender<Company>
 {
 public:
     void sendClearMsg(const MsgInfo &info)
@@ -163,36 +236,8 @@ int &f8()
     return a;
 }
 
-class Text
-{
-    char *content;
-
-public:
-    Text(char *value) { content = value; }
-    // ...
-    const char &operator[](std::size_t idx) const
-    {
-        return content[idx];
-    }
-
-    char &operator[](std::size_t idx)
-    {
-        return const_cast<char &>(static_cast<const Text &>(*this)[idx]);
-    }
-};
-
 int main(int argc, char const *argv[])
 {
-    /* code */
-    //  char greeting[] = "hello";
-    // char *const p1 = greeting;
-    // const char *p2 = greeting;
-    // cout<<*p1<<endl;
-    // cout<<*p2<<endl;
-
-    // const Text text = Text(greeting);
-    // const char *p = &text[0];
-    // std::cout << text[0] << std::endl;
 
     string s("chenyu");
     string result = f2(s);
