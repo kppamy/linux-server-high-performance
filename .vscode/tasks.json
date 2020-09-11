@@ -25,17 +25,14 @@
                 // "todo.cpp"
                 // "lamada.cpp"
                 // "StringTest.cpp"
-                "graph.cpp"
+                // "graph.cpp"
                 // "file-test.cpp"
                 // "newFeatures.cpp"
                 //  "multi.cpp"
                 // "Ufind.cpp"
+                "maxProfit.cpp"
                 "-o",
-                // "AlgoTest",
-                "LeetCode",
-                // "TreeTest"
-                // "Sort"
-                // "ArrayTest"
+                "LeetCode"
             ],
             "group": {
                 "kind": "build",

@@ -1,25 +1,14 @@
-#include <stdio.h>
 #include <vector>
-using namespace std;
 class ArrayTest
 {
 private:
     /* data */
 public:
-    ArrayTest(/* args */);
-    int maxProfit(vector<int> &prices);
+    ArrayTest(/* args */){};
     // rotate the array by k steps
-    void rotateArray(vector<int> &input, int steps);
-    void rotateArraySwitch(vector<int> &input, int k);
-    void rotateRecus(vector<int> &input, int steps);
-    void rotateOne(vector<int> &input);
-    ~ArrayTest();
+    void rotateArray(std::vector<int> &input, int steps);
+    void rotateArraySwitch(std::vector<int> &input, int k);
+    void rotateRecus(std::vector<int> &input, int steps);
+    void rotateOne(std::vector<int> &input);
+    ~ArrayTest(){};
 };
-
-ArrayTest::ArrayTest(/* args */)
-{
-}
-
-ArrayTest::~ArrayTest()
-{
-}
