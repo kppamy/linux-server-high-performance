@@ -1,6 +1,7 @@
 #include "ArrayTest.h"
 #include "common.h"
 
+using namespace std;
 
 void ArrayTest::rotateArray(vector<int> &input, int k)
 {
@@ -52,8 +53,6 @@ void ArrayTest::rotateOne(vector<int> &input)
     tmp = input[0];
 }
 
-
-
 // 1248. Count Number of Nice Subarrays
 int numberOfSubarrays(vector<int> &nums, int k)
 {
@@ -85,7 +84,7 @@ void testNiceArray()
     //  vector<int> input{2,2,2,1,2,2,1,2,2,2};
     // int k = 2;
     printVector(input);
-    cout << "numberOfSubarrays:  " << numberOfSubarrays(input, k)<<endl;
+    cout << "numberOfSubarrays:  " << numberOfSubarrays(input, k) << endl;
 }
 
 void testRotateArray()
@@ -100,12 +99,41 @@ void testRotateArray()
     printVector(prices);
 }
 
+int maxArea(vector<int> &height)
+{
+    int left = 0;
+    int right = height.size() - 1;
+    int maxa = 0;
+    auto area = [&](int i, int j) {
+        return ((j - i) * min(height[i], height[j]));
+    };
+    while (left < right)
+    {
+        maxa = max(area(left, right), maxa);
+        if (height[left] < height[right])
+            left++;
+        else
+            right--;
+    }
+    return maxa;
+}
 
+void testMaxArea()
+{
+    vector<int> arr1 = {1, 8, 6, 2, 5, 4, 8, 3, 7};
+    printVector(arr1);
+    cout << "max area: " << maxArea(arr1) << endl;
+
+    arr1 = {1, 3, 2, 4};
+    printVector(arr1);
+    cout << "max area: " << maxArea(arr1) << endl;
+}
 
 int main(int argc, char const *argv[])
 {
 
-    timeit(testNiceArray);
+    // timeit(testNiceArray);
     // testNiceArray();
+    timeit(testMaxArea);
     return 0;
 }
