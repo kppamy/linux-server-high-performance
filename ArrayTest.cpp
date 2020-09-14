@@ -99,6 +99,10 @@ void testRotateArray()
     printVector(prices);
 }
 
+// |     11. Container With Most Water
+// |     
+// |     two pointers.
+// |     c++: 32 ms  python: 116 ms
 int maxArea(vector<int> &height)
 {
     int left = 0;
