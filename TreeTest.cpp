@@ -195,6 +195,71 @@ void testmaxDepth()
     cout << endl;
 }
 
+// 111. Minimum Depth of Binary Tree
+// Runtime: 20 ms, faster than 41.10% of C++ online submissions for Minimum Depth of Binary Tree.
+// Memory Usage: 20.1 MB, less than 53.37% of C++ online submissions for Minimum Depth of Binary Tree
+int minDepth(TreeNode *root)
+{
+    if (!root)
+        return 0;
+    if(!root->left && !root->right)
+        return 1;
+    int left = INT_MAX;
+    if (root->left)
+        left = minDepth(root->left);
+    int right = INT_MAX;
+    if (root->right)
+        right = minDepth(root->right);
+    return (min(left, right) + 1);
+}
+
+void testminDepth()
+{
+
+    vector<int> tr4 = {1, 1}; //false
+    TreeNode *root = buildTree(tr4);
+    prettyPrintTree(root, 2);
+    cout << "minDepth: " << minDepth(root) << endl;
+    cout << endl;
+
+    vector<int> arr = {3, 9, 20, -1, -1, 15, 7};
+    root = buildTree(arr);
+    prettyPrintTree(root, 3);
+    cout << "minDepth: " << minDepth(root) << endl;
+
+    //     2
+    //    / \
+    //   1   3
+    vector<int> tr1 = {2, 1, 3}; //true
+    root = buildTree(tr1);
+    prettyPrintTree(root, 2);
+    cout << "minDepth: " << minDepth(root) << endl;
+    cout << endl;
+
+    //     5
+    //    / \
+    //   1   4
+    //      / \
+    //     3   6
+    vector<int> tr2 = {5, 1, 4, -1, -1, 3, 6}; //false
+    root = buildTree(tr2);
+    prettyPrintTree(root, 3);
+    cout << "minDepth: " << minDepth(root) << endl;
+    cout << endl;
+
+    //     10
+    //    /   \   
+    //    5   15
+    //       /   \   
+    //       6   20
+    vector<int> tr3 = {10, 5, 15, -1, -1, 6, 20}; //false
+    root = buildTree(tr3);
+    prettyPrintTree(root, 3);
+    cout << "minDepth: " << minDepth(root) << endl;
+    cout << endl;
+}
+
+
 bool validate(TreeNode *node, int parentv, bool isroot, bool isleft)
 {
     if (!node)
@@ -565,6 +630,7 @@ int main(int argc, char const *argv[])
     // testSqrt();
 
     // testIsValidBST();
-    timeit(testmaxDepth);
+    // timeit(testmaxDepth);
+    timeit(testminDepth);
     return 0;
 }
