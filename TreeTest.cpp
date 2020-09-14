@@ -130,6 +130,71 @@ int Tree::maxDepth(const TreeNode *root)
     }
 }
 
+// 104. Maximum Depth of Binary Tree
+// Runtime: 16 ms, faster than 44.65% of C++ online submissions for Maximum Depth of Binary Tree.
+// Memory Usage: 19.5 MB, less than 6.95% of C++ online submissions for Maximum Depth of Binary Tree.
+int maxDepth(TreeNode *root)
+{
+    if (!root)
+        return 0;
+    int left = 0;
+    if (root->left)
+        left = maxDepth(root->left);
+    int right = 0;
+    if (root->right)
+        right = maxDepth(root->right);
+    return (max(left, right) + 1);
+}
+
+void testmaxDepth()
+{
+
+    vector<int> tr4 = {1, 1}; //false
+    TreeNode *root = buildTree(tr4);
+    prettyPrintTree(root, 2);
+    cout << "maxDepth: " << maxDepth(root) << endl;
+    cout << endl;
+
+    vector<int> arr = {3, 9, 20, -1, -1, 15, 7};
+    root = buildTree(arr);
+    prettyPrintTree(root, 3);
+    cout << "maxDepth: " << maxDepth(root) << endl;
+
+    //     2
+    //    / \
+    //   1   3
+    vector<int> tr1 = {2, 1, 3}; //true
+    printVector(tr1);
+    root = buildTree(tr1);
+    prettyPrintTree(root, 2);
+    cout << "maxDepth: " << maxDepth(root) << endl;
+    cout << endl;
+
+    //     5
+    //    / \
+    //   1   4
+    //      / \
+    //     3   6
+    vector<int> tr2 = {5, 1, 4, -1, -1, 3, 6}; //false
+    printVector(tr2);
+    root = buildTree(tr2);
+    prettyPrintTree(root, 3);
+    cout << "maxDepth: " << maxDepth(root) << endl;
+    cout << endl;
+
+    //     10
+    //    /   \   
+    //    5   15
+    //       /   \   
+    //       6   20
+    vector<int> tr3 = {10, 5, 15, -1, -1, 6, 20}; //false
+    printVector(tr3);
+    root = buildTree(tr3);
+    prettyPrintTree(root, 3);
+    cout << "maxDepth: " << maxDepth(root) << endl;
+    cout << endl;
+}
+
 bool validate(TreeNode *node, int parentv, bool isroot, bool isleft)
 {
     if (!node)
@@ -172,11 +237,9 @@ void midOrder(TreeNode *node, vector<int> &sorted)
     midOrder(node->right, sorted);
 }
 
-
-
 // 98. Validate Binary Search Tree
 // Runtime: 20 ms, faster than 67.28% of C++ online submissions for Validate Binary Search Tree.
-    // Memory Usage: 22.1 MB, less than 5.47% of C++ online submissions for Validate Binary Search Tree.
+// Memory Usage: 22.1 MB, less than 5.47% of C++ online submissions for Validate Binary Search Tree.
 
 bool isValidBST(TreeNode *root)
 {
@@ -191,7 +254,6 @@ bool isValidBST(TreeNode *root)
     }
     return true;
 }
-
 
 #include <list>
 void midOrder(TreeNode *node, list<int> &sorted)
@@ -461,6 +523,36 @@ void testSqrt()
     cout << "mySqrt of 9 is " << mySqrt(9) << endl;
 }
 
+void testTree()
+{
+    cout << "please input the tree nodes" << endl;
+    // right tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
+    // left tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
+    // 3 1 -1 -1 5 4 -1 -1 1 -1 -1
+    // 1 2 -1 -1 -1
+    // 1 2 -1 4 -1 -1 3 -1 -1
+    TreeNode *root = buildTree();
+    Tree tt;
+    int dpt = tt.maxDepth(root);
+    prettyPrintTree(root, dpt);
+    cout << "depth of the tree: " << dpt << endl;
+    // cout << "is BST ? " << tt.isValidBST(root) << endl;
+    BinaryTree bt;
+
+    bt.printBinaryTree(root);
+    int a = 0;
+    cout << ((a = 0) == 0) << endl;
+    BSTree<int> bst;
+
+    // vector<int> nodes{7, 2, 4, 6, 3, 1, 5};
+    vector<int> nodes{4, 2, 1, 3, 6, 5, 7};
+    for (int val : nodes)
+    {
+        // bst.insert(root, val);
+    }
+    bst.printBinaryTree(root);
+}
+
 // 167. Two Sum II - Input array is sorted
 // two sum
 vector<int> twoSum(vector<int> &numbers, int target)
@@ -469,34 +561,10 @@ vector<int> twoSum(vector<int> &numbers, int target)
 
 int main(int argc, char const *argv[])
 {
-    cout << "please input the tree nodes" << endl;
-    // right tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
-    // left tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
-    // 3 1 -1 -1 5 4 -1 -1 1 -1 -1
-    // 1 2 -1 -1 -1
-    // 1 2 -1 4 -1 -1 3 -1 -1
-    // TreeNode *root = buildTree();
-    // Tree tt;
-    // int dpt = tt.maxDepth(root);
-    // prettyPrintTree(root, dpt);
-    // cout << "depth of the tree: " << dpt << endl;
-    // cout << "is BST ? " << tt.isValidBST(root) << endl;
-    // BinaryTree bt;
 
-    // bt.printBinaryTree(root);
-    // int a = 0;
-    // cout << ((a = 0) == 0) << endl;
-    // BSTree<int> bst;
-    // TreeNode *root;
-    // // vector<int> nodes{7, 2, 4, 6, 3, 1, 5};
-    // vector<int> nodes{4, 2, 1, 3, 6, 5, 7};
-    // for (int val : nodes)
-    // {
-    //     bst.insert(root, val);
-    // }
-    // bst.printBinaryTree(root);
     // testSqrt();
 
-    testIsValidBST();
+    // testIsValidBST();
+    timeit(testmaxDepth);
     return 0;
 }
