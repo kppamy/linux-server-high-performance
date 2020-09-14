@@ -202,7 +202,7 @@ int minDepth(TreeNode *root)
 {
     if (!root)
         return 0;
-    if(!root->left && !root->right)
+    if (!root->left && !root->right)
         return 1;
     int left = INT_MAX;
     if (root->left)
@@ -259,6 +259,91 @@ void testminDepth()
     cout << endl;
 }
 
+int maxDifference(TreeNode *root)
+{
+    if (!root)
+        return 0;
+    int left = 0;
+    if (root->left)
+        left = maxDifference(root->left);
+    int right = 0;
+    if (root->right)
+        right = maxDifference(root->right);
+    if (left == -1 || right == -1)
+        return -1;
+    if (abs(left - right) > 1)
+        return -1;
+    return (max(left, right) + 1);
+}
+
+// 110. Balanced Binary Tree
+// Runtime: 20 ms, faster than 65.17% of C++ online submissions for Balanced Binary Tree.
+// Memory Usage: 21.5 MB, less than 87.45% of C++ online submissions for Balanced Binary Tree.
+bool isBalanced(TreeNode *root)
+{
+    if (maxDifference(root) == -1)
+        return false;
+    return true;
+}
+
+void testisBalanced()
+{
+
+    vector<int> tr4 = {1, 1, -1, -1, 1}; //false
+    TreeNode *root = buildTree(tr4);
+    prettyPrintTree(root, 3);
+    cout << "isBalanced: " << isBalanced(root) << endl;
+    cout << endl;
+
+    //          1
+    //        /   \   
+    //        2    2
+    //      /       \   
+    //      3         3
+    //    /             \
+    //    4               4
+    vector<int> tr0 = {1, 2, 2, 3, -1, -1, 3, 4, -1, -1, 4}; //false
+    root = buildTree(tr0);
+    prettyPrintTree(root, 5);
+    cout << "isBalanced: " << isBalanced(root) << endl;
+    cout << endl;
+
+    vector<int> arr = {3, 9, 20, -1, -1, 15, 7};
+    root = buildTree(arr);
+    prettyPrintTree(root, 3);
+    cout << "isBalanced: " << isBalanced(root) << endl;
+
+    //     2
+    //    / \
+    //   1   3
+    vector<int> tr1 = {2, 1, 3}; //true
+    root = buildTree(tr1);
+    prettyPrintTree(root, 2);
+    cout << "isBalanced: " << isBalanced(root) << endl;
+    cout << endl;
+
+    //     5
+    //    / \
+    //   1   4
+    //      / \
+    //     3   6
+    vector<int> tr2 = {1, 2, 2, 3, 3, -1, -1, 4, 4}; //false
+    root = buildTree(tr2);
+    prettyPrintTree(root, 4);
+    cout << "isBalanced: " << isBalanced(root) << endl;
+    cout << endl;
+
+    //     10
+    //    /   \   
+    //    5   15
+    //       /   \   
+    //       6   20
+    vector<int> tr3 = {10, 5, 15, -1, -1, 6, 20}; //false
+    root = buildTree(tr3);
+    prettyPrintTree(root, 3);
+    cout << "isBalanced: " << isBalanced(root) << endl;
+    cout << endl;
+}
 
 bool validate(TreeNode *node, int parentv, bool isroot, bool isleft)
 {
@@ -631,6 +716,7 @@ int main(int argc, char const *argv[])
 
     // testIsValidBST();
     // timeit(testmaxDepth);
-    timeit(testminDepth);
+    // timeit(testminDepth);
+    timeit(testisBalanced);
     return 0;
 }
