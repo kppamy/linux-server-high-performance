@@ -153,15 +153,16 @@ void cocktailSort(vector<int> &arr, int size)
             }
         }
         swap(arr[j], arr[index_min]);
-        if(j == index_max){
+        if (j == index_max)
+        {
             int new_max = index_min;
             swap(arr[size - j - 1], arr[new_max]);
-        }else
+        }
+        else
         {
             swap(arr[size - j - 1], arr[index_max]);
-
         }
-        
+
         max = INT_MIN, min = INT_MAX;
         index_max = -1;
         index_min = -1;
@@ -170,31 +171,107 @@ void cocktailSort(vector<int> &arr, int size)
     }
 }
 
-void  split(vector<int> &arr, int start, int end){
+void split(vector<int> &arr, int start, int end)
+{
     int j = start;
-    int i = j+1;
-    int key=arr[start];
-    for(;i<= end;++i){
-        if(arr[i]<key){
-            swap(arr[i],arr[j]);
+    int i = j + 1;
+    int key = arr[start];
+    for (; i <= end; ++i)
+    {
+        if (arr[i] < key)
+        {
+            swap(arr[i], arr[j]);
             j++;
         }
     }
-    if(end - start <= 1){
+    if (end - start <= 1)
+    {
         return;
     }
-    split(arr,0,j);
-    split(arr,j+1,end);
+    split(arr, 0, j);
+    split(arr, j + 1, end);
 }
 
-
-void quickSort(vector<int> &arr, int size){
-    split(arr, 0, size-1);
-}
-
-int main(int arc, const char *argv[])
+void quickSort(vector<int> &arr, int size)
 {
+    split(arr, 0, size - 1);
+}
 
+#include <map>
+#include <algorithm>
+
+// 1356. Sort Integers by The Number of 1 Bits
+// Runtime: 32 ms, faster than 21.36% of C++ online submissions for Sort Integers by The Number of 1 Bits.
+// Memory Usage: 13.8 MB, less than 5.05% of C++ online submissions for Sort Integers by The Number of 1 Bits
+vector<int> sortByBits(vector<int> &arr)
+{
+    int len = arr.size();
+    if (len <= 1)
+    {
+        return arr;
+    }
+    map<int, vector<int>> counter;
+    vector<int> items;
+    for (int val : arr)
+    {
+        int left = val;
+        int bit = -1;
+        int cnt = 0;
+        while (left > 0)
+        {
+            bit = left % 2;
+            if (bit)
+                cnt++;
+            left = left / 2;
+        }
+        items = counter[cnt];
+        items.push_back(val);
+        counter[cnt] = items;
+    }
+    // cout<<"after counter bits"<<endl;
+    // for(auto &&itr:counter){
+    //     cout<<itr.first<<": ";
+    //     printVector(itr.second);
+    // }
+    // cout<<"after counter bits"<<endl;
+
+    vector<int> out(len, -1);
+    int pos = 0;
+    for (int i = 0; i < counter.size(); ++i)
+    {
+        items = counter[i];
+        sort(items.begin(), items.end());
+        for (int val : items)
+        {
+            out[pos++] = val;
+        }
+    }
+    return out;
+}
+
+vector<vector<int>> generater1DCases()
+{
+    return {
+        {0, 1, 2, 3, 4, 5, 6, 7, 8},
+        {1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1},
+        {10000, 10000},
+        {2, 3, 5, 7, 11, 13, 17, 19},
+        {10, 100, 1000, 10000}};
+}
+
+void testSortBit()
+{
+    vector<vector<int>> cases = generater1DCases();
+    for (auto &&item : cases)
+    {
+        printVector(item);
+        vector<int> res = sortByBits(item);
+        printVector(res);
+    }
+}
+
+void oldTests()
+{
     Sort sort;
     // int input[INPUT_SIZE];
     // for (int i = 0; i < INPUT_SIZE; i++)
@@ -221,10 +298,15 @@ int main(int arc, const char *argv[])
     // bunbleSort(arr, 10);
     // cocktailSort(arr, 10);
     quickSort(arr, 10);
-    
+
     printVector(arr);
 
     int end = clock();
     double elaps = (static_cast<float>(end - start)) / CLOCKS_PER_SEC;
     cout << "elaps: " << elaps * 1000 << " ms" << endl;
+}
+
+int main(int arc, const char *argv[])
+{
+    testSortBit();
 }
