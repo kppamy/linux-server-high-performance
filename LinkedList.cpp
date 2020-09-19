@@ -145,7 +145,7 @@ void dumySwap(ListNode *n1, ListNode *n2)
   n2->val = tmp;
 }
 
-pair<ListNode *, int> splitList(ListNode *pivot, int len)
+pair<ListNode *, int> splitListH(ListNode *pivot, int len)
 {
   // len > 1
   ListNode *lower = pivot; // for "next" lower node
@@ -168,22 +168,22 @@ pair<ListNode *, int> splitList(ListNode *pivot, int len)
   return pair<ListNode *, int>{lower, pos};
 }
 
-ListNode *qSortList(ListNode *head, int len)
+ListNode *qSortListH(ListNode *head, int len)
 {
-  pair<ListNode *, int> pa = splitList(head, len);
+  pair<ListNode *, int> pa = splitListH(head, len);
   int spos = pa.second;
   ListNode *snode = pa.first;
   if (spos > 1)
-    qSortList(head, spos);
+    qSortListH(head, spos);
   if (len - spos - 1 > 1 && snode->next)
-    qSortList(snode->next, len - spos - 1);
+    qSortListH(snode->next, len - spos - 1);
   return head;
 }
 
 // 148. Sort List
 // Runtime: 460 ms, faster than 7.65% of C++ online submissions for Sort List.
 // Memory Usage: 16.2 MB, less than 39.73% of C++ online submissions for Sort Lis
-ListNode *sortList(ListNode *head)
+ListNode *sortListH(ListNode *head)
 {
   if (!head)
     return nullptr;
@@ -197,18 +197,71 @@ ListNode *sortList(ListNode *head)
   //compute sz
   if (sz == 1)
     return head;
-  return qSortList(head, sz);
+  return qSortListH(head, sz);
+}
+
+ListNode *splitList(ListNode *head, ListNode *pivot)
+{
+  // len > 1
+  ListNode *lower = new ListNode(100001, head); // record the actual ones smaller than pivot
+  ListNode *higher = head;
+  // split
+  while (higher != pivot)
+  {
+    if (higher->val < pivot->val)
+    {
+      dumySwap(lower->next, higher);
+      lower = lower->next;
+    }
+    higher = higher->next;
+  }
+  dumySwap(lower->next, pivot);
+  return lower;
+}
+
+ListNode *qSortList(ListNode *head, ListNode *tail)
+{
+  if (head == tail)
+    return head;
+  ListNode *pre_split = splitList(head, tail);
+  if (pre_split->next != head)
+    qSortList(head, pre_split);
+  if (pre_split->next != tail)
+    qSortList(pre_split->next->next, tail);
+  return head;
+}
+
+ListNode *sortList(ListNode *head)
+{
+  if (!head)
+    return nullptr;
+  ListNode *tmp = head;
+  ListNode *tail = head;
+  while (tmp)
+  {
+    if (!tmp->next)
+    {
+      tail = tmp;
+      break;
+    }
+    tmp = tmp->next;
+  }
+  if (tail == head)
+    return head;
+  return qSortList(head, tail);
 }
 
 #include "common.h"
 void testsortList()
 {
   my2arr cases = {
-      {1, 3, 2},
-      {1, 2},
-      {2, 1},
       {4, 2, 1, 3},
+      {1, 2},
+      {1, 3, 2},
+      {2, 1},
+      {4, 3, 2, 1},
       {-1, 5, 3, 4, 0},
+      {1, 2, 6, 4, 5},
       {},
   };
 

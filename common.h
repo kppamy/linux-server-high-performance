@@ -4,40 +4,44 @@
 #include <limits.h>
 #include <random>
 #include "Timer.h"
-using namespace std;
 
-void timeit(std::function<void()> func){
+typedef vector<vector<int>> my2arr;
+
+
+void timeit(std::function<void()> func)
+{
     Timer t;
     t.start();
     func();
     t.stop();
-    std::cout<<"time cost: "<<t.miniSeconds()<<" ms"<<endl;
+    std::cout << "time cost: " << t.miniSeconds() << " ms" << endl;
 }
 
-
-void printVector(vector<int> &input){
-    for_each(input.begin(),input.end(),[](int i){
-        cout<<i<<" ";
-    });
-    // for(int v:input){
-    //     cout<<v<<" ";
-    // }
-    cout<<endl;
-}
-
-void printInput(int input[], int len){
+void printVector(std::vector<int> &input)
 {
-    for (int i = 0; i < len; i++)
-    {
-        cout << input[i] << " ";
-    }
+
+    for_each(input.begin(), input.end(), [](int i) {
+        cout << i << " ";
+    });
     cout << endl;
 }
+
+void printInput(int input[], int len)
+{
+    {
+        for (int i = 0; i < len; i++)
+        {
+            cout << input[i] << " ";
+        }
+        cout << endl;
+    }
 }
 
-vector<int> generateArray(int num, int max){
+
+vector<int> generateArray(int num, int max)
+{
     vector<int> arr(num);
-    
+
     // C random generators
     // for(int i=0;i<=num;i++){
     //     arr[i]=(rand()%max);
@@ -49,7 +53,8 @@ vector<int> generateArray(int num, int max){
     std::mt19937 mt(rd());
     std::uniform_real_distribution<double> dist(1.0, 10.0);
 
-    for (int i=0; i<num; ++i){
+    for (int i = 0; i < num; ++i)
+    {
         arr[i] = dist(mt);
     }
     return arr;
