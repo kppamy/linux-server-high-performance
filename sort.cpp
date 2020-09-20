@@ -412,24 +412,80 @@ vector<int> sortArrayByParityII(vector<int> &A)
     return out;
 }
 
-void testsortArrayByParityII(){
-    my2arr cases={
-        {0,1},
-        {1,0},
-        {4,2,5,7},
-        {3,2,5,4},
-        };
-    for(auto&& item:cases){
+void testsortArrayByParityII()
+{
+    my2arr cases = {
+        {0, 1},
+        {1, 0},
+        {4, 2, 5, 7},
+        {3, 2, 5, 4},
+    };
+    for (auto &&item : cases)
+    {
         printVector(item);
-        auto res=sortArrayByParityII(item);
+        auto res = sortArrayByParityII(item);
         printf("sorted:\n");
         printVector(res);
     }
+}
+
+// 242. Valid Anagram
+// Runtime: 32 ms, faster than 51.84% of C++ online submissions for Valid Anagram.
+// Memory Usage: 7.4 MB, less than 54.61% of C++ online submissions for Valid Anagram.
+bool isAnagram(string s, string t)
+{
+    int lens = s.size();
+    int lent = t.size();
+    if (lens != lent)
+    {
+        return false;
+    }
+    vector<int> counter(26, 0);
+    for (int i = 0; i < lens; i++)
+    {
+        counter[s[i] - 97]++;
+    }
+    int pos = 0;
+    for (int j = 0; j < lent; j++)
+    {
+        pos = t[j] - 97;
+        if (counter[pos] <= 0)
+            return false;
+        counter[pos]--;
+    }
+    return true;
+}
+
+void testisAnagram()
+{
+    string s1 = "anagram";
+    string t1 = "nagaram";
+    cout << t1 << " is " << (isAnagram(s1, t1) ? "" : " not ") << "an anagram of " << s1 << endl;
+
+    s1 = "zlap";
+    t1 = "kcqx";
+    cout << t1 << " is " << (isAnagram(s1, t1) ? "" : " not ") << "an anagram of " << s1 << endl;
+
+    s1 = "rat";
+    t1 = "car";
+    cout << t1 << " is " << (isAnagram(s1, t1) ? "" : " not ") << "an anagram of " << s1 << endl;
+
+
+    s1 = "abcdefghigklmnopqrstuvwxyz";
+    t1 = "abcdefghigklmnopqrstuvwwyz";
+    cout << t1 << " is " << (isAnagram(s1, t1) ? "" : " not ") << "an anagram of " << s1 << endl;
+
+    s1 = "abcdefghigklmnopqrstuvwxyz";
+    t1 = "abcdefghigklmnopqrstuvxwyz";
+    cout << t1 << " is " << (isAnagram(s1, t1) ? "" : " not ") << "an anagram of " << s1 << endl;
 }
 
 int main(int arc, const char *argv[])
 {
     // testSortBit();
     // testintersectII();
-    testsortArrayByParityII();
+    // testsortArrayByParityII();
+    testisAnagram();
+    printf("A: %d\n",'A');
+    printf("a: %d\n",'a');
 }
