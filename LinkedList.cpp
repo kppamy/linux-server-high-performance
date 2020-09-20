@@ -276,9 +276,73 @@ void testsortList()
   }
 }
 
+void insert(ListNode *head, ListNode *node)
+{
+  ListNode *tmp = head;
+  while (tmp != node)
+  {
+    if (node->val > tmp->val)
+    {
+      tmp = tmp->next;
+    }
+    else
+      break;
+  }
+  if (tmp == node)
+    return;
+  // [tmp...node-1], shift 1
+  int nextv = tmp->val;
+  tmp->val = node->val;
+  int tv;
+  while (tmp != node)
+  {
+    tv = tmp->next->val;
+    tmp->next->val = nextv;
+    nextv = tv;
+    tmp = tmp->next;
+  }
+}
+
+// 147. Insertion Sort List
+// Runtime: 96 ms, faster than 10.01% of C++ online submissions for Insertion Sort List.
+// Memory Usage: 10 MB, less than 18.80% of C++ online submissions for Insertion Sort List.
+ListNode *insertionSortList(ListNode *head)
+{
+  ListNode* end=head;
+  while(end && end->next){
+    insert(head,end->next);
+    end=end->next;
+  }
+  return head;
+}
+
+void testinsertionSortList(){
+  my2arr cases = {
+          {1, 2},
+                {2, 1},
+      {4, 2, 1, 3},
+      {1, 3, 2},
+      {4, 3, 2, 1},
+      {-1, 5, 3, 4, 0},
+      {1, 2, 6, 4, 5},
+      {},
+  };
+
+  for (auto &&item : cases)
+  {
+    ListNode *head = vectorToListNode(item);
+    prettyPrintLinkedList(head);
+    insertionSortList(head);
+    cout << "sorted list: " << endl;
+    prettyPrintLinkedList(head);
+    cout << endl;
+  }
+}
+
 int main()
 {
 
-  testsortList();
+  // testsortList();
+  testinsertionSortList();
   return 0;
 }
