@@ -306,7 +306,79 @@ void oldTests()
     cout << "elaps: " << elaps * 1000 << " ms" << endl;
 }
 
+#include <map>
+#include <algorithm>
+// 350. Intersection of Two Arrays II
+// Runtime: 12 ms, faster than 66.25% of C++ online submissions for Intersection of Two Arrays II.
+// Memory Usage: 10.4 MB, less than 64.37% of C++ online submissions for Intersection of Two Arrays II.
+vector<int> intersect(vector<int> &nums1, vector<int> &nums2)
+{
+    int len1=nums1.size();
+    int len2=nums2.size();
+    if(len1*len2==0){
+        return {};
+    }
+    sort(nums1.begin(),nums1.end());
+    sort(nums2.begin(), nums2.end());
+    int i=0,j=0;
+    vector<int> out;
+    while(i<len1 && j<len2){
+        if(nums1[i]==nums2[j]){
+            out.push_back(nums1[i]);
+            i++;
+            j++;
+        }else if(nums1[i]<nums2[j]){
+            i++;
+        }else{
+            j++;
+        }
+    }
+    return out;    
+}
+
+// 350. Intersection of Two Arrays II
+// Runtime: 16 ms, faster than 30.45% of C++ online submissions for Intersection of Two Arrays II.
+// Memory Usage: 10.8 MB, less than 43.01% of C++ online submissions for Intersection of Two Arrays II.
+vector<int> intersectHash(vector<int> &nums1, vector<int> &nums2)
+{
+    map<int, int> counter;
+    for (int item : nums1)
+    {
+        counter[item]++;
+    }
+    sort(nums2.begin(), nums2.end());
+    vector<int> out = {};
+    for (int item : nums2)
+    {
+        if (counter.find(item) != counter.end() && counter[item] > 0)
+        {
+            counter[item]--;
+            out.push_back(item);
+        }
+    }
+    return out;
+}
+
+void testintersectII()
+{
+    my2DCases cases = {
+        {{1, 2, 2, 1}, {2, 2}},
+        {{}, {}},
+        {{4, 9, 5}, {9, 4, 9, 8, 4}},
+
+    };
+    for (auto &&item : cases)
+    {
+        printVector(item[0]);
+        printVector(item[1]);
+        auto out = intersect(item[0], item[1]);
+        cout << "result: " << endl;
+        printVector(out);
+    }
+}
+
 int main(int arc, const char *argv[])
 {
-    testSortBit();
+    // testSortBit();
+    testintersectII();
 }

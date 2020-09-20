@@ -6,6 +6,7 @@
 #include "Timer.h"
 
 typedef vector<vector<int>> my2arr;
+typedef vector<my2arr> my2DCases;
 
 
 void timeit(std::function<void()> func)
