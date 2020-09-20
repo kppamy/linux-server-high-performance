@@ -470,7 +470,6 @@ void testisAnagram()
     t1 = "car";
     cout << t1 << " is " << (isAnagram(s1, t1) ? "" : " not ") << "an anagram of " << s1 << endl;
 
-
     s1 = "abcdefghigklmnopqrstuvwxyz";
     t1 = "abcdefghigklmnopqrstuvwwyz";
     cout << t1 << " is " << (isAnagram(s1, t1) ? "" : " not ") << "an anagram of " << s1 << endl;
@@ -480,12 +479,92 @@ void testisAnagram()
     cout << t1 << " is " << (isAnagram(s1, t1) ? "" : " not ") << "an anagram of " << s1 << endl;
 }
 
+// 324. Wiggle Sort II
+void wiggleSort(vector<int> &nums)
+{
+
+    int len = nums.size();
+    if (len <= 1)
+        return;
+    int start = 0;
+    vector<int> out(len, 0);
+    while (start < len)
+    {
+        if (start == len - 1)
+        {
+            out[0] = nums[start];
+            break;
+        }
+        int max = nums[start], maxi = start;
+        int min = nums[start], mini = start;
+        for (int i = start + 1; i < len; i++)
+        {
+            if (nums[i] > max)
+            {
+                max = nums[i];
+                maxi = i;
+            }
+            if (nums[i] < min)
+            {
+                min = nums[i];
+                mini = i;
+            }
+        }
+        out[start + 1] = nums[maxi];
+        if (len % 2)
+        {
+            out[len - start - 1] = nums[mini];
+        }
+        else
+        {
+            out[len - start - 2] = nums[mini];
+        }
+
+        if (start != mini && start != maxi)
+            swap(nums[start], nums[mini]);
+        else if (start == maxi)
+        {
+            swap(nums[start + 1], nums[mini]);
+        }
+        if (maxi != start + 1 && maxi != start)
+            swap(nums[start + 1], nums[maxi]);
+
+        start = start + 2;
+    }
+    nums = out;
+}
+
+void testWiggleSort()
+{
+    my2arr cases = {
+        {6, 5, 5},
+        {5, 3, 1, 2, 6, 7, 8, 5, 5},
+        // output:   [5,8,5,7,3,6,2,6,1]
+        // expected: [5,8,5,7,3,6,2,5,1]
+        {2, 1},
+        {1, 2},
+        {1, 5, 1, 1, 6, 4},
+        {1, 3, 2},
+        {1, 3, 2, 2, 3, 1},
+        {},
+    };
+
+    for (auto &&item : cases)
+    {
+        printVector(item);
+        wiggleSort(item);
+        cout << "sorted : " << endl;
+        printVector(item);
+    }
+}
+
 int main(int arc, const char *argv[])
 {
     // testSortBit();
     // testintersectII();
     // testsortArrayByParityII();
-    testisAnagram();
-    printf("A: %d\n",'A');
-    printf("a: %d\n",'a');
+    // testisAnagram();
+    // printf("A: %d\n", 'A');
+    // printf("a: %d\n", 'a');
+    testWiggleSort();
 }
