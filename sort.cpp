@@ -313,27 +313,34 @@ void oldTests()
 // Memory Usage: 10.4 MB, less than 64.37% of C++ online submissions for Intersection of Two Arrays II.
 vector<int> intersect(vector<int> &nums1, vector<int> &nums2)
 {
-    int len1=nums1.size();
-    int len2=nums2.size();
-    if(len1*len2==0){
+    int len1 = nums1.size();
+    int len2 = nums2.size();
+    if (len1 * len2 == 0)
+    {
         return {};
     }
-    sort(nums1.begin(),nums1.end());
+    sort(nums1.begin(), nums1.end());
     sort(nums2.begin(), nums2.end());
-    int i=0,j=0;
+    int i = 0, j = 0;
     vector<int> out;
-    while(i<len1 && j<len2){
-        if(nums1[i]==nums2[j]){
+    while (i < len1 && j < len2)
+    {
+        if (nums1[i] == nums2[j])
+        {
             out.push_back(nums1[i]);
             i++;
             j++;
-        }else if(nums1[i]<nums2[j]){
+        }
+        else if (nums1[i] < nums2[j])
+        {
             i++;
-        }else{
+        }
+        else
+        {
             j++;
         }
     }
-    return out;    
+    return out;
 }
 
 // 350. Intersection of Two Arrays II
@@ -377,8 +384,52 @@ void testintersectII()
     }
 }
 
+// 922. Sort Array By Parity II
+// Runtime: 44 ms, faster than 71.38% of C++ online submissions for Sort Array By Parity II.
+// Memory Usage: 21.5 MB, less than 70.37% of C++ online submissions for Sort Array By Parity II.
+vector<int> sortArrayByParityII(vector<int> &A)
+{
+    int len = A.size();
+    if (len == 0)
+    {
+        return {};
+    }
+    vector<int> out(len, 0);
+    int odd = 1, even = 0;
+    for (int i = 0; i < A.size(); i++)
+    {
+        if (A[i] % 2)
+        {
+            out[odd] = A[i];
+            odd += 2;
+        }
+        else
+        {
+            out[even] = A[i];
+            even += 2;
+        }
+    }
+    return out;
+}
+
+void testsortArrayByParityII(){
+    my2arr cases={
+        {0,1},
+        {1,0},
+        {4,2,5,7},
+        {3,2,5,4},
+        };
+    for(auto&& item:cases){
+        printVector(item);
+        auto res=sortArrayByParityII(item);
+        printf("sorted:\n");
+        printVector(res);
+    }
+}
+
 int main(int arc, const char *argv[])
 {
     // testSortBit();
-    testintersectII();
+    // testintersectII();
+    testsortArrayByParityII();
 }
