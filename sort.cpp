@@ -520,15 +520,17 @@ void wiggleSort(vector<int> &nums)
             out[len - start - 2] = nums[mini];
         }
 
-        if (start != mini && start != maxi)
-            swap(nums[start], nums[mini]);
-        else if (start == maxi)
+        //  if start is the maximum, only need to swap start+1 and minimum
+        //otherwise, put minimum at the first, and swap the maximum and start+1.
+        if (start == maxi)
         {
             swap(nums[start + 1], nums[mini]);
         }
-        if (maxi != start + 1 && maxi != start)
+        else
+        {
+            swap(nums[start], nums[mini]);
             swap(nums[start + 1], nums[maxi]);
-
+        }
         start = start + 2;
     }
     nums = out;
@@ -537,6 +539,7 @@ void wiggleSort(vector<int> &nums)
 void testWiggleSort()
 {
     my2arr cases = {
+        {5, 6, 1},
         {6, 5, 5},
         {5, 3, 1, 2, 6, 7, 8, 5, 5},
         // output:   [5,8,5,7,3,6,2,6,1]
