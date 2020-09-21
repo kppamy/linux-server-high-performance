@@ -270,14 +270,14 @@ public:
     void foo(function<void()> printFoo)
     {
 
-        for (int i = 0; i < n;i++)
+        for (int i = 0; i < n; i++)
         {
 
             // printFoo() outputs "foo". Do not change or remove this line.
             if (who.load(memory_order_acquire))
             {
                 printFoo();
-                who.store(false,memory_order_release);
+                who.store(false, memory_order_release);
             }
             else
                 this_thread::yield();
@@ -294,7 +294,7 @@ public:
             if (!who.load(memory_order_acquire))
             {
                 printBar();
-                who.store(true,memory_order_release);
+                who.store(true, memory_order_release);
             }
             else
                 this_thread::yield();
@@ -335,9 +335,120 @@ void testPrintFooBar0lck()
     cout << "sizeof atomic<int> who{1} " << sizeof(atomic<int>) << endl;
     cout << "sizeof FooBar0Lck " << sizeof(FooBar0Lck) << endl;
     thread t1(bind(&FooBar0Lck::foo, &fb, &pFoo));
-    thread t2(bind(& FooBar0Lck::bar, &fb, &pBar));
+    thread t2(bind(&FooBar0Lck::bar, &fb, &pBar));
     t1.join();
     t2.join();
+}
+
+void printN(int num)
+{
+    cout << num;
+}
+
+// 1116. Print Zero Even Odd
+class ZeroEvenOdd
+{
+private:
+    int n;
+    int progress;
+    mutex mutZ;
+    mutex mutE;
+    mutex mutO;
+
+public:
+    ZeroEvenOdd(int n)
+    {
+        this->n = n;
+        mutZ.lock();
+        mutE.lock();
+        mutO.lock();
+        progress=0;
+    }
+
+    ~ZeroEvenOdd()
+    {
+        mutZ.unlock();
+        mutE.unlock();
+        mutO.unlock();
+    }
+
+    // printNumber(x) outputs "x", where x is an integer.
+    void zero(function<void(int)> printNumber)
+    {
+        // print
+        while (n > 0)
+        {
+            printNumber(0);
+            progress++;
+            if (progress % 2)
+            {
+                mutO.unlock();
+            }
+            else
+            {
+                mutE.unlock();
+            }
+            // cout << "\n zero lock " << endl;
+            mutZ.lock();
+            // cout << "\n zero unlock " << endl;
+        }
+    }
+
+    void odd(function<void(int)> printNumber)
+    {
+
+        // print
+        while (n > 0)
+        {
+            // cout << "\n odd lock " << endl;
+            mutO.lock();
+            // cout << "\n odd unlock " << endl;
+            printNumber(progress);
+            cout << " ";
+            n--;
+            mutZ.unlock();
+            if (n == 1 && (progress + 1) % 2 == 0)
+            {
+                break;
+            }
+        }
+    }
+
+    void even(function<void(int)> printNumber)
+    {
+
+        while (n > 0)
+        {
+            // cout << "\n even lock " << endl;
+            mutE.lock();
+            // cout << "\n even unlock " << endl;
+            printNumber(progress);
+            cout << " ";
+            n--;
+            mutZ.unlock();
+            if (n == 1 && (progress + 1) % 2 == 1)
+            {
+                break;
+            }
+        }
+    }
+};
+
+void testZeroEvenOdd()
+{
+    int cases = 100;
+    while (cases > 0)
+    {
+        ZeroEvenOdd test(cases);
+        thread t1(bind(&ZeroEvenOdd::zero, &test, &printN));
+        thread t2(bind(&ZeroEvenOdd::odd, &test, &printN));
+        thread t3(bind(&ZeroEvenOdd::even, &test, &printN));
+        t1.join();
+        t2.join();
+        t3.join();
+        cases--;
+        cout<<endl;
+    }
 }
 
 int main(int argc, char const *argv[])
@@ -346,6 +457,7 @@ int main(int argc, char const *argv[])
     // testPrintInOrder();
     // timeit(testPrintInOrderModernWay);
     // timeit(testPrintFooBar);
-    timeit(testPrintFooBar0lck);
+    // timeit(testPrintFooBar0lck);
+    testZeroEvenOdd();
     return 0;
 }
