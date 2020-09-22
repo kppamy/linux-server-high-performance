@@ -51,6 +51,9 @@ void testRecentCounter()
 }
 
 // 622. Design Circular Queue
+// Runtime: 56 ms, faster than 36.42% of C++ online submissions for Design Circular Queue.
+// Memory Usage: 16.8 MB, less than 46.43% of C++ online submissions for Design Circular Queue.
+
 class MyCircularQueue
 {
 public:
@@ -69,8 +72,9 @@ public:
         }
         size++;
         rear++;
-        if(rear>=capacity){
-            rear=0;
+        if (rear == capacity)
+        {
+            rear = 0;
         }
         data[rear] = value;
         return true;
@@ -85,13 +89,14 @@ public:
         }
         size--;
         front++;
-        if (size==0)
+        if (size == 0)
         {
             front = 0;
-            rear = 0;
+            rear = -1;
         }
-        if(front==capacity){
-            front=0;
+        if (front == capacity)
+        {
+            front = 0;
         }
         return true;
     }
@@ -99,15 +104,15 @@ public:
     /** Get the front item from the queue. */
     int Front()
     {
-        if(isEmpty())
-        return -1;
+        if (isEmpty())
+            return -1;
         return data[front];
     }
 
     /** Get the last item from the queue. */
     int Rear()
     {
-        if(isEmpty())
+        if (isEmpty())
             return -1;
         return data[rear];
     }
@@ -161,9 +166,8 @@ void testCircularQueue()
     // circularQueue->enQueue(4);                               // return true
     cout << "circularQueue->enQueue(4)" << ((circularQueue->enQueue(4)) ? "" : " not ") << "success" << endl;
 
- // circularQueue->enQueue(5);                               // return false, the queue is full
+    // circularQueue->enQueue(5);                               // return false, the queue is full
     cout << "circularQueue->enQueue(5)" << ((circularQueue->enQueue(5)) ? "" : " not ") << "success" << endl;
-
 
     // circularQueue->Rear();                                   // return 3
     cout << "circularQueue->Rear() " << circularQueue->Rear() << endl;
@@ -171,7 +175,7 @@ void testCircularQueue()
     // circularQueue->isFull();                                 // return true
     cout << "circularQueue->isFull()" << ((circularQueue->isFull()) ? " YES " : " NO ") << endl;
 
-        // circularQueue->deQueue();                                // return true
+    // circularQueue->deQueue();                                // return true
     cout << "circularQueue->deQueue()" << ((circularQueue->deQueue()) ? "" : " not ") << "success" << endl;
     // circularQueue->Rear();                                   // return 1
     cout << "circularQueue->Rear() " << circularQueue->Rear() << endl;
@@ -183,7 +187,7 @@ void testCircularQueue()
     cout << "circularQueue->deQueue()" << ((circularQueue->deQueue()) ? "" : " not ") << "success" << endl;
 
     // circularQueue->enQueue(4);                               // return true
-    cout << "circularQueue->enQueue(4)" << ((circularQueue->enQueue(4)) ? "" : " not ") << "success" << endl;
+    cout << "circularQueue->enQueue(6)" << ((circularQueue->enQueue(6)) ? "" : " not ") << "success" << endl;
 
     // circularQueue->Rear();                                   // return 4
     cout << "circularQueue->Rear() " << circularQueue->Rear() << endl;
