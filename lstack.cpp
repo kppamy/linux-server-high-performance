@@ -228,7 +228,6 @@ void testMinStack3()
     cout << "minimum: " << minStack->getMin() << endl;
     minStack->pop();
 
-
     // "push","top","getMin", "push","top","getMin","pop","getMin"]
     // [2147483647],[],[],[-2147483648],[],[],[],[]]
 
@@ -284,12 +283,99 @@ void testMinStack4()
     minStack->pop();
 }
 
+#include <queue>
+// 225. Implement Stack using Queues
+class QStack
+{
+public:
+    /** Initialize your data structure here. */
+    QStack()
+    {
+    }
+
+    /** Push element x onto stack. */
+    void push(int x)
+    {
+        data.push(x);
+        rear = x;
+        size++;
+        cout << __func__ << " " << x << " " << endl;
+    }
+
+    /** Removes the element on top of the stack and returns that element. */
+    int pop()
+    {
+        if (empty())
+            return INT_MAX;
+        cout << __func__ << " " << rear << endl;
+        int counter = size;
+        queue<int> backup;
+        int tmp;
+        while (counter > 1)
+        {
+            tmp = data.front();
+            backup.push(tmp);
+            cout << tmp << " ";
+            data.pop();
+            counter--;
+        }
+        cout << endl;
+        data = backup;
+        int end = rear;
+        size--;
+        rear = (size > 0) ? tmp : INT_MAX;
+        return end;
+    }
+
+    /** Get the top element. */
+    int top()
+    {
+        cout << __func__ << " " << rear << endl;
+        if (!empty())
+            return rear;
+        return INT_MAX;
+    }
+
+    /** Returns whether the stack is empty. */
+    bool empty()
+    {
+        cout << __func__ << "? size: " << size << endl;
+        return size == 0;
+    }
+
+private:
+    queue<int> data;
+    int size = 0;
+    int rear;
+};
+
+void testQstack()
+{
+    QStack *stack = new QStack();
+    stack->push(1);
+    stack->push(2);
+    stack->top();   // returns 2
+    stack->pop();   // returns 2
+    stack->empty(); // returns false
+    stack->pop();   // returns 2
+    stack->push(3);
+    stack->top(); // returns 2
+    stack->push(4);
+    stack->top(); // returns 2
+    stack->push(5);
+    stack->top(); // returns 2
+    stack->pop(); // returns 2
+    stack->pop(); // returns 2
+    stack->top(); // returns 2
+}
+
 int main(int argc, char const *argv[])
 {
     // testsValid();
     // testMinStack2();
-    testMinStack3();
+    // testMinStack3();
     // testMinStack4();
     // formatCall();
+    testQstack();
     return 0;
 }
