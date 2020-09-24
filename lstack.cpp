@@ -285,6 +285,8 @@ void testMinStack4()
 
 #include <queue>
 // 225. Implement Stack using Queues
+// Runtime: 0 ms, faster than 100.00% of C++ online submissions for Implement Stack using Queues.
+// Memory Usage: 7.1 MB, less than 18.28% of C++ online submissions for Implement Stack using Queues.
 class QStack
 {
 public:
@@ -369,6 +371,72 @@ void testQstack()
     stack->top(); // returns 2
 }
 
+// 331. Verify Preorder Serialization of a Binary Tree
+// Runtime: 52 ms, faster than 5.92% of C++ online submissions for Verify Preorder Serialization of a Binary Tree.
+// Memory Usage: 38.6 MB, less than 5.03% of C++ online submissions for Verify Preorder Serialization of a Binary Tree.
+bool isValidSerialization(string preorder)
+{
+    stack<string> sta;
+    int len = preorder.size();
+    auto check = [&](string &&nd) {
+        if (nd != "#")
+        {
+            sta.push(nd);
+            return true;
+        }
+        while (true)
+        {
+            if (sta.empty())
+                return len==0;
+            if (sta.top() == "#")
+            {
+                sta.pop();
+                sta.pop();
+            }
+            else
+            {
+                sta.push("#");
+                break;
+            }
+        }
+        return true;
+    };
+
+    while (true)
+    {
+        int pos = preorder.find(',');
+        if (pos == -1)
+        {
+            len = 0;
+            if (!check(move(preorder)))
+                return false;
+            break;
+        }
+        else
+        {
+            if (!check(preorder.substr(0, pos)))
+                return false;
+            preorder = preorder.substr(pos + 1);
+        }
+    }
+    return sta.size() == 0;
+}
+
+void testisValidSerialization()
+{
+    vector<string> cases = {
+        "9,#,92,#,#",
+        "9,#,#",
+        "9,3,4,#,#,1,#,#,2,#,6,#,#",
+        "#,9,#",
+        "1,#",
+        "9,#,#,1"};
+    for (auto &&str : cases)
+    {
+        cout << str + "  is" << (isValidSerialization(str) ? "" : " not ") << " valid preorder serialization " << endl;
+    }
+}
+
 int main(int argc, char const *argv[])
 {
     // testsValid();
@@ -376,6 +444,7 @@ int main(int argc, char const *argv[])
     // testMinStack3();
     // testMinStack4();
     // formatCall();
-    testQstack();
+    // testQstack();
+    testisValidSerialization();
     return 0;
 }
