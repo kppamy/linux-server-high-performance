@@ -482,70 +482,91 @@ void testisAnagram()
 // 324. Wiggle Sort II
 void wiggleSort(vector<int> &nums)
 {
-
     int len = nums.size();
     if (len <= 1)
         return;
+    // 8,1,6,3,4,5,2,7....
+    auto vindex=[&](int i)->int{
+        int even=(len%2)?(len-1-i):(len-2-i);
+        return (i%2)?i:even;
+    };
+
     int start = 0;
-    vector<int> out(len, 0);
     while (start < len)
     {
         if (start == len - 1)
         {
-            out[0] = nums[start];
             break;
         }
-        int max = nums[start], maxi = start;
-        int min = nums[start], mini = start;
-        for (int i = start + 1; i < len; i++)
+
+        int maxi = vindex(start), max = nums[maxi];
+        int mini = vindex(start), min = nums [mini];
+        int i = -1;
+        for (int vi = start + 1; vi < len; vi++)
         {
-            if (nums[i] > max)
+            i=vindex(vi);
+            if (nums[i] >= max)
             {
                 max = nums[i];
                 maxi = i;
             }
-            if (nums[i] < min)
+            if (nums[i] <= min)
             {
                 min = nums[i];
                 mini = i;
             }
         }
-        out[start + 1] = nums[maxi];
-        if (len % 2)
-        {
-            out[len - start - 1] = nums[mini];
-        }
-        else
-        {
-            out[len - start - 2] = nums[mini];
-        }
-
-        //  if start is the maximum, only need to swap start+1 and minimum
-        //otherwise, put minimum at the first, and swap the maximum and start+1.
-        if (start == maxi)
-        {
-            swap(nums[start + 1], nums[mini]);
-        }
-        else
-        {
-            swap(nums[start], nums[mini]);
-            swap(nums[start + 1], nums[maxi]);
+        int tmaxi=vindex(start+1);
+        int tmini=vindex(start);
+        if(maxi==tmini){
+           swap(nums[maxi],nums[mini]);
+        }else{
+            swap(nums[tmini],nums[mini]);
+            swap(nums[tmaxi],nums[maxi]);
         }
         start = start + 2;
     }
-    nums = out;
+}
+
+
+my2arr&& generateWiggleInputes(){
+    my2arr cases = {
+        {6, 5, 5},
+        {5, 6, 1},
+        {2, 1},
+        {1, 2},
+        {1,3,2,2,3,1},
+        // output:  [1,3,1,2,3,2]
+        // expected: [2,3,1,3,1,2]
+        {5, 3, 1, 2, 6, 7, 8, 5, 5},
+        // output:   [5,8,5,7,3,6,2,6,1]
+        // expected: [5,8,5,7,3,6,2,5,1]
+
+        {1, 5, 1, 1, 6, 4},
+        {1, 3, 2},
+        {1, 3, 2, 2, 3, 1},
+        {},
+    };
+    return move(cases);
 }
 
 void testWiggleSort()
 {
     my2arr cases = {
-        {5, 6, 1},
+        {1,5,3,2,4,1,2,1,5,2,4,3,1,2,2,2,1},
+        // Output: [2,5,2,5,2,4,2,1,2,4,1,3,1,3,1,2,1]
+        // Expected: [2,5,2,5,2,4,2,4,1,3,1,3,1,2,1,2,1]
+        {4,5,5,5,5,6,6,6},
         {6, 5, 5},
+        {5, 6, 1},
+        {2, 1},
+        {1, 2},
+        {1,3,2,2,3,1},
+        // output:  [1,3,1,2,3,2]
+        // expected: [2,3,1,3,1,2]
         {5, 3, 1, 2, 6, 7, 8, 5, 5},
         // output:   [5,8,5,7,3,6,2,6,1]
         // expected: [5,8,5,7,3,6,2,5,1]
-        {2, 1},
-        {1, 2},
         {1, 5, 1, 1, 6, 4},
         {1, 3, 2},
         {1, 3, 2, 2, 3, 1},
@@ -561,6 +582,20 @@ void testWiggleSort()
     }
 }
 
+
+template<typename p>
+void test_tem(p prt){
+    prt();
+}
+
+void fun1(){
+    cout<<"fun1"<<endl;
+}
+
+void fun2(int a){
+    cout<<"fun2 "<<a<<endl;
+}
+
 int main(int arc, const char *argv[])
 {
     // testSortBit();
@@ -570,4 +605,5 @@ int main(int arc, const char *argv[])
     // printf("A: %d\n", 'A');
     // printf("a: %d\n", 'a');
     testWiggleSort();
+    // format_test(wiggleSort,generateWiggleInputes,printVector);
 }
