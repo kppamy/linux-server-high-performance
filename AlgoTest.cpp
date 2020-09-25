@@ -112,6 +112,44 @@ int removeDup(vector<int> &nums)
     return j;
 }
 
+
+int square(unsigned int start, unsigned int end, unsigned int num)
+{
+    //recursion faster than iteration ??
+    if (end - start == 1)
+        return start;
+    long long mid = (start + end) / 2;
+    if (mid * mid < num)
+        //  try x/2, 3/4 x
+        return square(mid, end, num);
+    else if (mid * mid == num)
+        return mid;
+    else
+    {
+        //try x/4,x/2
+        return square(start, mid, num);
+    }
+}
+
+// 69. Sqrt(x)
+int mySqrt(int x)
+{
+    if (x == 1)
+        return 1;
+    else
+        return square(0, x, x);
+}
+
+void testSqrt()
+{
+    cout << "mySqrt of INT64_MAX is " << mySqrt(INT64_MAX) << endl;
+    cout << "mySqrt of 1 is " << mySqrt(1) << endl;
+    cout << "mySqrt of 4 is " << mySqrt(4) << endl;
+    cout << "mySqrt of 6 is " << mySqrt(6) << endl;
+    cout << "mySqrt of 8 is " << mySqrt(8) << endl;
+    cout << "mySqrt of 9 is " << mySqrt(9) << endl;
+}
+
 int main(int argc, char **argv)
 {
     // cout << "begin algo test: " << endl;

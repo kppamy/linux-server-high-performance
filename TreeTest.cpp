@@ -146,55 +146,6 @@ int maxDepth(TreeNode *root)
     return (max(left, right) + 1);
 }
 
-void testmaxDepth()
-{
-
-    vector<int> tr4 = {1, 1}; //false
-    TreeNode *root = buildTree(tr4);
-    prettyPrintTree(root, 2);
-    cout << "maxDepth: " << maxDepth(root) << endl;
-    cout << endl;
-
-    vector<int> arr = {3, 9, 20, -1, -1, 15, 7};
-    root = buildTree(arr);
-    prettyPrintTree(root, 3);
-    cout << "maxDepth: " << maxDepth(root) << endl;
-
-    //     2
-    //    / \
-    //   1   3
-    vector<int> tr1 = {2, 1, 3}; //true
-    printVector(tr1);
-    root = buildTree(tr1);
-    prettyPrintTree(root, 2);
-    cout << "maxDepth: " << maxDepth(root) << endl;
-    cout << endl;
-
-    //     5
-    //    / \
-    //   1   4
-    //      / \
-    //     3   6
-    vector<int> tr2 = {5, 1, 4, -1, -1, 3, 6}; //false
-    printVector(tr2);
-    root = buildTree(tr2);
-    prettyPrintTree(root, 3);
-    cout << "maxDepth: " << maxDepth(root) << endl;
-    cout << endl;
-
-    //     10
-    //    /   \   
-    //    5   15
-    //       /   \   
-    //       6   20
-    vector<int> tr3 = {10, 5, 15, -1, -1, 6, 20}; //false
-    printVector(tr3);
-    root = buildTree(tr3);
-    prettyPrintTree(root, 3);
-    cout << "maxDepth: " << maxDepth(root) << endl;
-    cout << endl;
-}
-
 // 111. Minimum Depth of Binary Tree
 // Runtime: 20 ms, faster than 41.10% of C++ online submissions for Minimum Depth of Binary Tree.
 // Memory Usage: 20.1 MB, less than 53.37% of C++ online submissions for Minimum Depth of Binary Tree
@@ -211,52 +162,6 @@ int minDepth(TreeNode *root)
     if (root->right)
         right = minDepth(root->right);
     return (min(left, right) + 1);
-}
-
-void testminDepth()
-{
-
-    vector<int> tr4 = {1, 1}; //false
-    TreeNode *root = buildTree(tr4);
-    prettyPrintTree(root, 2);
-    cout << "minDepth: " << minDepth(root) << endl;
-    cout << endl;
-
-    vector<int> arr = {3, 9, 20, -1, -1, 15, 7};
-    root = buildTree(arr);
-    prettyPrintTree(root, 3);
-    cout << "minDepth: " << minDepth(root) << endl;
-
-    //     2
-    //    / \
-    //   1   3
-    vector<int> tr1 = {2, 1, 3}; //true
-    root = buildTree(tr1);
-    prettyPrintTree(root, 2);
-    cout << "minDepth: " << minDepth(root) << endl;
-    cout << endl;
-
-    //     5
-    //    / \
-    //   1   4
-    //      / \
-    //     3   6
-    vector<int> tr2 = {5, 1, 4, -1, -1, 3, 6}; //false
-    root = buildTree(tr2);
-    prettyPrintTree(root, 3);
-    cout << "minDepth: " << minDepth(root) << endl;
-    cout << endl;
-
-    //     10
-    //    /   \   
-    //    5   15
-    //       /   \   
-    //       6   20
-    vector<int> tr3 = {10, 5, 15, -1, -1, 6, 20}; //false
-    root = buildTree(tr3);
-    prettyPrintTree(root, 3);
-    cout << "minDepth: " << minDepth(root) << endl;
-    cout << endl;
 }
 
 int maxDifference(TreeNode *root)
@@ -286,64 +191,6 @@ bool isBalanced(TreeNode *root)
     return true;
 }
 
-void testisBalanced()
-{
-
-    vector<int> tr4 = {1, 1, -1, -1, 1}; //false
-    TreeNode *root = buildTree(tr4);
-    prettyPrintTree(root, 3);
-    cout << "isBalanced: " << isBalanced(root) << endl;
-    cout << endl;
-
-    //          1
-    //        /   \   
-    //        2    2
-    //      /       \   
-    //      3         3
-    //    /             \
-    //    4               4
-    vector<int> tr0 = {1, 2, 2, 3, -1, -1, 3, 4, -1, -1, 4}; //false
-    root = buildTree(tr0);
-    prettyPrintTree(root, 5);
-    cout << "isBalanced: " << isBalanced(root) << endl;
-    cout << endl;
-
-    vector<int> arr = {3, 9, 20, -1, -1, 15, 7};
-    root = buildTree(arr);
-    prettyPrintTree(root, 3);
-    cout << "isBalanced: " << isBalanced(root) << endl;
-
-    //     2
-    //    / \
-    //   1   3
-    vector<int> tr1 = {2, 1, 3}; //true
-    root = buildTree(tr1);
-    prettyPrintTree(root, 2);
-    cout << "isBalanced: " << isBalanced(root) << endl;
-    cout << endl;
-
-    //     5
-    //    / \
-    //   1   4
-    //      / \
-    //     3   6
-    vector<int> tr2 = {1, 2, 2, 3, 3, -1, -1, 4, 4}; //false
-    root = buildTree(tr2);
-    prettyPrintTree(root, 4);
-    cout << "isBalanced: " << isBalanced(root) << endl;
-    cout << endl;
-
-    //     10
-    //    /   \   
-    //    5   15
-    //       /   \   
-    //       6   20
-    vector<int> tr3 = {10, 5, 15, -1, -1, 6, 20}; //false
-    root = buildTree(tr3);
-    prettyPrintTree(root, 3);
-    cout << "isBalanced: " << isBalanced(root) << endl;
-    cout << endl;
-}
 
 bool validate(TreeNode *node, int parentv, bool isroot, bool isleft)
 {
@@ -432,50 +279,6 @@ bool isValidBSTList(TreeNode *root)
         ++fitr;
     }
     return true;
-}
-
-void testIsValidBST()
-{
-    //     2
-    //    / \
-    //   1   3
-    vector<int> tr1 = {2, 1, 3}; //true
-    printVector(tr1);
-    TreeNode *root = buildTree(tr1);
-    prettyPrintTree(root, 2);
-    cout << " is " << (isValidBST(root) ? "" : " not ") << "valid BST" << endl;
-    cout << endl;
-
-    //     5
-    //    / \
-    //   1   4
-    //      / \
-    //     3   6
-    vector<int> tr2 = {5, 1, 4, -1, -1, 3, 6}; //false
-    printVector(tr2);
-    root = buildTree(tr2);
-    prettyPrintTree(root, 3);
-    cout << " is " << (isValidBST(root) ? "" : " not ") << "valid BST" << endl;
-    cout << endl;
-
-    //     10
-    //    /   \   
-    //    5   15
-    //       /   \   
-    //       6   20
-    vector<int> tr3 = {10, 5, 15, -1, -1, 6, 20}; //false
-    printVector(tr3);
-    root = buildTree(tr3);
-    prettyPrintTree(root, 3);
-    cout << " is " << (isValidBST(root) ? "" : " not ") << "valid BST" << endl;
-    cout << endl;
-
-    vector<int> tr4 = {1, 1}; //false
-    printVector(tr4);
-    root = buildTree(tr4);
-    prettyPrintTree(root, 2);
-    cout << " is " << (isValidBST(root) ? "" : " not ") << "valid BST" << endl;
-    cout << endl;
 }
 
 void BinaryTree::printBinaryTree(const TreeNode *root)
@@ -636,87 +439,98 @@ void BSTree<T>::del(TreeNodeT<T> *&root, T val)
     }
 }
 
-int square(unsigned int start, unsigned int end, unsigned int num)
-{
-    //recursion faster than iteration ??
-    if (end - start == 1)
-        return start;
-    long long mid = (start + end) / 2;
-    if (mid * mid < num)
-        //  try x/2, 3/4 x
-        return square(mid, end, num);
-    else if (mid * mid == num)
-        return mid;
-    else
-    {
-        //try x/4,x/2
-        return square(start, mid, num);
-    }
-}
-
-// 69. Sqrt(x)
-int mySqrt(int x)
-{
-    if (x == 1)
-        return 1;
-    else
-        return square(0, x, x);
-}
-
-void testSqrt()
-{
-    cout << "mySqrt of INT64_MAX is " << mySqrt(INT64_MAX) << endl;
-    cout << "mySqrt of 1 is " << mySqrt(1) << endl;
-    cout << "mySqrt of 4 is " << mySqrt(4) << endl;
-    cout << "mySqrt of 6 is " << mySqrt(6) << endl;
-    cout << "mySqrt of 8 is " << mySqrt(8) << endl;
-    cout << "mySqrt of 9 is " << mySqrt(9) << endl;
-}
-
-void testTree()
-{
-    cout << "please input the tree nodes" << endl;
-    // right tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
-    // left tree: 1 -1 2 -1 3 -1 4 -1 5 6 -1 7 -1 -1 -1
-    // 3 1 -1 -1 5 4 -1 -1 1 -1 -1
-    // 1 2 -1 -1 -1
-    // 1 2 -1 4 -1 -1 3 -1 -1
-    TreeNode *root = buildTree();
-    Tree tt;
-    int dpt = tt.maxDepth(root);
-    prettyPrintTree(root, dpt);
-    cout << "depth of the tree: " << dpt << endl;
-    // cout << "is BST ? " << tt.isValidBST(root) << endl;
-    BinaryTree bt;
-
-    bt.printBinaryTree(root);
-    int a = 0;
-    cout << ((a = 0) == 0) << endl;
-    BSTree<int> bst;
-
-    // vector<int> nodes{7, 2, 4, 6, 3, 1, 5};
-    vector<int> nodes{4, 2, 1, 3, 6, 5, 7};
-    for (int val : nodes)
-    {
-        // bst.insert(root, val);
-    }
-    bst.printBinaryTree(root);
-}
-
 // 167. Two Sum II - Input array is sorted
 // two sum
 vector<int> twoSum(vector<int> &numbers, int target)
 {
 }
 
+#include <stack>
+// 145. Binary Tree Postorder Traversal
+// Runtime: 0 ms, faster than 100.00% of C++ online submissions for Binary Tree Postorder Traversal.
+// Memory Usage: 8.5 MB, less than 69.18% of C++ online submissions for Binary Tree Postorder Traversal.
+vector<int> postorderTraversal(TreeNode *root)
+{
+    if (!root)
+        return {};
+    stack<TreeNode *> nodes;
+    nodes.push(root);
+    vector<int> post;
+    TreeNode *tmp = root;
+    stack<TreeNode *> parents;
+    while (true)
+    {
+        if (!parents.empty() && tmp == parents.top())
+        {
+            nodes.pop();
+            post.push_back(tmp->val);
+            parents.pop();
+        }
+        else
+        {
+            if (tmp->right)
+                nodes.push(tmp->right);
+            if (tmp->left)
+                nodes.push(tmp->left);
+            if (!tmp->left && !tmp->right)
+            {
+                nodes.pop();
+                post.push_back(tmp->val);
+            }
+            else
+            {
+                parents.push(tmp);
+            }
+        }
+        if (nodes.empty())
+        {
+            break;
+        }
+        tmp = nodes.top();
+    }
+    return post;
+}
+
+template <typename f, typename u>
+void testTree(f fuc, string name, u print = nullptr)
+{
+    my2arr cases = {
+        {}, 
+        {1},
+        {1, 1},
+        {1, 2},
+        {2, 1, 3},
+        {3, 1, 2},
+        {1, -1, 2},
+        {1, -1, 2, 3},
+        {1, 2, -1, -1, 3},
+        {5, 1, 4, -1, -1, 3, 6},
+        {10, 5, 15, -1, -1, 6, 20},
+        {1, 2, 2, 3, -1, -1, 3, 4, -1, -1, 4},
+        {3, 9, 20, -1, -1, 15, 7},
+        {1, 2, 2, 3, 3, -1, -1, 4, 4},
+        {10, 5, 15, -1, -1, 6, 20},
+    };
+
+    for (auto &&test : cases)
+    {
+        printVector(test);
+        TreeNode *root = buildTree(test);
+        prettyPrintTree(root, maxDepth(root));
+        cout << name + ": ";
+        auto &&res = fuc(root);
+        print(res);
+        cout << endl;
+    }
+}
+
+
 int main(int argc, char const *argv[])
 {
-
-    // testSqrt();
-
-    // testIsValidBST();
-    // timeit(testmaxDepth);
-    // timeit(testminDepth);
-    timeit(testisBalanced);
+    // testTree(isValidBST,"isValidBST",printInt);
+    // testTree(maxDepth,"maxDepth",printInt);
+    // testTree(minDepth,"minDepth",printInt);
+    // testTree(isBalanced,"isBalanced",printInt);
+    testTree(postorderTraversal, "postorderTraversal", printVector);
     return 0;
 }

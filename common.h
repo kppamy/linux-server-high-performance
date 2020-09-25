@@ -18,6 +18,10 @@ void timeit(std::function<void()> func)
     std::cout << "time cost: " << t.miniSeconds() << " ms" << endl;
 }
 
+void printInt(int n){
+    cout<<" "<<n<<" ";
+}
+
 void printVector(std::vector<int> &input)
 {
 
