@@ -45,23 +45,23 @@ Node *buildNaryNode(vector<int> &bfs_storage)
     int len = bfs_storage.size();
     if (len == 0)
         return nullptr;
-    Node *root=nullptr;
+    Node *root = nullptr;
     queue<Node *> prelevel;
     queue<Node *> nextlevel;
     vector<Node *> children;
-    auto update=[&](){
+    auto update = [&]() {
         if (!prelevel.empty())
-            {
-                Node *parent = prelevel.front();
-                parent->children = children;
-                prelevel.pop();
-            }
-            children.clear();
-            if (prelevel.size() == 0)
-            {
-                prelevel = nextlevel;
-                nextlevel= queue<Node*>();
-            }
+        {
+            Node *parent = prelevel.front();
+            parent->children = children;
+            prelevel.pop();
+        }
+        children.clear();
+        if (prelevel.size() == 0)
+        {
+            prelevel = nextlevel;
+            nextlevel = queue<Node *>();
+        }
     };
 
     for (int node : bfs_storage)
@@ -81,9 +81,29 @@ Node *buildNaryNode(vector<int> &bfs_storage)
     return root;
 }
 
+#include <stack>
 // 589. N-ary Tree Preorder Traversal
+// Runtime: 36 ms, faster than 98.13% of C++ online submissions for N-ary Tree Preorder Traversal.
+// Memory Usage: 11.4 MB, less than 24.08% of C++ online submissions for N-ary Tree Preorder Traversal.
 vector<int> preorder(Node *root)
 {
+    if (!root)
+        return {};
+    stack<Node *> data;
+    data.push(root);
+    vector<int> ordered;
+    while (!data.empty())
+    {
+        Node *tp = data.top();
+        ordered.push_back(tp->val);
+        data.pop();
+        int sz = tp->children.size();
+        for (int i = sz - 1; i >= 0; i--)
+        {
+            data.push(tp->children[i]);
+        }
+    }
+    return ordered;
 }
 
 #include "common.h"
@@ -109,6 +129,7 @@ void testNaryTree(f fuc, string name, u print = nullptr)
 int main(int argc, char const *argv[])
 {
     /* code */
-    testNaryTree(maxDepth,"maxDepth",printInt);
+    // testNaryTree(maxDepth,"maxDepth",printInt);
+    testNaryTree(preorder, "preorder", printVector);
     return 0;
 }

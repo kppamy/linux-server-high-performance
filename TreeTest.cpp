@@ -103,7 +103,7 @@ void build(TreeNode *pare, int i, const vector<int> &arr, int len)
     }
 };
 
-// build tree from arr storage, for parent i, left:2i+1, right:2i+2
+// build tree from arr storage, BFS storage
 TreeNode *buildTree(const vector<int> &arr)
 {
     int len = arr.size();
@@ -190,7 +190,6 @@ bool isBalanced(TreeNode *root)
         return false;
     return true;
 }
-
 
 bool validate(TreeNode *node, int parentv, bool isroot, bool isleft)
 {
@@ -491,22 +490,84 @@ vector<int> postorderTraversal(TreeNode *root)
     return post;
 }
 
+#include <queue>
+// 101. Symmetric Tree
+// Runtime: 4 ms, faster than 92.07% of C++ online submissions for Symmetric Tree.
+// Memory Usage: 18.5 MB, less than 5.00% of C++ online submissions for Symmetric Tree.
+bool isSymmetric(TreeNode *root)
+{
+    queue<TreeNode *> nodes;
+    stack<int> line;
+    nodes.push(root);
+    auto getval = [&](TreeNode *nd) {
+        return (nd ? nd->val : INT_MAX);
+    };
+
+    auto deline = [&](TreeNode *nd) {
+        if (line.empty())
+            return true;
+        if (getval(nd) != line.top())
+            return false;
+        else
+            line.pop();
+        return true;
+    };
+    while (!nodes.empty())
+    {
+        queue<TreeNode *> next;
+        int sz = nodes.size();
+        int half = 0;
+        int count = 0;
+        while (!nodes.empty())
+        {
+            TreeNode *ft = nodes.front();
+            if (count < sz / 2)
+            {
+                line.push(getval(ft));
+            }
+            else
+            {
+                if (!deline(ft))
+                    return false;
+            }
+            if (ft)
+            {
+                next.push(ft->left);
+                next.push(ft->right);
+            }
+
+            count++;
+            nodes.pop();
+        }
+        if (!line.empty())
+        {
+            return false;
+        }
+        nodes = next;
+    }
+    return true;
+}
+
+
 template <typename f, typename u>
 void testTree(f fuc, string name, u print = nullptr)
 {
     my2arr cases = {
-        {}, 
+        {2, 3, 3, 4, 5, 5, 4, -1, -1, 8, 9, -1, -1, 9, 8},
+        {1, 2, 2, 3, -1, -1, 3, 4, -1, -1, 4},
+        {1, 2, 2, 3, 4, 4, 3},
+        {1, 2, 2, -1, 3, -1, 3},
+        {2, 1, 3},
+        {},
         {1},
         {1, 1},
         {1, 2},
-        {2, 1, 3},
         {3, 1, 2},
         {1, -1, 2},
         {1, -1, 2, 3},
         {1, 2, -1, -1, 3},
         {5, 1, 4, -1, -1, 3, 6},
         {10, 5, 15, -1, -1, 6, 20},
-        {1, 2, 2, 3, -1, -1, 3, 4, -1, -1, 4},
         {3, 9, 20, -1, -1, 15, 7},
         {1, 2, 2, 3, 3, -1, -1, 4, 4},
         {10, 5, 15, -1, -1, 6, 20},
@@ -524,13 +585,13 @@ void testTree(f fuc, string name, u print = nullptr)
     }
 }
 
-
 int main(int argc, char const *argv[])
 {
     // testTree(isValidBST,"isValidBST",printInt);
     // testTree(maxDepth,"maxDepth",printInt);
     // testTree(minDepth,"minDepth",printInt);
     // testTree(isBalanced,"isBalanced",printInt);
-    testTree(postorderTraversal, "postorderTraversal", printVector);
+    // testTree(postorderTraversal, "postorderTraversal", printVector);
+    testTree(isSymmetric, "isSymmetric", printInt);
     return 0;
 }
