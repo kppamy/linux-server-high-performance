@@ -2,6 +2,7 @@
 #include <atomic>
 #include <iostream>
 using namespace std;
+
 // 1116. Print Zero Even Odd
 // Runtime: 48 ms, faster than 60.12% of C++ online submissions for Print Zero Even Odd.
 // Memory Usage: 7.1 MB, less than 15.91% of C++ online submissions for Print Zero Even Odd.
@@ -77,7 +78,7 @@ public:
 
     void even(function<void(int)> printNumber)
     {
-    // if n==0 or n==1, I should never run at all , or i will block at mutE forever. 
+        // if n==0 or n==1, I should never run at all , or i will block at mutE forever.
         while (progress <= n && n > 1)
         {
             mutE.lock();
@@ -119,8 +120,144 @@ void testZeroEvenOdd()
     }
 }
 
+#include <condition_variable>
+// 1116. Print Zero Even Odd using Condition variable
+class ZeroEvenOddC
+{
+private:
+    int n;
+    mutex mut;
+    condition_variable ec;
+    condition_variable zc;
+    int counter = 0;
+
+public:
+    ZeroEvenOddC(int n)
+    {
+        this->n = n;
+    }
+
+    // printNumber(x) outputs "x", where x is an integer.
+    void zero(function<void(int)> printNumber)
+    {
+        while (counter < n)
+        {
+            printNumber(0);
+            counter++;
+            if (counter % 2)
+            {
+            }
+            else
+            {
+                // unique_lock<mutex> lck(mut);
+                ec.notify_one();
+            }
+            unique_lock<mutex> lck(mut);
+            if (counter < n)
+                zc.wait(lck);
+        }
+    }
+
+    void odd(function<void(int)> printNumber)
+    {
+        int last = (n % 2) ? n : n - 1;
+        while (n >= 1)
+        {
+            if (counter == last)
+                break;
+        }
+    }
+
+    void even(function<void(int)> printNumber)
+    {
+        int last = (n % 2) ? n - 1 : n;
+        while (n >= 2)
+        {
+            unique_lock<mutex> lck(mut);
+            ec.wait(lck);
+            printNumber(counter);
+            if (counter == last)
+                break;
+            else if (counter < last)
+            {
+                zc.notify_one();
+            }
+        }
+    }
+};
+
+void testZeroEvenOddC()
+{
+    int cases = 5;
+    while (cases >= 0)
+    {
+        ZeroEvenOddC test(cases);
+        thread t1(bind(&ZeroEvenOddC::zero, &test, &printN));
+        thread t2(bind(&ZeroEvenOddC::odd, &test, &printN));
+        thread t3(bind(&ZeroEvenOddC::even, &test, &printN));
+        t1.join();
+        t2.join();
+        t3.join();
+        cases--;
+        cout << endl;
+    }
+}
+
+// 1116. Print Zero Even Odd using semphore
+class ZeroEvenOddS
+{
+private:
+    int n;
+
+public:
+    ZeroEvenOddS(int n)
+    {
+        this->n = n;
+    }
+
+    // printNumber(x) outputs "x", where x is an integer.
+    void zero(function<void(int)> printNumber)
+    {
+    }
+
+    void odd(function<void(int)> printNumber)
+    {
+    }
+
+    void even(function<void(int)> printNumber)
+    {
+    }
+};
+
+// 1116. Print Zero Even Odd using futhure
+class ZeroEvenOddF
+{
+private:
+    int n;
+
+public:
+    ZeroEvenOddF(int n)
+    {
+        this->n = n;
+    }
+
+    // printNumber(x) outputs "x", where x is an integer.
+    void zero(function<void(int)> printNumber)
+    {
+    }
+
+    void odd(function<void(int)> printNumber)
+    {
+    }
+
+    void even(function<void(int)> printNumber)
+    {
+    }
+};
+
 int main(int argc, char const *argv[])
 {
-    testZeroEvenOdd();
+    // testZeroEvenOdd();
+    testZeroEvenOddC();
     return 0;
 }

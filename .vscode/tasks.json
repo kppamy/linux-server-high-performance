@@ -14,10 +14,14 @@
                 // "-fsanitize=address",
                 // "-fno-omit-frame-pointer",
                 // "-O1",
+                // "common.cpp"
                 // "AlgoTest.cpp",
                 // "LinkedList.cpp",
                 // "TreeTest.cpp",
+                // "NaryTree.cpp"
                 // "sort.cpp",
+                // "lqueue.cpp"
+                // "lstack.cpp"
                 // "DynamicProgramming.cpp",
                 // "ArrayTest.cpp",
                 // "EffectiveC.cpp",
@@ -29,8 +33,13 @@
                 // "file-test.cpp"
                 // "newFeatures.cpp"
                 //  "multi.cpp"
+                 "ZeroEvenOdd.cpp"
                 // "Ufind.cpp"
-                "maxProfit.cpp"
+                // "maxProfit.cpp"
+                // "punch.cpp"
+                // "DiningPhilosophers.cpp"
+                // "FizzBuzz.cpp"
+                // "H2O.cpp"
                 "-o",
                 "LeetCode"
             ],
