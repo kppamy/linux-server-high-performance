@@ -127,12 +127,8 @@ class ZeroEvenOddC
 private:
     int n;
     mutex mutO;
-    mutex mutE;
-    condition_variable ec;
-    condition_variable oc;
     condition_variable zc;
     int counter = 0;
-    // atomic<int> who{0};
     int who=0;
 
 public:
@@ -148,21 +144,12 @@ public:
         {
             printNumber(0);
             counter++;
-            unique_lock<mutex> lck;
-            if (counter % 2)
-            {
-                lck = unique_lock<mutex>(mutO);
-                who = 1;
-                oc.notify_one();
+            unique_lock<mutex> lck(mutO);
+            who=(counter % 2)?1:2;
+            zc.notify_all();
+            if (counter < n){
+                    zc.wait(lck);
             }
-            else
-            {
-                lck = unique_lock<mutex>(mutE);
-                who = 2;
-                ec.notify_one(); 
-            }
-            if (counter < n)
-                zc.wait(lck);
         }
     }
 
@@ -172,14 +159,15 @@ public:
         while (n >= 1)
         {
             unique_lock<mutex> lck(mutO);
-            if (who != 1)
-                oc.wait(lck);
+            while (who != 1)
+                zc.wait(lck);
             // lck.unlock(); //ondition_variable wait failed: 
             printNumber(counter);
             who = 0;
-            zc.notify_one();
+            zc.notify_all();
             if (counter == last)
                 break;
+
         }
     }
 
@@ -188,13 +176,13 @@ public:
         int last = (n % 2) ? n - 1 : n;
         while (n >= 2)
         {
-            unique_lock<mutex> lck(mutE);
-            if (who != 2)
-                ec.wait(lck);
+            unique_lock<mutex> lck(mutO);
+            while (who != 2)
+                zc.wait(lck);
             // lck.unlock(); //ondition_variable wait failed: 
             printNumber(counter);
             who = 0;
-            zc.notify_one();
+            zc.notify_all();
             if (counter == last){
                 break;
             }
@@ -204,7 +192,7 @@ public:
 
 void testZeroEvenOddC()
 {
-    int cases = 30;//6863.16 ms
+    int cases = 1000;//use 3 condtion_variable 2 mutex, notify_one: 6863.16 ms; use 1 condition_variable, 1 mutex, notify_all : 16430.5 ms
     while (cases >= 0)
     {
         ZeroEvenOddC test(cases);
