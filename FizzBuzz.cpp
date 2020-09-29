@@ -159,9 +159,228 @@ void testFizzBuzz()
     }
 }
 
+class FizzBuzzC
+{
+private:
+    int n;
+    int counter = 0;
+    char who = 'n';
+    mutex mx;
+    condition_variable cv;
+
+public:
+    FizzBuzzC(int n)
+    {
+        this->n = n;
+    }
+
+    // printFizz() outputs "fizz".
+    void fizz(function<void()> printFizz)
+    {
+        int expect = (n / 3 * 3);
+        int last = (expect % 15==0) ? (expect-3) : expect;
+        while (n >= 3)
+        {
+            unique_lock<mutex> lk(mx);
+            while(who != 'f')
+                cv.wait(lk);
+            printFizz();
+            who = 'n';
+            cv.notify_all();
+            if (counter == last)
+                break;
+        }
+    }
+
+    // printBuzz() outputs "buzz".
+    void buzz(function<void()> printBuzz)
+    {
+        int expect=n / 5 * 5;
+        int last = (expect % 15==0) ? (expect-5) : expect;
+        while (n >= 5)
+        {
+            unique_lock<mutex> lk(mx);
+            while (who != 'b')
+                cv.wait(lk);
+            printBuzz();
+            who = 'n';
+            cv.notify_all();
+            if (counter == last)
+                break;
+        }
+    }
+
+    // printFizzBuzz() outputs "fizzbuzz".
+    void fizzbuzz(function<void()> printFizzBuzz)
+    {
+        int last = (n / 15 * 15);
+        while (n >= 15)
+        {
+            unique_lock<mutex> lk(mx);
+            while (who != 'o')
+                cv.wait(lk);
+            printFizzBuzz();
+            who = 'n';
+            cv.notify_all();
+            if (counter == last)
+                break;
+        }
+
+    }
+
+    // printNumber(x) outputs "x", where x is an integer.
+    void number(function<void(int)> printNumber)
+    {
+        while (counter < n)
+        {
+            unique_lock<mutex> lk(mx);
+            counter++;
+            if (counter % 15 == 0)
+            {
+                who = 'o';
+            }
+            else if (counter % 3 == 0)
+            {
+                who = 'f';
+            }
+            else if (counter % 5 == 0)
+            {
+                who = 'b';
+            }
+            else
+            {
+                printNumber(counter);
+            }
+            cv.notify_all();
+            while (counter < n && who!='n')
+                cv.wait(lk);
+        }
+    }
+};
+
+void testFizzBuzzC()
+{
+    int n = 32;
+    while (n > 0)
+    {
+        FizzBuzzC fb(n);
+        thread t1(bind(&FizzBuzzC::fizz, &fb, printFizz));
+        thread t2(bind(&FizzBuzzC::buzz, &fb, printBuzz));
+        thread t3(bind(&FizzBuzzC::fizzbuzz, &fb, printFizzBuzz));
+        thread t4(bind(&FizzBuzzC::number, &fb, printNumber));
+        t3.join();
+        t1.join();
+        t2.join();
+        t4.join();
+        // t1.detach();
+        // t2.detach();
+        // t3.detach();
+        // t4.detach();
+        cout << endl;
+        n--;
+    }
+}
+
+class FizzBuzzS
+{
+private:
+    int n;
+
+public:
+    FizzBuzzS(int n)
+    {
+        this->n = n;
+    }
+
+    // printFizz() outputs "fizz".
+    void fizz(function<void()> printFizz)
+    {
+    }
+
+    // printBuzz() outputs "buzz".
+    void buzz(function<void()> printBuzz)
+    {
+    }
+
+    // printFizzBuzz() outputs "fizzbuzz".
+    void fizzbuzz(function<void()> printFizzBuzz)
+    {
+    }
+
+    // printNumber(x) outputs "x", where x is an integer.
+    void number(function<void(int)> printNumber)
+    {
+    }
+};
+
+class FizzBuzzF
+{
+private:
+    int n;
+
+public:
+    FizzBuzzF(int n)
+    {
+        this->n = n;
+    }
+
+    // printFizz() outputs "fizz".
+    void fizz(function<void()> printFizz)
+    {
+    }
+
+    // printBuzz() outputs "buzz".
+    void buzz(function<void()> printBuzz)
+    {
+    }
+
+    // printFizzBuzz() outputs "fizzbuzz".
+    void fizzbuzz(function<void()> printFizzBuzz)
+    {
+    }
+
+    // printNumber(x) outputs "x", where x is an integer.
+    void number(function<void(int)> printNumber)
+    {
+    }
+};
+
+class FizzBuzz0
+{
+private:
+    int n;
+
+public:
+    FizzBuzz0(int n)
+    {
+        this->n = n;
+    }
+
+    // printFizz() outputs "fizz".
+    void fizz(function<void()> printFizz)
+    {
+    }
+
+    // printBuzz() outputs "buzz".
+    void buzz(function<void()> printBuzz)
+    {
+    }
+
+    // printFizzBuzz() outputs "fizzbuzz".
+    void fizzbuzz(function<void()> printFizzBuzz)
+    {
+    }
+
+    // printNumber(x) outputs "x", where x is an integer.
+    void number(function<void(int)> printNumber)
+    {
+    }
+};
+
 int main(int argc, char const *argv[])
 {
     /* code */
-    testFizzBuzz();
+    // testFizzBuzz();
+    testFizzBuzzC();
     return 0;
 }
