@@ -105,7 +105,7 @@ void printN(int num)
 #include <thread>
 void testZeroEvenOdd()
 {
-    int cases = 5;
+    int cases = 1000; //time cost: 7434.13 ms
     while (cases >= 0)
     {
         ZeroEvenOdd test(cases);
@@ -126,10 +126,14 @@ class ZeroEvenOddC
 {
 private:
     int n;
-    mutex mut;
+    mutex mutO;
+    mutex mutE;
     condition_variable ec;
+    condition_variable oc;
     condition_variable zc;
     int counter = 0;
+    // atomic<int> who{0};
+    int who=0;
 
 public:
     ZeroEvenOddC(int n)
@@ -144,15 +148,19 @@ public:
         {
             printNumber(0);
             counter++;
+            unique_lock<mutex> lck;
             if (counter % 2)
             {
+                lck = unique_lock<mutex>(mutO);
+                who = 1;
+                oc.notify_one();
             }
             else
             {
-                // unique_lock<mutex> lck(mut);
+                lck = unique_lock<mutex>(mutE);
+                who = 2;
                 ec.notify_one();
             }
-            unique_lock<mutex> lck(mut);
             if (counter < n)
                 zc.wait(lck);
         }
@@ -163,6 +171,13 @@ public:
         int last = (n % 2) ? n : n - 1;
         while (n >= 1)
         {
+            unique_lock<mutex> lck(mutO);
+            if (who != 1)
+                oc.wait(lck);
+            lck.unlock(); //ondition_variable wait failed: 
+            printNumber(counter);
+            who = 0;
+            zc.notify_one();
             if (counter == last)
                 break;
         }
@@ -173,14 +188,15 @@ public:
         int last = (n % 2) ? n - 1 : n;
         while (n >= 2)
         {
-            unique_lock<mutex> lck(mut);
-            ec.wait(lck);
+            unique_lock<mutex> lck(mutE);
+            if (who != 2)
+                ec.wait(lck);
+            lck.unlock(); //ondition_variable wait failed: 
             printNumber(counter);
-            if (counter == last)
+            who = 0;
+            zc.notify_one();
+            if (counter == last){
                 break;
-            else if (counter < last)
-            {
-                zc.notify_one();
             }
         }
     }
@@ -188,7 +204,7 @@ public:
 
 void testZeroEvenOddC()
 {
-    int cases = 5;
+    int cases = 30;//6863.16 ms
     while (cases >= 0)
     {
         ZeroEvenOddC test(cases);
@@ -255,9 +271,10 @@ public:
     }
 };
 
+#include "common.h"
 int main(int argc, char const *argv[])
 {
-    // testZeroEvenOdd();
-    testZeroEvenOddC();
+    //  timeit(testZeroEvenOdd);
+    timeit(testZeroEvenOddC);
     return 0;
 }
