@@ -159,7 +159,7 @@ public:
             {
                 lck = unique_lock<mutex>(mutE);
                 who = 2;
-                ec.notify_one();
+                ec.notify_one(); 
             }
             if (counter < n)
                 zc.wait(lck);
@@ -174,7 +174,7 @@ public:
             unique_lock<mutex> lck(mutO);
             if (who != 1)
                 oc.wait(lck);
-            lck.unlock(); //ondition_variable wait failed: 
+            // lck.unlock(); //ondition_variable wait failed: 
             printNumber(counter);
             who = 0;
             zc.notify_one();
@@ -191,7 +191,7 @@ public:
             unique_lock<mutex> lck(mutE);
             if (who != 2)
                 ec.wait(lck);
-            lck.unlock(); //ondition_variable wait failed: 
+            // lck.unlock(); //ondition_variable wait failed: 
             printNumber(counter);
             who = 0;
             zc.notify_one();
