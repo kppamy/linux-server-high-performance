@@ -5,14 +5,14 @@
 // Memory Usage: 6.2 MB, less than 5.68% of C++ online submissions for Water Bottles.
 int numWaterBottles(int numBottles, int numExchange)
 {
-    int sum=numBottles;
+    int sum = numBottles;
     int begin = numBottles;
     while (begin >= numExchange)
     {
         int chg = begin / numExchange;
         int left = begin % numExchange;
-        sum +=  chg;
-        begin = left + chg;   
+        sum += chg;
+        begin = left + chg;
     }
     return sum;
 }
@@ -33,8 +33,32 @@ void testnumWaterBottles()
     cout << "numWaterBottles  numBottles = 2, numExchange = 3 " << numWaterBottles(numBottles, numExchange) << endl;
 }
 
+// 1221. Split a String in Balanced Strings
+// Runtime: 0 ms, faster than 100.00% of C++ online submissions for Split a String in Balanced Strings.
+// Memory Usage: 6.5 MB, less than 5.09% of C++ online submissions for Split a String in Balanced Strings.
+int balancedStringSplit(string s)
+{
+    int counter=0;
+    int sum=0;
+    for(auto&& c:s){
+        sum+=(c=='L'?1:-1);
+        if(sum==0)
+            counter++;
+    }
+    return counter;
+}
+
+void testbalancedStringSpli(){
+    cout<<" balancedStringSplit "<<" RLRRLLRLRL " <<balancedStringSplit("RLRRLLRLRL")<<endl;
+    cout<<" balancedStringSplit "<<" RLLLLRRRLR " <<balancedStringSplit("RLLLLRRRLR")<<endl;
+    cout<<" balancedStringSplit "<<" LLLLRRRR " <<balancedStringSplit("LLLLRRRR")<<endl;
+    cout<<" balancedStringSplit "<<" RLRRRLLRLL "<<balancedStringSplit("RLRRRLLRLL")<<endl;
+
+}
+
 int main(int argc, char const *argv[])
 {
-    testnumWaterBottles();
+    // testnumWaterBottles();
+    testbalancedStringSpli();
     return 0;
 }
