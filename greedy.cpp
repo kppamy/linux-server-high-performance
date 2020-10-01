@@ -101,10 +101,45 @@ void testminDeletionSize()
     }
 }
 
+// 1403. Minimum Subsequence in Non-Increasing Order
+// Runtime: 16 ms, faster than 76.28% of C++ online submissions for Minimum Subsequence in Non-Increasing Order.
+// Memory Usage: 10.9 MB, less than 13.92% of C++ online submissions for Minimum Subsequence in Non-Increasing Order.
+vector<int> minSubsequence(vector<int> &nums)
+{
+    int max = INT_MIN;
+    int sum = 0;
+    for (int val : nums)
+    {
+        sum += val;
+    }
+    int sz = nums.size();
+    vector<int> out;
+    int sum2 = 0;
+    sort(nums.begin(),nums.end());
+    while (sz > 0)
+    {
+        out.push_back(nums[sz - 1]);
+        sum2 += nums[sz - 1];
+        if (sum2 > sum - sum2)
+            return out;
+        sz--;
+    }
+    return out;
+}
+
+my2arr testminSubsequenc(){
+    return {
+        {4,3,10,9,8},
+        {4,4,7,6,7},
+        {6}
+    };
+}
+
 int main(int argc, char const *argv[])
 {
     // testnumWaterBottles();
     // testbalancedStringSpli();
-    testminDeletionSize();
+    // testminDeletionSize();
+    testArray(minSubsequence,"minSubsequence",testminSubsequenc, printVector);
     return 0;
 }

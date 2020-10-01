@@ -74,6 +74,18 @@ void format_test(f func, u inputf, t print){
  }
 }
 
+template<typename f, typename u, typename p>
+void testArray(f fun, string name, u input, p print){
+    my2arr&& cases=input();
+    for(auto&& cs:cases){
+        printVector(cs);
+        cout<<name<<" :"<<endl;
+        auto res=fun(cs);
+        print(res);
+    }
+}
+
+
 #include <iostream>
 #include <string>
 #include <map>
