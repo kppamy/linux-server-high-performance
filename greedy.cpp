@@ -164,12 +164,71 @@ void testisSubsequence()
     cout << s << " is " << (isSubsequence(s, t) ? "" : " not ") << "Subsequence of " << t << endl;
 }
 
+int largestSumAfterKNegations(vector<int> &A, int K)
+{
+    sort(A.begin(), A.end());
+    for (auto &&val : A)
+    {
+        if (K > 0 && val < 0)
+        {
+            val = -1 * val;
+            K--;
+        }
+        if (K == 0)
+            break;
+    }
+    sort(A.begin(), A.end());
+    int sum = 0;
+    for (int val : A)
+    {
+        if (K > 0 && val >= 0)
+        {
+            if (K % 2)
+            {
+                val = -1 * val;
+            }
+            K = 0;
+        }
+        sum += val;
+    }
+    return sum;
+}
+
+void testlargestSumAfterKNegation()
+{
+    vector<int> A = {4, 2, 3};
+    int K = 1;
+    printVector(A);
+    cout << "largestSumAfter " << K << " Negations: " << largestSumAfterKNegations(A, K) << endl;
+
+    A = {2, -3, -1, 5, -4}, K = 2;
+    printVector(A);
+    cout << "largestSumAfter " << K << " Negations: " << largestSumAfterKNegations(A, K) << endl;
+
+    A = {-8, 3, -5, -3, -5, -2}, K = 6;
+    printVector(A);
+    cout << "largestSumAfter " << K << " Negations: " << largestSumAfterKNegations(A, K) << endl;
+
+    A = {1, 3, 2, 6, 7, 9}, K = 3;
+    printVector(A);
+    cout << "largestSumAfter " << K << " Negations: " << largestSumAfterKNegations(A, K) << endl;
+
+    A = {3, -1, 0, 2}, K = 3;
+    printVector(A);
+    cout << "largestSumAfter " << K << " Negations: " << largestSumAfterKNegations(A, K) << endl;
+
+    A = {2, -3, -1, 5, -4}, K = 2;
+    printVector(A);
+    cout << "largestSumAfter " << K << " Negations: " << largestSumAfterKNegations(A, K) << endl;
+}
+
 int main(int argc, char const *argv[])
 {
     // testnumWaterBottles();
     // testbalancedStringSpli();
     // testminDeletionSize();
     // testArray(minSubsequence, "minSubsequence", testminSubsequenc, printVector);
-    testisSubsequence();
+    // testisSubsequence();
+    testlargestSumAfterKNegation();
     return 0;
 }
