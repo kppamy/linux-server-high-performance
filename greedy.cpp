@@ -106,7 +106,6 @@ void testminDeletionSize()
 // Memory Usage: 10.9 MB, less than 13.92% of C++ online submissions for Minimum Subsequence in Non-Increasing Order.
 vector<int> minSubsequence(vector<int> &nums)
 {
-    int max = INT_MIN;
     int sum = 0;
     for (int val : nums)
     {
@@ -115,7 +114,7 @@ vector<int> minSubsequence(vector<int> &nums)
     int sz = nums.size();
     vector<int> out;
     int sum2 = 0;
-    sort(nums.begin(),nums.end());
+    sort(nums.begin(), nums.end());
     while (sz > 0)
     {
         out.push_back(nums[sz - 1]);
@@ -127,12 +126,42 @@ vector<int> minSubsequence(vector<int> &nums)
     return out;
 }
 
-my2arr testminSubsequenc(){
+my2arr testminSubsequenc()
+{
     return {
-        {4,3,10,9,8},
-        {4,4,7,6,7},
-        {6}
-    };
+        {4, 3, 10, 9, 8},
+        {4, 4, 7, 6, 7},
+        {6}};
+}
+
+// 392. Is Subsequence
+// Runtime: 0 ms, faster than 100.00% of C++ online submissions for Is Subsequence.
+// Memory Usage: 6.7 MB, less than 25.13% of C++ online submissions for Is Subsequence.
+bool isSubsequence(string s, string t)
+{
+    int ls = s.size();
+    if (ls == 0)
+        return true;
+    int lt = t.size();
+    int i = 0, j = 0;
+    while (i < ls && j < lt)
+    {
+        if (s[i] == t[j])
+        {
+            i++;
+        }
+        j++;
+    }
+    return (i == ls);
+}
+
+void testisSubsequence()
+{
+    string s = "abc", t = "ahbgdc";
+    cout << s << " is " << (isSubsequence(s, t) ? "" : " not ") << "Subsequence of " << t << endl;
+
+    s = "axc", t = "ahbgdc";
+    cout << s << " is " << (isSubsequence(s, t) ? "" : " not ") << "Subsequence of " << t << endl;
 }
 
 int main(int argc, char const *argv[])
@@ -140,6 +169,7 @@ int main(int argc, char const *argv[])
     // testnumWaterBottles();
     // testbalancedStringSpli();
     // testminDeletionSize();
-    testArray(minSubsequence,"minSubsequence",testminSubsequenc, printVector);
+    // testArray(minSubsequence, "minSubsequence", testminSubsequenc, printVector);
+    testisSubsequence();
     return 0;
 }
