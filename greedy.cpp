@@ -164,6 +164,9 @@ void testisSubsequence()
     cout << s << " is " << (isSubsequence(s, t) ? "" : " not ") << "Subsequence of " << t << endl;
 }
 
+// 1005. Maximize Sum Of Array After K Negations
+// Runtime: 12 ms, faster than 73.24% of C++ online submissions for Maximize Sum Of Array After K Negations.
+// Memory Usage: 9.3 MB, less than 21.72% of C++ online submissions for Maximize Sum Of Array After K Negations.
 int largestSumAfterKNegations(vector<int> &A, int K)
 {
     sort(A.begin(), A.end());
@@ -222,6 +225,63 @@ void testlargestSumAfterKNegation()
     cout << "largestSumAfter " << K << " Negations: " << largestSumAfterKNegations(A, K) << endl;
 }
 
+// 860. Lemonade Change
+// Runtime: 32 ms, faster than 81.26% of C++ online submissions for Lemonade Change.
+// Memory Usage: 17.4 MB, less than 12.11% of C++ online submissions for Lemonade Change.
+bool lemonadeChange(vector<int> &bills)
+{
+    int fives = 0;
+    int tens = 0;
+    int revenue = 0;
+    for (auto val : bills)
+    {
+        revenue = revenue + 5;
+        if (val > revenue)
+            return false;
+        if (val == 5)
+            fives++;
+        else if (val == 10)
+        {
+            fives--;
+            tens++;
+            if (fives < 0)
+                return false;
+        }
+        else if (val == 20)
+        {
+            if (fives < 1)
+                return false;
+            if (tens >= 1)
+            {
+                tens--;
+                fives--;
+            }
+            else
+            {
+                fives = fives - 3;
+                if (fives < 0)
+                    return false;
+            }
+        }
+    }
+    return true;
+}
+
+void testlemonadeChange()
+{
+    my2arr bills = {
+        {5, 5, 5, 10, 5, 5, 10, 20, 20, 20},
+        {5, 5, 5, 10, 20},
+        {5, 5, 10},
+        {10, 10},
+        {5, 5, 10, 10, 20}};
+    for (auto &&cs : bills)
+    {
+        printVector(cs);
+        cout << "can change? " << (lemonadeChange(cs) ? "true" : "false") << endl;
+    }
+}
+
 int main(int argc, char const *argv[])
 {
     // testnumWaterBottles();
@@ -229,6 +289,7 @@ int main(int argc, char const *argv[])
     // testminDeletionSize();
     // testArray(minSubsequence, "minSubsequence", testminSubsequenc, printVector);
     // testisSubsequence();
-    testlargestSumAfterKNegation();
+    // testlargestSumAfterKNegation();
+    testlemonadeChange();
     return 0;
 }
