@@ -82,6 +82,7 @@ void testArray(f fun, string name, u input, p print){
         cout<<name<<" :"<<endl;
         auto res=fun(cs);
         print(res);
+        cout<<endl;
     }
 }
 

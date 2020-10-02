@@ -282,6 +282,35 @@ void testlemonadeChange()
     }
 }
 
+// 1217. Minimum Cost to Move Chips to The Same Position
+// Runtime: 0 ms, faster than 100.00% of C++ online submissions for Minimum Cost to Move Chips to The Same Position.
+// Memory Usage: 7.7 MB, less than 12.79% of C++ online submissions for Minimum Cost to Move Chips to The Same Position.
+int minCostToMoveChips(vector<int> &position)
+{
+    int even = 0;
+    int odd = 0;
+    for (int val : position)
+    {
+        if (val % 2)
+        {
+            odd++;
+        }
+        else
+        {
+            even++;
+        }
+    }
+    return (even > odd) ? odd : even;
+}
+
+my2arr testminCostToMoveChip()
+{
+    return {
+        {1, 2, 3},
+        {2, 2, 2, 3, 3},
+        {1, 1000000000}};
+}
+
 int main(int argc, char const *argv[])
 {
     // testnumWaterBottles();
@@ -290,6 +319,7 @@ int main(int argc, char const *argv[])
     // testArray(minSubsequence, "minSubsequence", testminSubsequenc, printVector);
     // testisSubsequence();
     // testlargestSumAfterKNegation();
-    testlemonadeChange();
+    // testlemonadeChange();
+    testArray(minCostToMoveChips, "minCostToMoveChips", testminCostToMoveChip, printInt);
     return 0;
 }
