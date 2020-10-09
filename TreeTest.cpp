@@ -548,7 +548,6 @@ bool isSymmetric(TreeNode *root)
     return true;
 }
 
-
 template <typename f, typename u>
 void testTree(f fuc, string name, u print = nullptr)
 {
@@ -578,11 +577,57 @@ void testTree(f fuc, string name, u print = nullptr)
         printVector(test);
         TreeNode *root = buildTree(test);
         prettyPrintTree(root, maxDepth(root));
-        cout << name + ": ";
+        cout << name + ": " << endl;
         auto &&res = fuc(root);
         print(res);
         cout << endl;
     }
+}
+
+// 107. Binary Tree Level Order Traversal II
+// Runtime: 8 ms, faster than 50.37% of C++ online submissions for Binary Tree Level Order Traversal II.
+// Memory Usage: 13.9 MB, less than 18.22% of C++ online submissions for Binary Tree Level Order Traversal II.
+vector<vector<int>> levelOrderBottom(TreeNode *root)
+{
+    if (!root)
+        return {};
+    stack<vector<int>> data;
+    queue<TreeNode *> qu;
+    qu.push(root);
+    data.push({root->val});
+    while (!qu.empty())
+    {
+        vector<int> level;
+        queue<TreeNode *> next;
+        while (!qu.empty())
+        {
+            TreeNode *parent = qu.front();
+            qu.pop();
+            if (parent->left)
+            {
+                level.push_back(parent->left->val);
+                next.push(parent->left);
+            }
+            if (parent->right)
+            {
+                level.push_back(parent->right->val);
+                next.push(parent->right);
+            }
+        }
+        if (!level.empty())
+        {
+            data.push(level);
+            qu = next;
+        }
+    }
+
+    vector<vector<int>> out;
+    while (!data.empty())
+    {
+        out.push_back(data.top());
+        data.pop();
+    }
+    return out;
 }
 
 int main(int argc, char const *argv[])
@@ -592,6 +637,7 @@ int main(int argc, char const *argv[])
     // testTree(minDepth,"minDepth",printInt);
     // testTree(isBalanced,"isBalanced",printInt);
     // testTree(postorderTraversal, "postorderTraversal", printVector);
-    testTree(isSymmetric, "isSymmetric", printInt);
+    // testTree(isSymmetric, "isSymmetric", printInt);
+    testTree(levelOrderBottom, "levelOrderBottom", print2Vector);
     return 0;
 }
