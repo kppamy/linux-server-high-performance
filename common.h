@@ -31,6 +31,14 @@ void printVector(std::vector<int> &input)
     cout << endl;
 }
 
+void print2Vector(std::vector<std::vector<int>> &input)
+{
+
+   for(auto&& item:input){
+       printVector(item);
+   }
+}
+
 void printInput(int input[], int len)
 {
     {
