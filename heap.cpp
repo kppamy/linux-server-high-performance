@@ -1,6 +1,9 @@
 #include "common.h"
 using namespace std;
 
+// 703. Kth Largest Element in a Stream
+// Runtime: 48 ms, faster than 99.74% of C++ online submissions for Kth Largest Element in a Stream.
+// Memory Usage: 20.1 MB, less than 8.70% of C++ online submissions for Kth Largest Element in a Stream.
 class KthLargest
 {
 public:
@@ -15,19 +18,25 @@ public:
 
     void pop()
     {
-        int sz = heap.size();
+        int last = heap.size()-1;
         int i = 0;
-        while (i < sz - 1)
+        swap(last,i);
+        while (i < last)
         {
             int left = 2 * i + 1;
-            left = (left < sz - 1) ? left : sz - 1;
+            if(left>=last)
+                break;
             int right = 2 * i + 2;
-            right = (right < sz - 1) ? right : sz - 1;
+            right = (right < last) ? right : left;
             int mini = (heap[left] > heap[right]) ? right : left;
-            swap(i, mini);
-            i = mini;
+            if(heap[i]>heap[mini]){
+                swap(i, mini);
+                i = mini;
+            }else{
+                break;
+            }
         }
-        heap.resize(sz - 1);
+        heap.pop_back();
     }
 
     void swap(int i, int j)
@@ -39,7 +48,11 @@ public:
 
     int add(int val)
     {
-        cout<<"add: "<<val<<endl;
+        cout << "add: " << val << endl;
+        if(heap.size()==kth && val<=heap[0]){
+            cout<<"ignore minimum on heap full "<<val<<endl;
+            return heap[0];
+        }
         heap.push_back(val);
         int last = heap.size() - 1;
         while (last > 0)
@@ -104,10 +117,25 @@ void testKthLargest()
     kthLargest->add(4);  // return 8
 
     cout << "+++++++++++++++++++++++++++++++++++++++" << endl;
+    // heap: 
+    // 5 
+    // 6 9 
+    // 7 7 10 5 
+    // add: 8
+    vector<int> nums0 = {5,6,9,7,7,10,5};
+    kthLargest = new KthLargest(7, nums0);
+    vector<int> elements = {8};
+    for (int val : elements)
+    {
+        kthLargest->add(val);
+    }
+
+
+     cout << "+++++++++++++++++++++++++++++++++++++++" << endl;
     vector<int> nums1 = {-10, 1, 3, 1, 4, 10, 3, 9, 4, 5, 1};
     kthLargest = new KthLargest(7, nums1);
-    vector<int> elements = {3, 2, 3, 1, 2, 4, 5, 5, 6, 7, 7, 8, 2, 3, 1, 1, 1, 10, 11, 5, 6, 2, 4, 7, 8, 5, 6};
-    for (int val : elements)
+    vector<int> elements0 = {3, 2, 3, 1, 2, 4, 5, 5, 6, 7, 7, 8, 2, 3, 1, 1, 1, 10, 11, 5, 6, 2, 4, 7, 8, 5, 6};
+    for (int val : elements0)
     {
         kthLargest->add(val);
     }
