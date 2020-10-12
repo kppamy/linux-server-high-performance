@@ -18,21 +18,24 @@ public:
 
     void pop()
     {
-        int last = heap.size()-1;
+        int last = heap.size() - 1;
         int i = 0;
-        swap(last,i);
+        swap(last, i);
         while (i < last)
         {
             int left = 2 * i + 1;
-            if(left>=last)
+            if (left >= last)
                 break;
             int right = 2 * i + 2;
             right = (right < last) ? right : left;
             int mini = (heap[left] > heap[right]) ? right : left;
-            if(heap[i]>heap[mini]){
+            if (heap[i] > heap[mini])
+            {
                 swap(i, mini);
                 i = mini;
-            }else{
+            }
+            else
+            {
                 break;
             }
         }
@@ -49,8 +52,9 @@ public:
     int add(int val)
     {
         cout << "add: " << val << endl;
-        if(heap.size()==kth && val<=heap[0]){
-            cout<<"ignore minimum on heap full "<<val<<endl;
+        if (heap.size() == kth && val <= heap[0])
+        {
+            cout << "ignore minimum on heap full " << val << endl;
             return heap[0];
         }
         heap.push_back(val);
@@ -117,12 +121,12 @@ void testKthLargest()
     kthLargest->add(4);  // return 8
 
     cout << "+++++++++++++++++++++++++++++++++++++++" << endl;
-    // heap: 
-    // 5 
-    // 6 9 
-    // 7 7 10 5 
+    // heap:
+    // 5
+    // 6 9
+    // 7 7 10 5
     // add: 8
-    vector<int> nums0 = {5,6,9,7,7,10,5};
+    vector<int> nums0 = {5, 6, 9, 7, 7, 10, 5};
     kthLargest = new KthLargest(7, nums0);
     vector<int> elements = {8};
     for (int val : elements)
@@ -130,8 +134,7 @@ void testKthLargest()
         kthLargest->add(val);
     }
 
-
-     cout << "+++++++++++++++++++++++++++++++++++++++" << endl;
+    cout << "+++++++++++++++++++++++++++++++++++++++" << endl;
     vector<int> nums1 = {-10, 1, 3, 1, 4, 10, 3, 9, 4, 5, 1};
     kthLargest = new KthLargest(7, nums1);
     vector<int> elements0 = {3, 2, 3, 1, 2, 4, 5, 5, 6, 7, 7, 8, 2, 3, 1, 1, 1, 10, 11, 5, 6, 2, 4, 7, 8, 5, 6};
@@ -141,8 +144,32 @@ void testKthLargest()
     }
 }
 
+#include <queue>
+// 1046. Last Stone Weight
+// Runtime: 4 ms, faster than 65.17% of C++ online submissions for Last Stone Weight.
+// Memory Usage: 7.8 MB, less than 99.26% of C++ online submissions for Last Stone Weight.
+int lastStoneWeight(vector<int> &stones)
+{
+    priority_queue<int> heap(stones.begin(), stones.end());
+    while (heap.size() > 1)
+    {
+        int largest = heap.top();
+        heap.pop();
+        int second = heap.top();
+        heap.pop();
+        if (largest - second > 0)
+        {
+            heap.push(largest - second);
+        }
+    }
+    if (heap.empty())
+        return 0;
+    return heap.top();
+}
+
 int main(int argc, char const *argv[])
 {
-    testKthLargest();
+    // testKthLargest();
+    testArray(lastStoneWeight, "lastStoneWeight", generateArrayInput, printInt);
     return 0;
 }
