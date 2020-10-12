@@ -145,6 +145,32 @@ void testKthLargest()
 }
 
 #include <queue>
+// 215. Kth Largest Element in an Array
+// Runtime: 28 ms, faster than 47.97% of C++ online submissions for Kth Largest Element in an Array.
+// Memory Usage: 10.4 MB, less than 12.36% of C++ online submissions for Kth Largest Element in an Array.
+int findKthLargest(vector<int> &nums, int k)
+{
+    priority_queue<int, vector<int>, std::greater<int>> heap(nums.begin(), nums.end());
+    while (heap.size() > k)
+    {
+        heap.pop();
+    }
+    return heap.top();
+}
+
+void testfindKthLargest()
+{
+    vector<int> arr = {3, 2, 1, 5, 6, 4};
+    int k = 2;
+    printVector(arr);
+    cout << k << " largest: " << findKthLargest(arr, k) << endl;
+
+    arr = {3, 2, 3, 1, 2, 4, 5, 5, 6};
+    k = 4;
+    printVector(arr);
+    cout << k << " largest: " << findKthLargest(arr, k) << endl;
+}
+
 // 1046. Last Stone Weight
 // Runtime: 4 ms, faster than 65.17% of C++ online submissions for Last Stone Weight.
 // Memory Usage: 7.8 MB, less than 99.26% of C++ online submissions for Last Stone Weight.
@@ -170,6 +196,7 @@ int lastStoneWeight(vector<int> &stones)
 int main(int argc, char const *argv[])
 {
     // testKthLargest();
-    testArray(lastStoneWeight, "lastStoneWeight", generateArrayInput, printInt);
+    // testArray(lastStoneWeight, "lastStoneWeight", generateArrayInput, printInt);
+    testfindKthLargest();
     return 0;
 }
