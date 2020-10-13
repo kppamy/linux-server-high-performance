@@ -198,7 +198,8 @@ int lastStoneWeight(vector<int> &stones)
 // 787. Cheapest Flights Within K Stops
 // Runtime: 280 ms, faster than 5.92% of C++ online submissions for Cheapest Flights Within K Stops.
 // Memory Usage: 11.7 MB, less than 9.08% of C++ online submissions for Cheapest Flights Within K Stops.
-int findCheapestPrice(int n, vector<vector<int>> &flights, int src, int dst, int K)
+
+int findCheapestPriceMy(int n, vector<vector<int>> &flights, int src, int dst, int K)
 {
     vector<vector<int>> map(n, vector<int>(n, 0));
     vector<int> indegree(n, 0);
@@ -253,6 +254,53 @@ int findCheapestPrice(int n, vector<vector<int>> &flights, int src, int dst, int
         }
     }
     return (mini == INT_MAX) ? -1 : mini;
+}
+
+int findCheapestPrice(int n, vector<vector<int>> &flights, int src, int dst, int K)
+{
+    vector<pair<int, int>> adjList[n];
+
+    for (auto &flight : flights)
+        adjList[flight[0]].emplace_back(flight[1], flight[2]);
+
+    int minCost[n];
+    for (auto &cost : minCost)
+        cost = INT_MAX;
+
+    queue<pair<int, int>> que;
+    que.emplace(src, 0);
+    int steps = 0, res = INT_MAX;
+
+    while (!que.empty() && steps <= K + 1)
+    {
+        int size = que.size();
+        while (size--)
+        {
+            auto [at, cost] = que.front();
+            cout << "pop: " << at << " cost: " << cost << endl;
+            que.pop();
+
+            if (at == dst)
+                res = min(res, cost);
+
+            if (steps == K + 1)
+                continue;
+
+            for (auto &edge : adjList[at])
+            {
+                cout << at << " " << edge.first << " " << edge.second << endl;
+                if (cost + edge.second < minCost[edge.first])
+                {
+                    minCost[edge.first] = cost + edge.second;
+                    que.emplace(edge.first, cost + edge.second);
+                    cout << "emplace: " << edge.first << " cost: " << cost + edge.second << endl;
+                }
+            }
+        }
+        steps++;
+    }
+
+    return res == INT_MAX ? -1 : res;
 }
 
 void testfindCheapestPrice()
