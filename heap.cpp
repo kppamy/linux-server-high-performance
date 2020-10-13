@@ -193,10 +193,94 @@ int lastStoneWeight(vector<int> &stones)
     return heap.top();
 }
 
+#include <array>
+#include <unordered_map>
+// bellman-ford shortest path
+// 787. Cheapest Flights Within K Stops
+int findCheapestPrice(int n, vector<vector<int>> &flights, int src, int dst, int K)
+{
+    vector<vector<int>> map(n, vector<int>(n, 0));
+    vector<int> indegree(n, 0);
+    for (auto &&val : flights)
+    {
+        map[val[0]][val[1]] = val[2];
+        indegree[val[1]]++;
+    }
+    typedef vector<array<int, 2>> pathtype;
+    pathtype paths;
+    vector<pathtype> cheapest(n, paths); //n*[(prices,0 stops),(prices 2,1 stops)... ]
+    cheapest[src].push_back({0, -1});
+    queue<int> bfs;
+    auto relax = [&](int u) {
+        for (int v = 0; v < n; v++)
+        {
+            if (map[u][v] == 0)
+                continue;
+            if (indegree[v] > 0)
+            {
+                bfs.push(v);
+                indegree[v]--;
+            }
+            for (auto &&path : cheapest[u])
+            {
+                cheapest[v].push_back({path[0] + map[u][v], path[1] + 1});
+            }
+        }
+    };
+
+    bfs.push(src);
+    while (!bfs.empty())
+    {
+        int nd = bfs.front();
+        bfs.pop();
+        relax(nd);
+    }
+
+    if (cheapest[dst].empty())
+        return -1;
+    int mini = INT_MAX;
+    for (auto &&path : cheapest[dst])
+    {
+        if (path[0] < mini && path[1] <= K)
+        {
+            mini = path[0];
+        }
+    }
+    return (mini == INT_MAX) ? -1 : mini;
+}
+
+void testfindCheapestPrice()
+{
+    int n = 3, src = 0, dst = 2, k = 1;
+    vector<vector<int>> edges = {{0, 1, 100}, {1, 2, 100}, {0, 2, 500}};
+    cout << "from " << src << " to " << dst << " within " << k << " stops, cheapest: " << findCheapestPrice(n, edges, src, dst, k) << endl;
+    k = 0;
+    cout << "from " << src << " to " << dst << " within " << k << " stops, cheapest: " << findCheapestPrice(n, edges, src, dst, k) << endl;
+
+    // Time Limit Exceeded
+    n = 18, src = 7, dst = 2, k = 6;
+    edges = {{16, 1, 81}, {15, 13, 47}, {1, 0, 24}, {5, 10, 21}, {7, 1, 72}, {0, 4, 88}, {16, 4, 39}, {9, 3, 25}, {10, 11, 28}, {13, 8, 93}, {10, 3, 62}, {14, 0, 38}, {3, 10, 58}, {3, 12, 46}, {3, 8, 2}, {10, 16, 27}, {6, 9, 90}, {14, 8, 6}, {0, 13, 31}, {6, 4, 65}, {14, 17, 29}, {13, 17, 64}, {12, 5, 26}, {12, 1, 9}, {12, 15, 79}, {16, 11, 79}, {16, 15, 17}, {4, 0, 21}, {15, 10, 75}, {3, 17, 23}, {8, 5, 55}, {9, 4, 19}, {0, 10, 83}, {3, 7, 17}, {0, 12, 31}, {11, 5, 34}, {17, 14, 98}, {11, 14, 85}, {16, 7, 48}, {12, 6, 86}, {5, 17, 72}, {4, 12, 5}, {12, 10, 23}, {3, 2, 31}, {12, 7, 5}, {6, 13, 30}, {6, 7, 88}, {2, 17, 88}, {6, 8, 98}, {0, 7, 69}, {10, 15, 13}, {16, 14, 24}, {1, 17, 24}, {13, 9, 82}, {13, 6, 67}, {15, 11, 72}, {12, 0, 83}, {1, 4, 37}, {12, 9, 36}, {9, 17, 81}, {9, 15, 62}, {8, 15, 71}, {10, 12, 25}, {7, 6, 23}, {16, 5, 76}, {7, 17, 4}, {3, 11, 82}, {2, 11, 71}, {8, 4, 11}, {14, 10, 51}, {8, 10, 51}, {4, 1, 57}, {6, 16, 68}, {3, 9, 100}, {1, 14, 26}, {10, 7, 14}, {8, 17, 24}, {1, 11, 10}, {2, 9, 85}, {9, 6, 49}, {11, 4, 95}};
+    cout << "from " << src << " to " << dst << " within " << k << " stops, cheapest: " << findCheapestPrice(n, edges, src, dst, k) << endl;
+
+    src = 0;
+    edges = {{0, 1, 100}, {0, 2, 100}, {0, 3, 10}, {1, 2, 100}, {1, 4, 10}, {2, 1, 10}, {2, 3, 100}, {2, 4, 100}, {3, 2, 10}, {3, 4, 100}};
+    n = 5, dst = 4, k = 3;
+    cout << "from " << src << " to " << dst << " within " << k << " stops, cheapest: " << findCheapestPrice(n, edges, src, dst, k) << endl;
+
+    edges = {{0, 1, 100}, {1, 2, 100}, {0, 2, 500}, {2, 3, 100}};
+    n = 4, k = 1, dst = 3;
+    cout << "from " << src << " to " << dst << " within " << k << " stops, cheapest: " << findCheapestPrice(4, edges, src, dst, k) << endl;
+    k = 2;
+    cout << "from " << src << " to " << dst << " within " << k << " stops, cheapest: " << findCheapestPrice(4, edges, src, dst, k) << endl;
+    k = 0;
+    cout << "from " << src << " to " << dst << " within " << k << " stops, cheapest: " << findCheapestPrice(4, edges, src, dst, k) << endl;
+}
+
 int main(int argc, char const *argv[])
 {
     // testKthLargest();
     // testArray(lastStoneWeight, "lastStoneWeight", generateArrayInput, printInt);
-    testfindKthLargest();
+    // testfindKthLargest();
+    testfindCheapestPrice();
     return 0;
 }
