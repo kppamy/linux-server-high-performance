@@ -328,11 +328,47 @@ void testaddBinary()
     cout << a << " + " << b << " = " << addBinary(a, b) << endl;
 }
 
+// 415. Add Strings
+// Runtime: 4 ms, faster than 93.78% of C++ online submissions for Add Strings.
+// Memory Usage: 7.1 MB, less than 31.44% of C++ online submissions for Add Strings.
+string addStrings(string num1, string num2)
+{
+    int i = num1.size() - 1;
+    int j = num2.size() - 1;
+    int carry = 0;
+    string res = "";
+    while (i >= 0 || j >= 0)
+    {
+        int sum = carry;
+        if (i >= 0)
+            sum += num1[i--] - '0';
+        if (j >= 0)
+            sum += num2[j--] - '0';
+        res += to_string(sum % 10);
+        carry = sum / 10;
+    }
+    if (carry)
+        res += to_string(carry);
+    reverse(res.begin(), res.end());
+    return res;
+}
+
+void testAddString()
+{
+    string a = "1", b = "19";
+    cout << a << " + " << b << " = " << addStrings(a, b) << endl;
+    a = "1", b = "17";
+    cout << a << " + " << b << " = " << addStrings(a, b) << endl;
+    a = "1", b = "9";
+    cout << a << " + " << b << " = " << addStrings(a, b) << endl;
+}
+
 int main(int argc, char const *argv[])
 {
     // StringTest st;
     // // st.testlongestPalindrome();
     // st.testlongestCommonSubsequence();
-    testaddBinary();
+    // testaddBinary();
+    testAddString();
     return 0;
 }
