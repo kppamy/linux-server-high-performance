@@ -121,35 +121,39 @@ public:
             return 0;
         }
         vector<vector<int>> lcs(len1, vector<int>(len2, 0));
-        
-      for (int j=0;j<len2-1;j++) {
-          if(text1[0]==text2[j]){
-              lcs[0][j] = 1;
-          }
-          lcs[0][j+1] = lcs[0][j];
-      }
 
-       for (int j=0;j<len1-1;j++) {
-          if(text1[j]==text2[0]){
-              lcs[j][0] = 1;
-          }
-          lcs[j+1][0] = lcs[j][0];
-      }
+        for (int j = 0; j < len2 - 1; j++)
+        {
+            if (text1[0] == text2[j])
+            {
+                lcs[0][j] = 1;
+            }
+            lcs[0][j + 1] = lcs[0][j];
+        }
 
+        for (int j = 0; j < len1 - 1; j++)
+        {
+            if (text1[j] == text2[0])
+            {
+                lcs[j][0] = 1;
+            }
+            lcs[j + 1][0] = lcs[j][0];
+        }
 
-        for (int i=1;i<len1;i++) {
-            for (int j=1;j<len2;j++) {
-                if (text1[i]==text2[j])
-                    lcs[i][j] = lcs[i-1][j-1] + 1;
+        for (int i = 1; i < len1; i++)
+        {
+            for (int j = 1; j < len2; j++)
+            {
+                if (text1[i] == text2[j])
+                    lcs[i][j] = lcs[i - 1][j - 1] + 1;
                 else
                 {
-                    lcs[i][j]=lcs[i-1][j]>lcs[i][j-1]?lcs[i-1][j]:lcs[i][j-1];
+                    lcs[i][j] = lcs[i - 1][j] > lcs[i][j - 1] ? lcs[i - 1][j] : lcs[i][j - 1];
                 }
-
             }
         }
 
-        return lcs[len1-1][len2-1];
+        return lcs[len1 - 1][len2 - 1];
 
         // if (text1[len1 - 1] == text2[len2 - 1])
         // {
@@ -163,38 +167,38 @@ public:
         // return max1;
     }
 
+    void testlongestCommonSubsequence()
+    {
+        StringTest st;
+        string text1 = "ylqpejqbalahwr", text2 = "yrkzavgdmdgtqpg";
+        cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
+             << st.longestCommonSubsequence(text1, text2) << endl;
+        // cout << "longestCommonString of " << text1 << " and  " << text2 << " is "
+        //     << st.longestCommonSubstring(text1, text2) << endl;
 
-    void testlongestCommonSubsequence() {
-    StringTest st;
-    string text1 =  "ylqpejqbalahwr", text2 = "yrkzavgdmdgtqpg";
-    cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
-        << st.longestCommonSubsequence(text1, text2) << endl;
-    // cout << "longestCommonString of " << text1 << " and  " << text2 << " is "
-    //     << st.longestCommonSubstring(text1, text2) << endl;
+        text1 = "bl", text2 = "yby";
 
-   text1 = "bl",text2="yby";
+        cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
+             << st.longestCommonSubsequence(text1, text2) << endl;
 
-   cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
-        << st.longestCommonSubsequence(text1, text2) << endl;
+        text1 = "abcde", text2 = "ace";
+        cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
+             << st.longestCommonSubsequence(text1, text2) << endl;
+        // cout << "longestCommonString of " << text1 << " and  " << text2 << " is "
+        //     << st.longestCommonSubstring(text1, text2) << endl;
 
-    text1 = "abcde", text2 = "ace";
-    cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
-        << st.longestCommonSubsequence(text1, text2) << endl;
-    // cout << "longestCommonString of " << text1 << " and  " << text2 << " is "
-    //     << st.longestCommonSubstring(text1, text2) << endl;
+        text1 = "abc", text2 = "abc";
+        cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
+             << st.longestCommonSubsequence(text1, text2) << endl;
+        // cout << "longestCommonString of " << text1 << " and  " << text2 << " is "
+        //     << st.longestCommonSubstring(text1, text2) << endl;
 
-    text1 = "abc", text2 = "abc";
-    cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
-        << st.longestCommonSubsequence(text1, text2) << endl;
-    // cout << "longestCommonString of " << text1 << " and  " << text2 << " is "
-    //     << st.longestCommonSubstring(text1, text2) << endl;
-
-    text1 = "abc", text2 = "def";
-    cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
-        << st.longestCommonSubsequence(text1, text2) << endl;
-    // cout << "longestCommonString of " << text1 << " and  " << text2 << " is "
-    //     << st.longestCommonSubstring(text1, text2) << endl;
-}
+        text1 = "abc", text2 = "def";
+        cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
+             << st.longestCommonSubsequence(text1, text2) << endl;
+        // cout << "longestCommonString of " << text1 << " and  " << text2 << " is "
+        //     << st.longestCommonSubstring(text1, text2) << endl;
+    }
 
     // 214. Shortest Palindrome
     string shortestPalindrome(const string &s)
@@ -204,12 +208,12 @@ public:
             return s;
         int i = 0;
         int j = len - 1;
-        int counter=0;
+        int counter = 0;
         string ns = s;
         while (counter < j)
         {
             if (ns[i] != s[j])
-                ns = ns.substr(0, i) + s[j] + s.substr(counter,len-counter);
+                ns = ns.substr(0, i) + s[j] + s.substr(counter, len - counter);
             else
                 counter++;
             i++;
@@ -218,36 +222,39 @@ public:
         return ns;
     }
 
-//    5. Longest Palindromic Substring
-    string longestPalindrome(string s) {
+    //    5. Longest Palindromic Substring
+    string longestPalindrome(string s)
+    {
         //reverse s to t
         // find longest common str of S
         int len = s.length();
-        int  max = 0 , begin = 0;
+        int max = 0, begin = 0;
         for (int m = 0; m < len; m++)
         {
             int j = len - 1;
             int i = m;
-            int sum =0;
+            int sum = 0;
             while (i < len && j >= 0)
             {
                 if (s[i] != s[j])
                 {
                     sum = 0;
                 }
-                else 
+                else
                 {
                     i++;
                     sum++;
                 }
                 j--;
             }
-            if(sum > max){
+            if (sum > max)
+            {
                 max = sum;
                 begin = m;
             }
 
-            if(sum > len - i - 1){
+            if (sum > len - i - 1)
+            {
                 break;
             }
         }
@@ -258,15 +265,15 @@ public:
         return s.substr(begin, max);
     }
 
-    void testlongestPalindrome(){
-        cout << "longestPalindrome of babad  is " << longestPalindrome("babad")<<endl;
-        cout << "longestPalindrome of cbbd  is " << longestPalindrome("cbbd")<<endl;
+    void testlongestPalindrome()
+    {
+        cout << "longestPalindrome of babad  is " << longestPalindrome("babad") << endl;
+        cout << "longestPalindrome of cbbd  is " << longestPalindrome("cbbd") << endl;
     }
 };
 
-
-
-void testlengthOfLongestSubstringWithKRepeates() {
+void testlengthOfLongestSubstringWithKRepeates()
+{
     StringTest st;
     string input;
     while (true)
@@ -277,18 +284,55 @@ void testlengthOfLongestSubstringWithKRepeates() {
         {
             break;
         }
-        cout<< "longest of "<<input<<" is "<<st.lengthOfLongestSubstring(input)<<endl;
+        cout << "longest of " << input << " is " << st.lengthOfLongestSubstring(input) << endl;
         cout << "lengthOfLongestSubstringWithKRepeates of " << input << " is " << st.lengthOfLongestSubstringWithKRepeates(input, 3) << endl;
     }
 }
 
+#include <algorithm>
+// 67. Add Binary
+// Runtime: 4 ms, faster than 85.92% of C++ online submissions for Add Binary.
+// Memory Usage: 6.6 MB, less than 61.57% of C++ online submissions for Add Binary.
+string addBinary(string a, string b)
+{
+    int carry = 0;
+    int i = a.size() - 1;
+    int j = b.size() - 1;
+    string res = "";
+    while (i >= 0 || j >= 0)
+    {
+        int sum = 0;
+        sum += carry;
+        if (i >= 0)
+            sum += a[i--] - '0';
+        if (j >= 0)
+            sum += b[j--] - '0';
+        res += to_string(sum % 2);
+        carry = sum / 2;
+    }
+    if (carry)
+    {
+        res += to_string(carry);
+    }
+    reverse(res.begin(), res.end());
+    return res;
+}
 
-
+void testaddBinary()
+{
+    string a = "11", b = "1";
+    cout << a << " + " << b << " = " << addBinary(a, b) << endl;
+    a = "1010", b = "1011";
+    cout << a << " + " << b << " = " << addBinary(a, b) << endl;
+    a = "10", b = "1";
+    cout << a << " + " << b << " = " << addBinary(a, b) << endl;
+}
 
 int main(int argc, char const *argv[])
 {
-    StringTest st;
-    // st.testlongestPalindrome();
-   st.testlongestCommonSubsequence();
+    // StringTest st;
+    // // st.testlongestPalindrome();
+    // st.testlongestCommonSubsequence();
+    testaddBinary();
     return 0;
 }
