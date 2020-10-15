@@ -500,6 +500,41 @@ vector<int> numSmallerByFrequency(vector<string> &queries, vector<string> &words
     return qc;
 }
 
+// 1446. Consecutive Characters
+// Runtime: 0 ms, faster than 100.00% of C++ online submissions for Consecutive Characters.
+// Memory Usage: 7 MB, less than 100.00% of C++ online submissions for Consecutive Characters.
+int maxPower(string s)
+{
+    int i = 0, j = 1;
+    int power = 1;
+    while (j < s.size())
+    {
+        if (s[j] != s[i])
+        {
+            power = (j - i > power) ? (j - i) : power;
+            i = j;
+        }
+        j++;
+    }
+    if (j - i != 1)
+        power = (j - i > power) ? (j - i) : power;
+    return power;
+}
+
+void testmaxPower()
+{
+    string s = "leetcode";
+    cout << "max power of " << s << " is " << maxPower(s) << endl;
+    s = "abbcccddddeeeeedcba";
+    cout << "max power of " << s << " is " << maxPower(s) << endl;
+    s = "triplepillooooow";
+    cout << "max power of " << s << " is " << maxPower(s) << endl;
+    s = "hooraaaaaaaaaaay";
+    cout << "max power of " << s << " is " << maxPower(s) << endl;
+    s = "tourist";
+    cout << "max power of " << s << " is " << maxPower(s) << endl;
+}
+
 void testnumSmallerByFrequency()
 {
     vector<string> queries = {"cbd"}, words = {"zaaaz"};
@@ -517,6 +552,7 @@ int main(int argc, char const *argv[])
     // testAddString();
     // testbuddyStrings();
     // testisPrefixOfWord();
-    testnumSmallerByFrequency();
+    // testnumSmallerByFrequency();
+    testmaxPower();
     return 0;
 }
