@@ -456,6 +456,58 @@ void testisPrefixOfWord()
     cout << searchWord << " is at " << isPrefixOfWord(sentence, searchWord) << " of " << sentence << endl;
 }
 
+// 1170. Compare Strings by Frequency of the Smallest Character
+// Runtime: 128 ms, faster than 27.66% of C++ online submissions for Compare Strings by Frequency of the Smallest Character.
+// Memory Usage: 11.8 MB, less than 5.36% of C++ online submissions for Compare Strings by Frequency of the Smallest Character.
+vector<int> numSmallerByFrequency(vector<string> &queries, vector<string> &words)
+{
+    auto f = [](vector<string> &warray) {
+        int sz = warray.size();
+        vector<int> cnts(sz, 0);
+        for (int i = 0; i < sz; i++)
+        {
+            string word = warray[i];
+            char smallest = 'z' + 1;
+            int freq = 0;
+            for (int j = 0; j < word.size(); j++)
+            {
+                if (word[j] < smallest)
+                {
+                    freq = 1;
+                    smallest = word[j];
+                }
+                else if (word[j] == smallest)
+                {
+                    freq++;
+                }
+            }
+            cnts[i] = freq;
+        }
+        return cnts;
+    };
+    vector<int> qc = f(queries);
+    vector<int> wc = f(words);
+    for (int i = 0; i < qc.size(); i++)
+    {
+        int sum = 0;
+        for (int j = 0; j < wc.size(); j++)
+        {
+            if (qc[i] < wc[j])
+                sum++;
+        }
+        qc[i] = sum;
+    }
+    return qc;
+}
+
+void testnumSmallerByFrequency()
+{
+    vector<string> queries = {"cbd"}, words = {"zaaaz"};
+    vector<int> res = numSmallerByFrequency(queries, words);
+    queries = {"bbb", "cc"}, words = {"a", "aa", "aaa", "aaaa"};
+    res = numSmallerByFrequency(queries, words);
+}
+
 int main(int argc, char const *argv[])
 {
     // StringTest st;
@@ -464,6 +516,7 @@ int main(int argc, char const *argv[])
     // testaddBinary();
     // testAddString();
     // testbuddyStrings();
-    testisPrefixOfWord();
+    // testisPrefixOfWord();
+    testnumSmallerByFrequency();
     return 0;
 }
