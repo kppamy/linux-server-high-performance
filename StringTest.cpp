@@ -543,6 +543,71 @@ void testnumSmallerByFrequency()
     res = numSmallerByFrequency(queries, words);
 }
 
+bool ends_with(const string &a, const string &b)
+{
+    int sb = b.size();
+    int sa = a.size();
+    while (sb > 0)
+    {
+        if (b[sb - 1] == a[sa - 1])
+        {
+            sb--;
+            sa--;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return true;
+}
+int countBinarySubstrings(string s)
+{
+    int len = s.size();
+    string zero = "";
+    string one = "";
+    vector<string> patterns;
+    int num = len / 2;
+    while (num-- > 0)
+    {
+        zero.append("0");
+        one.append("1");
+        patterns.push_back(one + zero);
+        patterns.push_back(zero + one);
+    }
+    int cnts = 0;
+    int lenp = patterns.size();
+    auto counter = [&](int start) {
+        for (int i = start; i < lenp; i += 2)
+        {
+            string pat = patterns[i];
+            if (pat == "")
+                continue;
+            vector<string> arr = split(s, pat);
+            int as = arr.size();
+            if (arr[0] == s)
+                break;
+            if (ends_with(s, pat))
+                as = as + 1;
+            cnts += as - 1;
+        }
+    };
+    counter(0);
+    counter(1);
+    return cnts;
+}
+
+void testcountBinarySubstrings()
+{
+    string b = "00110011";
+    cout << "numer of BinarySubstrings of " << b << " is " << countBinarySubstrings(b) << endl;
+
+    b = "10101";
+    cout << "numer of BinarySubstrings of " << b << " is " << countBinarySubstrings(b) << endl;
+    b = "00110";
+    cout << "numer of BinarySubstrings of " << b << " is " << countBinarySubstrings(b) << endl;
+}
+
 int main(int argc, char const *argv[])
 {
     // StringTest st;
@@ -553,6 +618,7 @@ int main(int argc, char const *argv[])
     // testbuddyStrings();
     // testisPrefixOfWord();
     // testnumSmallerByFrequency();
-    testmaxPower();
+    // testmaxPower();
+    testcountBinarySubstrings();
     return 0;
 }

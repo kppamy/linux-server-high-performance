@@ -31,14 +31,16 @@ void printInt(int n){
     std::cout<<" "<<n<<" ";
 }
 
-void printVector(std::vector<int> &input)
+template<typename T>
+void printVector(std::vector<T> &input)
 {
-
-    for_each(input.begin(), input.end(), [](int i) {
-        std::cout << i << " ";
-    });
+    for(auto&& val:input){
+        std::cout<<val<<" ";
+    }
     std::cout << endl;
 }
+
+
 
 void print2Vector(std::vector<std::vector<int>> &input)
 {
