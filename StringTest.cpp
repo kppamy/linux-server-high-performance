@@ -421,6 +421,41 @@ void testbuddyStrings()
     cout << A << " and " << B << " is " << ((buddyStrings(A, B)) ? "" : "not") << " buddy string" << endl;
 }
 
+#include "common.h"
+
+// 1455. Check If a Word Occurs As a Prefix of Any Word in a Sentence
+// Runtime: 0 ms, faster than 100.00% of C++ online submissions for Check If a Word Occurs As a Prefix of Any Word in a Sentence.
+// Memory Usage: 7.9 MB, less than 100.00% of C++ online submissions for Check If a Word Occurs As a Prefix of Any Word in a Sentence.
+int isPrefixOfWord(string sentence, string searchWord)
+{
+    vector<std::string> splts = split(sentence, " ");
+    for (int i = 0; i < splts.size(); i++)
+    {
+        string val = splts[i];
+        if (val.find(searchWord) == 0)
+            return (i + 1);
+    }
+    return -1;
+}
+
+void testisPrefixOfWord()
+{
+    string sentence = "i love eating burger", searchWord = "burg";
+    cout << searchWord << " is at " << isPrefixOfWord(sentence, searchWord) << " of " << sentence << endl;
+
+    sentence = "this problem is an easy problem", searchWord = "pro";
+    cout << searchWord << " is at " << isPrefixOfWord(sentence, searchWord) << " of " << sentence << endl;
+
+    sentence = "i am tired", searchWord = "you";
+    cout << searchWord << " is at " << isPrefixOfWord(sentence, searchWord) << " of " << sentence << endl;
+
+    sentence = "i use triple pillow", searchWord = "pill";
+    cout << searchWord << " is at " << isPrefixOfWord(sentence, searchWord) << " of " << sentence << endl;
+
+    sentence = "hello from the other side", searchWord = "they";
+    cout << searchWord << " is at " << isPrefixOfWord(sentence, searchWord) << " of " << sentence << endl;
+}
+
 int main(int argc, char const *argv[])
 {
     // StringTest st;
@@ -428,6 +463,7 @@ int main(int argc, char const *argv[])
     // st.testlongestCommonSubsequence();
     // testaddBinary();
     // testAddString();
-    testbuddyStrings();
+    // testbuddyStrings();
+    testisPrefixOfWord();
     return 0;
 }

@@ -5,9 +5,18 @@
 #include <random>
 #include "Timer.h"
 
-typedef vector<vector<int>> my2arr;
-typedef vector<my2arr> my2DCases;
+typedef std::vector<std::vector<int>> my2arr;
+typedef std::vector<my2arr> my2DCases;
 
+struct TreeNode
+{
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int val, TreeNode *l, TreeNode *r) : val(0), left(l), right(r) {}
+};
 
 void timeit(std::function<void()> func)
 {
@@ -19,16 +28,16 @@ void timeit(std::function<void()> func)
 }
 
 void printInt(int n){
-    cout<<" "<<n<<" ";
+    std::cout<<" "<<n<<" ";
 }
 
 void printVector(std::vector<int> &input)
 {
 
     for_each(input.begin(), input.end(), [](int i) {
-        cout << i << " ";
+        std::cout << i << " ";
     });
-    cout << endl;
+    std::cout << endl;
 }
 
 void print2Vector(std::vector<std::vector<int>> &input)
@@ -44,16 +53,16 @@ void printInput(int input[], int len)
     {
         for (int i = 0; i < len; i++)
         {
-            cout << input[i] << " ";
+            std::cout << input[i] << " ";
         }
-        cout << endl;
+        std::cout << endl;
     }
 }
 
 
 vector<int> generateArray(int num, int max)
 {
-    vector<int> arr(num);
+    std::vector<int> arr(num);
 
     // C random generators
     // for(int i=0;i<=num;i++){
@@ -82,15 +91,26 @@ void format_test(f func, u inputf, t print){
  }
 }
 
+my2arr generateArrayInput()
+{
+    return {
+        {2,2},
+        {2, 7, 4, 1, 8, 1 },
+        {4, 3, 10, 9, 8},
+        {4, 4, 7, 6, 7},
+        {6}
+        };
+}
+
 template<typename f, typename u, typename p>
-void testArray(f fun, string name, u input, p print){
+void testArray(f fun, string name, u input=generateArrayInput, p print=printVector){
     my2arr&& cases=input();
     for(auto&& cs:cases){
         printVector(cs);
-        cout<<name<<" :"<<endl;
+        std::cout<<name<<" :"<<endl;
         auto res=fun(cs);
         print(res);
-        cout<<endl;
+        std::cout<<endl;
     }
 }
 
@@ -179,3 +199,14 @@ public:
         Test(){cout << "Test constructor" << endl;}
         ~Test(){cout << "Test destructor" << endl;}
 };
+
+#include <regex>
+std::vector<std::string> split(const string &input, const string &regex)
+{
+    // passing -1 as the submatch index parameter performs splitting
+    std::regex re(regex);
+    std::sregex_token_iterator
+        first{input.begin(), input.end(), re, -1},
+        last;
+    return {first, last};
+}
