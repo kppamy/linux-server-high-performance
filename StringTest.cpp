@@ -363,12 +363,71 @@ void testAddString()
     cout << a << " + " << b << " = " << addStrings(a, b) << endl;
 }
 
+#include <array>
+// 859. Buddy Strings
+// Runtime: 4 ms, faster than 87.09% of C++ online submissions for Buddy Strings.
+// Memory Usage: 7.2 MB, less than 6.03% of C++ online submissions for Buddy Strings.
+bool buddyStrings(string A, string B)
+{
+    int sa = A.size();
+    if (sa != B.size())
+        return false;
+    int i = 0;
+    int df[2] = {-1};
+    int cnts = 0;
+    for (i = 0; i < sa; i++)
+    {
+        if (A[i] == B[i])
+        {
+            continue;
+        }
+        else
+        {
+            if (cnts >= 2)
+                return false;
+            df[cnts++] = i;
+        }
+    }
+    if (cnts == 1)
+        return false;
+    if (cnts == 0)
+    {
+        int counter[26] = {0};
+        i = 0;
+        while (i < sa)
+        {
+            counter[A[i] - 'a']++;
+            if (counter[A[i] - 'a'] == 2)
+                return true;
+            i++;
+        }
+        return false;
+    }
+    char tmp = A[df[0]];
+    A[df[0]] = A[df[1]];
+    A[df[1]] = tmp;
+    return A == B;
+}
+
+void testbuddyStrings()
+{
+    string A = "ab", B = "ba";
+    cout << A << " and " << B << " is " << ((buddyStrings(A, B)) ? "" : "not") << " buddy string" << endl;
+    A = "ab", B = "ab";
+    cout << A << " and " << B << " is " << ((buddyStrings(A, B)) ? "" : "not") << " buddy string" << endl;
+    A = "aa", B = "aa";
+    cout << A << " and " << B << " is " << ((buddyStrings(A, B)) ? "" : "not") << " buddy string" << endl;
+    A = "aaaaaaabc", B = "aaaaaaacb";
+    cout << A << " and " << B << " is " << ((buddyStrings(A, B)) ? "" : "not") << " buddy string" << endl;
+}
+
 int main(int argc, char const *argv[])
 {
     // StringTest st;
     // // st.testlongestPalindrome();
     // st.testlongestCommonSubsequence();
     // testaddBinary();
-    testAddString();
+    // testAddString();
+    testbuddyStrings();
     return 0;
 }
