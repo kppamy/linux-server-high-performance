@@ -177,7 +177,6 @@ public:
         //     << st.longestCommonSubstring(text1, text2) << endl;
 
         text1 = "bl", text2 = "yby";
-
         cout << "longestCommonSubsequence of " << text1 << " and  " << text2 << " is "
              << st.longestCommonSubsequence(text1, text2) << endl;
 
@@ -649,6 +648,44 @@ void testlongestCommonPrefix()
     str = {"dog", "racecar", "car"};
     printVector(str);
     cout << "testlongestCommonPrefix: " << longestCommonPrefix(str) << endl;
+}
+
+// 521. Longest Uncommon Subsequence I
+// Runtime: 0 ms, faster than 100.00% of C++ online submissions for Longest Uncommon Subsequence I.
+// Memory Usage: 6.4 MB, less than 100.00% of C++ online submissions for Longest Uncommon Subsequence I.
+int findLUSlength(string a, string b)
+{
+    int lena = a.size();
+    int lenb = b.size();
+    if (lena != lenb)
+    {
+        return max(lena, lenb);
+    }
+    if (a == b)
+        return -1;
+    return lena;
+}
+
+template <typename F, typename P>
+void testString(F fun, string funname, P print)
+{
+    vector<vector<string>> cases = {
+        {"aba", "cdc"},
+        {"aaa", "bbb"},
+        {"aaa", "aaa"},
+        {"ylqpejqbalahwr", "yrkzavgdmdgtqpg"},
+        {"bl", "yby"},
+        {"abcde", "ace"},
+        {"abc", "abc"},
+        {"abc", "def"},
+    };
+    for (auto &&test : cases)
+    {
+        printVector(test);
+        auto res = fun(test[0], test[1]);
+        cout << funname + " : " << endl;
+        print(res);
+    }
 }
 
 int main(int argc, char const *argv[])
