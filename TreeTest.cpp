@@ -1,7 +1,6 @@
 #include "TreeTest.h"
 #include <iomanip>
 #include <math.h>
-#include "common.h"
 
 void getLine(TreeNode *root, int depth, vector<int> &vals)
 {
@@ -552,17 +551,15 @@ template <typename f, typename u>
 void testTree(f fuc, string name, u print = nullptr)
 {
     my2arr cases = {
-        {2, 3, 3, 4, 5, 5, 4, -1, -1, 8, 9, -1, -1, 9, 8},
-        {1, 2, 2, 3, -1, -1, 3, 4, -1, -1, 4},
-        {1, 2, 2, 3, 4, 4, 3},
-        {1, 2, 2, -1, 3, -1, 3},
-        {2, 1, 3},
+        {1, 2, 3, 4},
+        {1, 2, 3, -1, 4},
+        {1, -1, 2},
         {},
         {1},
         {1, 1},
         {1, 2},
+        {2, 1, 3},
         {3, 1, 2},
-        {1, -1, 2},
         {1, -1, 2, 3},
         {1, 2, -1, -1, 3},
         {5, 1, 4, -1, -1, 3, 6},
@@ -570,6 +567,10 @@ void testTree(f fuc, string name, u print = nullptr)
         {3, 9, 20, -1, -1, 15, 7},
         {1, 2, 2, 3, 3, -1, -1, 4, 4},
         {10, 5, 15, -1, -1, 6, 20},
+        {2, 3, 3, 4, 5, 5, 4, -1, -1, 8, 9, -1, -1, 9, 8},
+        {1, 2, 2, 3, -1, -1, 3, 4, -1, -1, 4},
+        {1, 2, 2, 3, 4, 4, 3},
+        {1, 2, 2, -1, 3, -1, 3},
     };
 
     for (auto &&test : cases)
@@ -630,6 +631,32 @@ vector<vector<int>> levelOrderBottom(TreeNode *root)
     return out;
 }
 
+// 606. Construct String from Binary Tree
+// Runtime: 36 ms, faster than 55.54% of C++ online submissions for Construct String from Binary Tree.
+// Memory Usage: 66.8 MB, less than 6.32% of C++ online submissions for Construct String from Binary Tree.
+string tree2str(TreeNode *t)
+{
+    string out = "";
+    if (!t)
+        return out;
+    out += to_string(t->val);
+    string left = "(";
+    left += tree2str(t->left);
+    left += ')';
+    string right = "(";
+    right += tree2str(t->right);
+    right += ')';
+    if (right == "()")
+    {
+        if (left == "()")
+            return out;
+        else
+            return out + left;
+    }
+    else
+        return out + left + right;
+}
+
 int main(int argc, char const *argv[])
 {
     // testTree(isValidBST,"isValidBST",printInt);
@@ -638,6 +665,7 @@ int main(int argc, char const *argv[])
     // testTree(isBalanced,"isBalanced",printInt);
     // testTree(postorderTraversal, "postorderTraversal", printVector);
     // testTree(isSymmetric, "isSymmetric", printInt);
-    testTree(levelOrderBottom, "levelOrderBottom", print2Vector);
+    // testTree(levelOrderBottom, "levelOrderBottom", print2Vector);
+    testTree(tree2str, "tree2str", [](string res) { cout << res << endl; });
     return 0;
 }

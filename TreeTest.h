@@ -1,7 +1,8 @@
 #include <stddef.h>
 #include <vector>
 #include <iostream>
-using namespace std;
+#include "common.h"
+
 template <typename T=int>
 struct TreeNodeT
 {
@@ -14,15 +15,7 @@ struct TreeNodeT
 };
 //use TreeNodeT<> tn;
 
-struct TreeNode
-{
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-    TreeNode() : val(0), left(nullptr), right(nullptr) {}
-    TreeNode(int val, TreeNode *l, TreeNode *r) : val(0), left(l), right(r) {}
-};
+
 
 class Tree
 {
