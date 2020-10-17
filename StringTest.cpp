@@ -688,6 +688,33 @@ void testString(F fun, string funname, P print)
     }
 }
 
+// 344. Reverse String
+// Runtime: 28 ms, faster than 97.65% of C++ online submissions for Reverse String.
+// Memory Usage: 23.4 MB, less than 32.49% of C++ online submissions for Reverse String.
+void reverseString(vector<char> &s)
+{
+    int len = s.size();
+    for (int i = 0; i < len / 2; i++)
+    {
+        swap(s[i], s[len - 1 - i]);
+    }
+}
+
+void testreverseString()
+{
+    vector<char> s = {'h', 'e', 'l', 'l', 'o'};
+    printVector(s);
+    reverseString(s);
+    cout << "reverseString: " << endl;
+    printVector(s);
+
+    s = {'H', 'a', 'n', 'n', 'a', 'h'};
+    printVector(s);
+    reverseString(s);
+    cout << "reverseString: " << endl;
+    printVector(s);
+}
+
 int main(int argc, char const *argv[])
 {
     // StringTest st;
@@ -700,6 +727,7 @@ int main(int argc, char const *argv[])
     // testnumSmallerByFrequency();
     // testmaxPower();
     // testcountBinarySubstrings();
-    testlongestCommonPrefix();
+    // testlongestCommonPrefix();
+    testreverseString();
     return 0;
 }
