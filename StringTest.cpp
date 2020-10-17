@@ -700,6 +700,36 @@ void reverseString(vector<char> &s)
     }
 }
 
+void reverseString(string &s, int start, int len)
+{
+    for (int i = start, j = start + len - 1; i < start + len / 2; i++, j--)
+    {
+        swap(s[i], s[j]);
+    }
+}
+
+// 541. Reverse String II
+// Runtime: 4 ms, faster than 99.17% of C++ online submissions for Reverse String II.
+// Memory Usage: 7.5 MB, less than 5.98% of C++ online submissions for Reverse String II.
+string reverseStr(string s, int k)
+{
+    int len = s.size();
+    for (int i = 0; i < len;)
+    {
+        if (i + k - 1 < len)
+        {
+            reverseString(s, i, k);
+            i += 2 * k;
+        }
+        else
+        {
+            reverseString(s, i, len - i);
+            break;
+        }
+    }
+    return s;
+}
+
 void testreverseString()
 {
     vector<char> s = {'h', 'e', 'l', 'l', 'o'};
@@ -715,6 +745,27 @@ void testreverseString()
     printVector(s);
 }
 
+void testreverseStr()
+{
+    string s = "abcdefg";
+    int k = 2;
+    cout << s << endl;
+    cout << " after reverse: " << endl;
+    cout << reverseStr(s, k) << endl;
+
+    s = "abcdefg";
+    k = 3;
+    cout << s << endl;
+    cout << " after reverse: " << endl;
+    cout << reverseStr(s, k) << endl;
+
+    s = "abcdefgsfjlssd";
+    k = 3;
+    cout << s << endl;
+    cout << " after reverse: " << endl;
+    cout << reverseStr(s, k) << endl;
+}
+
 int main(int argc, char const *argv[])
 {
     // StringTest st;
@@ -728,6 +779,7 @@ int main(int argc, char const *argv[])
     // testmaxPower();
     // testcountBinarySubstrings();
     // testlongestCommonPrefix();
-    testreverseString();
+    // testreverseString();
+    testreverseStr();
     return 0;
 }
