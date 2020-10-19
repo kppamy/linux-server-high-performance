@@ -224,6 +224,7 @@ public:
     //    5. Longest Palindromic Substring
     string longestPalindrome(string s)
     {
+
         //reverse s to t
         // find longest common str of S
         int len = s.length();
@@ -266,8 +267,10 @@ public:
 
     void testlongestPalindrome()
     {
+        cout << "longestPalindrome of bananas  is " << longestPalindrome("bananas") << endl;
         cout << "longestPalindrome of babad  is " << longestPalindrome("babad") << endl;
         cout << "longestPalindrome of cbbd  is " << longestPalindrome("cbbd") << endl;
+        cout << "longestPalindrome of dddddddd  is " << longestPalindrome("dddddddd") << endl;
     }
 };
 
@@ -766,10 +769,91 @@ void testreverseStr()
     cout << reverseStr(s, k) << endl;
 }
 
+int selfMatch(string str){
+   int sum=0;
+   int i=0;
+   int len=str.size();
+   while(i<len){
+       string prefix= str.substr(0,i+1);
+       string suffix= str.substr(len-1-i,i+1);
+       if(prefix==suffix)
+        i++;
+       else
+           break;
+       
+   }
+   return i;
+}
+
+string longestPalindrome(string s)
+{
+    int len = s.length();
+    string opposite = s;
+    std::reverse(opposite.begin(), opposite.end());
+    int longest = 0, maxi = 0;
+    auto isPalidrome = [&](int end, int slen) -> bool {
+        int i = end - slen + 1;
+        while (i < end)
+        {
+            if (s[i] != s[end])
+                return false;
+            i++;
+            end--;
+        }
+        return true;
+    };
+    for (int i = 0; i < len; i++)
+    {
+        int start = i;
+        int j = 0;
+        while (j < len)
+        {
+            if (start == len)
+                break;
+            if (s[start] == opposite[j])
+            {
+                start++;
+                j++;
+            }
+            else
+            {
+                if (start - i > longest && isPalidrome(j - 1, start - i))
+                {
+                    longest = start - i;
+                    maxi = i;
+                }
+                 int  leap =selfMatch(s.substr(i,start-i));
+                 j=start-i+leap;
+                  start= i+leap;
+            }
+        }
+        if (s[start - 1] == opposite[j - 1] && start - i > longest && isPalidrome(start - 1, start - i))
+        {
+            longest = start - i;
+            maxi = i;
+        }
+        if (start == len || longest >= len - start)
+            break;
+    }
+    return s.substr(maxi, longest);
+}
+
+void testlongestPalindrome()
+{ 
+    cout << "longestPalindrome of aacabdkacaa  is " << longestPalindrome("aacabdkacaa") << endl;
+    cout << "longestPalindrome of xaabacxcabaaxcabaax  is " << longestPalindrome("xaabacxcabaaxcabaax") << endl;
+    cout << "longestPalindrome of bacabab  is " << longestPalindrome("bacabab") << endl;
+    cout << "longestPalindrome of abb  is " << longestPalindrome("abb") << endl;
+    cout << "longestPalindrome of bananas  is " << longestPalindrome("bananas") << endl;
+    cout << "longestPalindrome of babad  is " << longestPalindrome("babad") << endl;
+    cout << "longestPalindrome of cbbd  is " << longestPalindrome("cbbd") << endl;
+    cout << "longestPalindrome of dddddddd  is " << longestPalindrome("dddddddd") << endl;
+}
+
 int main(int argc, char const *argv[])
 {
     // StringTest st;
-    // // st.testlongestPalindrome();
+    testlongestPalindrome();
     // st.testlongestCommonSubsequence();
     // testaddBinary();
     // testAddString();
@@ -780,6 +864,6 @@ int main(int argc, char const *argv[])
     // testcountBinarySubstrings();
     // testlongestCommonPrefix();
     // testreverseString();
-    testreverseStr();
+    // testreverseStr();
     return 0;
 }
