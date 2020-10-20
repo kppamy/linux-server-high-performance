@@ -769,22 +769,26 @@ void testreverseStr()
     cout << reverseStr(s, k) << endl;
 }
 
-int selfMatch(string str){
-   int sum=0;
-   int i=0;
-   int len=str.size();
-   while(i<len){
-       string prefix= str.substr(0,i+1);
-       string suffix= str.substr(len-1-i,i+1);
-       if(prefix==suffix)
-        i++;
-       else
-           break;
-       
-   }
-   return i;
+int selfMatch(string str)
+{
+    int sum = 0;
+    int i = 0;
+    int len = str.size();
+    if (len <= 1)
+        return 0;
+    while (i < len - 1)
+    {
+        string prefix = str.substr(0, i + 1);
+        string suffix = str.substr(len - 1 - i, i + 1);
+        if (prefix == suffix)
+            i++;
+        else
+            break;
+    }
+    return i;
 }
 
+// Knuth Morris Pratt
 string longestPalindrome(string s)
 {
     int len = s.length();
@@ -802,44 +806,56 @@ string longestPalindrome(string s)
         }
         return true;
     };
+    int matched = 0;
     for (int i = 0; i < len; i++)
     {
-        int start = i;
         int j = 0;
         while (j < len)
         {
-            if (start == len)
+            if (i + matched == len)
                 break;
-            if (s[start] == opposite[j])
+            if (s[i + matched] == opposite[j])
             {
-                start++;
+                matched++;
                 j++;
             }
             else
             {
-                if (start - i > longest && isPalidrome(j - 1, start - i))
+                if (matched > longest && isPalidrome(i + matched - 1, matched))
                 {
-                    longest = start - i;
+                    longest = matched;
                     maxi = i;
                 }
-                 int  leap =selfMatch(s.substr(i,start-i));
-                 j=start-i+leap;
-                  start= i+leap;
+                if (j == len - 1)
+                    break;
+                if (matched == 0)
+                    j++;
+                matched = selfMatch(s.substr(i, matched));
             }
         }
-        if (s[start - 1] == opposite[j - 1] && start - i > longest && isPalidrome(start - 1, start - i))
+        if (s[i + matched - 1] == opposite[j - 1])
         {
-            longest = start - i;
-            maxi = i;
+            if (matched > longest && isPalidrome(i + matched - 1, matched))
+            {
+                longest = matched;
+                maxi = i;
+            }
+            matched = selfMatch(s.substr(i, matched));
         }
-        if (start == len || longest >= len - start)
+        if (i + matched == len)
             break;
     }
     return s.substr(maxi, longest);
 }
 
 void testlongestPalindrome()
-{ 
+{
+    string s = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg";
+
+    cout << "longestPalindrome of  is " << longestPalindrome(s) << endl;
+    cout << "longestPalindrome of babaddtattarrattatddetartrateedredividerb  is " << longestPalindrome("babaddtattarrattatddetartrateedredividerb") << endl;
+    cout << "longestPalindrome of abacab  is " << longestPalindrome("abacab") << endl;
+    cout << "longestPalindrome of abbcccbbbcaaccbababcbcabca  is " << longestPalindrome("abbcccbbbcaaccbababcbcabca") << endl;
     cout << "longestPalindrome of aacabdkacaa  is " << longestPalindrome("aacabdkacaa") << endl;
     cout << "longestPalindrome of xaabacxcabaaxcabaax  is " << longestPalindrome("xaabacxcabaaxcabaax") << endl;
     cout << "longestPalindrome of bacabab  is " << longestPalindrome("bacabab") << endl;
