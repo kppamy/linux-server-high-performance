@@ -788,8 +788,62 @@ int selfMatch(string str)
     return i;
 }
 
-// Knuth Morris Pratt
+using namespace std;
+
+// 5. Longest Palindromic Substring
+// Runtime: 624 ms, faster than 12.81% of C++ online submissions for Longest Palindromic Substring.
+// Memory Usage: 386.7 MB, less than 5.30% of C++ online submissions for Longest Palindromic Substring.
 string longestPalindrome(string s)
+{
+    int len = s.length();
+    string reverse = s;
+    std::reverse(reverse.begin(), reverse.end());
+    int max = 0, maxi = 0;
+    string pali = "";
+    vector<vector<int>> dp(len + 1, vector<int>(len + 1, 0));
+    auto isPalidrome = [&](int end, int slen) -> bool {
+        int i = end - slen + 1;
+        while (i != end && i <= end)
+        {
+            if (s[i] != s[end])
+            {
+                return false;
+            }
+            i++;
+            end--;
+        }
+        return true;
+    };
+    for (int i = 1; i <= len; i++)
+    {
+        for (int j = 1; j <= len; j++)
+        {
+            if (s[i - 1] == reverse[j - 1])
+            {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+                if (dp[i][j] > max)
+                {
+                    int lcs = dp[i][j];
+                    while (lcs > max)
+                    {
+                        if (isPalidrome(i - 1, lcs))
+                        {
+                            max = dp[i][j];
+                            maxi = i;
+                            pali = s.substr(i - lcs, lcs);
+                            break;
+                        }
+                        lcs--;
+                    }
+                }
+            }
+        }
+    }
+    return pali;
+}
+
+// Knuth Morris Pratt not working why?
+string longestPalindromeKMP(string s)
 {
     int len = s.length();
     string opposite = s;
@@ -810,10 +864,8 @@ string longestPalindrome(string s)
     for (int i = 0; i < len; i++)
     {
         int j = 0;
-        while (j < len)
+        while (j < len && i + matched < len)
         {
-            if (i + matched == len)
-                break;
             if (s[i + matched] == opposite[j])
             {
                 matched++;
@@ -842,21 +894,24 @@ string longestPalindrome(string s)
             }
             matched = selfMatch(s.substr(i, matched));
         }
-        if (i + matched == len)
-            break;
     }
     return s.substr(maxi, longest);
 }
 
 void testlongestPalindrome()
 {
+
+    cout << "longestPalindrome of aacabdkacaa  is " << longestPalindrome("aacabdkacaa") << endl;
     string s = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg";
 
     cout << "longestPalindrome of  is " << longestPalindrome(s) << endl;
+
+    s = "slvafhpfjpbqbpcuwxuexavyrtymfydcnvvbvdoitsvumbsvoayefsnusoqmlvatmfzgwlhxtkhdnlmqmyjztlytoxontggyytcezredlrrimcbkyzkrdeshpyyuolsasyyvxfjyjzqksyxtlenaujqcogpqmrbwqbiaweacvkcdxyecairvvhngzdaujypapbhctaoxnjmwhqdzsvpyixyrozyaldmcyizilrmmmvnjbyhlwvpqhnnbausoyoglvogmkrkzppvexiovlxtmustooahwviluumftwnzfbxxrvijjyfybvfnwpjjgdudnyjwoxavlyiarjydlkywmgjqeelrohrqjeflmdyzkqnbqnpaewjdfmdyoazlznzthiuorocncwjrocfpzvkcmxdopisxtatzcpquxyxrdptgxlhlrnwgvee";
+    cout << "longestPalindrome of  is " << longestPalindrome(s) << endl;
+
     cout << "longestPalindrome of babaddtattarrattatddetartrateedredividerb  is " << longestPalindrome("babaddtattarrattatddetartrateedredividerb") << endl;
     cout << "longestPalindrome of abacab  is " << longestPalindrome("abacab") << endl;
     cout << "longestPalindrome of abbcccbbbcaaccbababcbcabca  is " << longestPalindrome("abbcccbbbcaaccbababcbcabca") << endl;
-    cout << "longestPalindrome of aacabdkacaa  is " << longestPalindrome("aacabdkacaa") << endl;
     cout << "longestPalindrome of xaabacxcabaaxcabaax  is " << longestPalindrome("xaabacxcabaaxcabaax") << endl;
     cout << "longestPalindrome of bacabab  is " << longestPalindrome("bacabab") << endl;
     cout << "longestPalindrome of abb  is " << longestPalindrome("abb") << endl;
