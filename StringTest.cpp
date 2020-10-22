@@ -199,28 +199,6 @@ public:
         //     << st.longestCommonSubstring(text1, text2) << endl;
     }
 
-    // 214. Shortest Palindrome
-    string shortestPalindrome(const string &s)
-    {
-        int len = s.length();
-        if (len <= 1)
-            return s;
-        int i = 0;
-        int j = len - 1;
-        int counter = 0;
-        string ns = s;
-        while (counter < j)
-        {
-            if (ns[i] != s[j])
-                ns = ns.substr(0, i) + s[j] + s.substr(counter, len - counter);
-            else
-                counter++;
-            i++;
-            j--;
-        }
-        return ns;
-    }
-
     //    5. Longest Palindromic Substring
     string longestPalindrome(string s)
     {
@@ -788,8 +766,27 @@ int selfMatch(string str)
     return i;
 }
 
-using namespace std;
+vector<int> getPrefixFunction(const string &pattern)
+{
+    int matched = 0;
+    int len = pattern.size();
+    if (len == 0)
+        return {};
+    vector<int> prefix(len + 1, 0);
+    for (int i = 2; i <= len; i++)
+    {
+        while (matched > 0 && pattern[matched] != pattern[i - 1])
+        {
+            matched = prefix[matched];
+        }
+        if (pattern[matched] == pattern[i - 1])
+            matched++;
+        prefix[i] = matched;
+    }
+    return prefix;
+}
 
+using namespace std;
 // 5. Longest Palindromic Substring
 // Runtime: 624 ms, faster than 12.81% of C++ online submissions for Longest Palindromic Substring.
 // Memory Usage: 386.7 MB, less than 5.30% of C++ online submissions for Longest Palindromic Substring.
@@ -823,13 +820,14 @@ string longestPalindrome(string s)
                 dp[i][j] = dp[i - 1][j - 1] + 1;
                 if (dp[i][j] > max)
                 {
+                    max = dp[i][j];
+                    maxi = i;
                     int lcs = dp[i][j];
                     while (lcs > max)
                     {
                         if (isPalidrome(i - 1, lcs))
                         {
-                            max = dp[i][j];
-                            maxi = i;
+
                             pali = s.substr(i - lcs, lcs);
                             break;
                         }
@@ -839,7 +837,8 @@ string longestPalindrome(string s)
             }
         }
     }
-    return pali;
+    while (maxi > 0)
+        return pali;
 }
 
 // Knuth Morris Pratt not working why?
@@ -921,10 +920,88 @@ void testlongestPalindrome()
     cout << "longestPalindrome of dddddddd  is " << longestPalindrome("dddddddd") << endl;
 }
 
+bool isPalindrome(const string &s)
+{
+    int len = s.size();
+    int half = len / 2;
+    string cp = s.substr(0, half);
+    int right = (len % 2) ? (half + 1) : (half);
+    std::reverse(cp.begin(), cp.end());
+    return cp == s.substr(right, len / 2);
+}
+
+// 214. Shortest Palindrome
+string shortestPalindromeBF(const string &s)
+{
+    int len = s.size();
+    int end = len;
+    while (end > 0)
+    {
+        if (isPalindrome(s.substr(0, end)))
+            break;
+        end--;
+    }
+    if (end == len)
+        return s;
+    string prefix = s.substr(end, len - end);
+    std::reverse(prefix.begin(), prefix.end());
+    return prefix + s;
+}
+
+// KMP
+// Runtime: 4 ms, faster than 95.88% of C++ online submissions for Shortest Palindrome.
+// Memory Usage: 8.1 MB, less than 8.08% of C++ online submissions for Shortest Palindrome.
+string shortestPalindrome(const string &s)
+{
+    int slen = s.size();
+    if (slen <= 1)
+        return s;
+    string rev(s);
+    std::reverse(rev.begin(), rev.end());
+    string pattern = s + '#' + rev;
+    int matched = 0;
+    int len = 2 * slen + 1;
+    vector<int> prefix(len + 1, 0);
+    for (int q = 2; q <= len; q++)
+    {
+        while (matched > 0 && pattern[matched] != pattern[q - 1])
+        {
+            matched = prefix[matched];
+        }
+        if (pattern[matched] == pattern[q - 1])
+            matched++;
+        prefix[q] = matched;
+    }
+    return rev.substr(0, slen - prefix[len]) + s;
+}
+
+void testshortestPalindrome()
+{
+
+    string s = "aacecaaa";
+    cout << "shortestPalindrome of " << s << " is: " << shortestPalindrome(s) << endl;
+
+    s = "";
+    for (int i = 0; i < 10000; i++)
+    {
+        s += "aaaaa";
+    }
+    // cout << "shortestPalindrome of is: " << shortestPalindrome(s) << endl;
+
+    s = "abbacd";
+    cout << "shortestPalindrome of " << s << " is: " << shortestPalindrome(s) << endl;
+
+    s = "abcd";
+    cout << "shortestPalindrome of " << s << " is: " << shortestPalindrome(s) << endl;
+
+    s = "aba";
+    cout << "shortestPalindrome of " << s << " is: " << shortestPalindrome(s) << endl;
+}
+
 int main(int argc, char const *argv[])
 {
     // StringTest st;
-    testlongestPalindrome();
+    // testlongestPalindrome();
     // st.testlongestCommonSubsequence();
     // testaddBinary();
     // testAddString();
@@ -936,5 +1013,6 @@ int main(int argc, char const *argv[])
     // testlongestCommonPrefix();
     // testreverseString();
     // testreverseStr();
+    testshortestPalindrome();
     return 0;
 }
