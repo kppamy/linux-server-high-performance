@@ -71,6 +71,7 @@ insert into Department (Id, Name) values ('1', 'IT') ;
 insert into Department (Id, Name) values ('2', 'Sales') ;
 SELECT * FROM Department;
 
+
 SELECT 
     DISTINCTROW  department.NAME as Department, Employee, Salary  
 FROM 
@@ -84,9 +85,19 @@ FROM
 ORDER BY Department; 
 
 
+  
+SELECT
+    department.NAME AS Department,Employee.Name AS Employee, Employee.Salary
+FROM 
+    (SELECT DepartmentId, max(Salary) as Salary FROM Employee GROUP BY DepartmentId) as maxinfo, Employee,department 
+WHERE
+    Employee.DepartmentId= maxinfo.DepartmentId 
+    and Employee.Salary=maxinfo.Salary 
+    and Employee.DepartmentId=department.id;
 
 
 -- 626	Exchange Seats   
+
 
 -- 178	Rank Scores    
 
