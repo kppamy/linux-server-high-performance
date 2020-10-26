@@ -124,6 +124,70 @@ ORDER BY Id;
 
 
 -- 178	Rank Scores    
+Create table If Not Exists Scores (Id int, Score DECIMAL(3,2)) ;
+Truncate table Scores ;
+insert into Scores (Id, Score) values ('1', '3.5') ;
+insert into Scores (Id, Score) values ('2', '3.65') ;
+insert into Scores (Id, Score) values ('3', '4.0') ;
+insert into Scores (Id, Score) values ('4', '3.85') ;
+insert into Scores (Id, Score) values ('5', '4.0') ;
+insert into Scores (Id, Score) values ('6', '3.65') ;
+SELECT * FROM Scores;
+SELECT count(*) FROM Scores;
+
+
+Create table If Not Exists ScoresN (Score DECIMAL(3,2),Ranks INTEGER) ;
+TRUNCATE table ScoresN;
+
+DROP PROCEDURE IF EXISTS ROWPERROW;
+CREATE PROCEDURE ROWPERROW()
+BEGIN
+    DECLARE n INT DEFAULT 0;
+    DECLARE i INT DEFAULT 0;
+    DECLARE pre FLOAT DEFAULT 0;
+    DECLARE cur FLOAT DEFAULT 0;
+    SELECT COUNT(*) FROM Scores INTO n;
+    SET i=0;
+    WHILE i<n DO 
+        SELECT Score FROM Scores ORDER BY Score DESC LIMIT i,1 into cur;
+        IF cur <> pre THEN
+            SET i = i + 1;
+        END IF;
+        SET pre=cur;
+        INSERT INTO ScoresN (score,ranks) values (cur,i);
+    END WHILE;
+End;
+;;
+
+DELIMITER ;
+
+CALL ROWPERROW();
+
+
+SELECT * FROM ScoresN;
+
+
+
+        SELECT Score FROM Scores ORDER BY Score DESC LIMIT 4,1 ;
+
+
+
+SELECT Score, @cnt:=@cnt+(@prev<>(@prev:=Score)) AS Ranks 
+FROM Scores, (SELECT @cnt :=0,@prev :=-1) INIT 
+ORDER BY Score DESC;
+
+
+ 
+SELECT
+  Score,
+  @rank := @rank + (@prev <> (@prev := Score)) Ranks
+FROM
+  Scores,
+  (SELECT @rank := 0, @prev := -1) init
+ORDER BY Score desc;
+
+
+
 
 -- 185. Department Top Three Salaries
 
