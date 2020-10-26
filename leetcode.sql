@@ -96,7 +96,31 @@ WHERE
     and Employee.DepartmentId=department.id;
 
 
+select department, employee, salary
+from
+(
+select a.name as employee,b.name as department, salary, dense_rank() 
+    over(partition by b.name order by a.salary desc) as rn
+from employee a
+inner join department b on a.departmentid = b.id
+) t1
+where rn = 1;
+
 -- 626	Exchange Seats   
+Create table If Not Exists seat(id int, student varchar(255)) ;
+Truncate table seat ;
+insert into seat (id, student) values ('1', 'Abbot') ;
+insert into seat (id, student) values ('2', 'Doris') ;
+insert into seat (id, student) values ('3', 'Emerson') ;
+insert into seat (id, student) values ('4', 'Green') ;
+insert into seat (id, student) values ('5', 'Jeames') ;
+SELECT * From seat;
+
+SELECT a.id,b.student
+FROM seat a, seat b
+WHERE (b.id=a.id+1 AND a.id%2=1) OR (b.id=a.id-1 AND a.id%2=0) 
+    OR (a.id%2=1 AND a.id+1 NOT IN (select id FROM seat) AND a.id=b.id)
+ORDER BY Id;
 
 
 -- 178	Rank Scores    
