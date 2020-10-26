@@ -1,4 +1,6 @@
 -- USE leetcode;
+
+-- 1179. Reformat Department Table
 Create table If Not Exists Department (id int, revenue int, month varchar(5));
 Truncate table Department;
 insert into Department (id, revenue, month) values ('1', '8000', 'Jan');
@@ -26,3 +28,39 @@ FROM
     Department 
 GROUP BY
     id;
+
+-- 180. Consecutive Numbers
+Create table If Not Exists Logs (Id int, Num int) ;
+Truncate table Logs ;
+insert into Logs (Id, Num) values ('1', '1') ;
+insert into Logs (Id, Num) values ('2', '1') ;
+insert into Logs (Id, Num) values ('3', '1') ;
+insert into Logs (Id, Num) values ('4', '2') ;
+insert into Logs (Id, Num) values ('5', '1') ;
+insert into Logs (Id, Num) values ('6', '2') ;
+insert into Logs (Id, Num) values ('7', '2') ;
+
+SELECT * FROM Logs;
+
+-- SELECT DISTINCT l1.Id FROM LOGS l1, LOGS l2, LOGS l3
+-- WHERE l2.id=l1.id+1 and l3.id=l2.id+1 and l1.num=l2.num and l2.num=l3.num;
+
+SELECT 
+    DISTINCT Num AS ConsecutiveNums 
+FROM Logs 
+where (Id+1,num) in (SELECT * FROM LOGS) and (Id +2,num) in (SELECT * FROM Logs);
+
+
+
+-- 184	Department Highest Salary    
+
+
+-- 626	Exchange Seats   
+
+-- 178	Rank Scores    
+
+-- 185. Department Top Three Salaries
+
+-- 601. Human Traffic of Stadium
+
+-- 262. Trips and Users
