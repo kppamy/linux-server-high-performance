@@ -53,6 +53,37 @@ where (Id+1,num) in (SELECT * FROM LOGS) and (Id +2,num) in (SELECT * FROM Logs)
 
 
 -- 184	Department Highest Salary    
+DROP TABLE Department;
+SELECT * FROM information_schema.tables WHERE TABLE_SCHEMA='leetcode';
+Create table If Not Exists Employee (Id int, Name varchar(255), Salary int, DepartmentId int) ;
+Truncate table Employee ;
+insert into Employee (Id, Name, Salary, DepartmentId) values ('1', 'Joe', '70000', '1') ;
+insert into Employee (Id, Name, Salary, DepartmentId) values ('2', 'Jim', '90000', '1') ;
+insert into Employee (Id, Name, Salary, DepartmentId) values ('3', 'Henry', '80000', '2') ;
+insert into Employee (Id, Name, Salary, DepartmentId) values ('4', 'Sam', '60000', '2') ;
+insert into Employee (Id, Name, Salary, DepartmentId) values ('5', 'Max', '90000', '1') ;
+SELECT * FROM Employee;
+
+
+Create table If Not Exists Department (Id int, Name varchar(255)) ;
+Truncate table Department ;
+insert into Department (Id, Name) values ('1', 'IT') ;
+insert into Department (Id, Name) values ('2', 'Sales') ;
+SELECT * FROM Department;
+
+SELECT 
+    DISTINCTROW  department.NAME as Department, Employee, Salary  
+FROM 
+    (SELECT 
+        Employee.Salary,Employee.Departmentid,Employee.Name AS Employee 
+    FROM 
+        (SELECT DepartmentId, max(Salary) as Salary FROM Employee GROUP BY DepartmentId) as maxinfo, Employee 
+    WHERE Employee.DepartmentId= maxinfo.DepartmentId and Employee.Salary=maxinfo.Salary) 
+    as temp 
+    Inner join Department on (temp.Departmentid=Department.id)
+ORDER BY Department; 
+
+
 
 
 -- 626	Exchange Seats   
