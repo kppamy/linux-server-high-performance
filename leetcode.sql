@@ -200,5 +200,42 @@ WHERE ranks<=3;
 
 
 -- 601. Human Traffic of Stadium
+Create table If Not Exists stadium (id int, visit_date DATE NULL, people int) ;
+Truncate table stadium ;
+insert into stadium (id, visit_date, people) values ('1', '2017-01-01', '10') ;
+insert into stadium (id, visit_date, people) values ('2', '2017-01-02', '109') ;
+insert into stadium (id, visit_date, people) values ('3', '2017-01-03', '150') ;
+insert into stadium (id, visit_date, people) values ('4', '2017-01-04', '99') ;
+insert into stadium (id, visit_date, people) values ('5', '2017-01-05', '145') ;
+insert into stadium (id, visit_date, people) values ('6', '2017-01-06', '1455') ;
+insert into stadium (id, visit_date, people) values ('7', '2017-01-07', '199') ;
+insert into stadium (id, visit_date, people) values ('8', '2017-01-09', '188') ;
+
+
+
+-- 263 ms, faster than 95.90%
+SELECT * 
+FROM 
+    (SELECT * FROM stadium WHERE people>=100) as a 
+WHERE ( (a.id+2) IN ((SELECT id FROM stadium WHERE people>=100))   AND   (a.id+1) IN (SELECT id FROM stadium WHERE people>=100) )
+    OR ( (a.id+1) IN (SELECT id FROM stadium WHERE people>=100)   AND   (a.id-1) IN (SELECT id FROM stadium WHERE people>=100) )
+    OR ( (a.id-2) IN (SELECT id FROM stadium WHERE people>=100)   AND   (a.id-1) IN (SELECT id FROM stadium WHERE people>=100) )
+ORDER BY visit_date;
+
+
+--  290 ms, faster than 81.46%
+SELECT DISTINCT a.* 
+FROM stadium a, stadium b,  stadium c
+WHERE (a.people>=100)
+    AND (b.people>=100)
+    AND (c.people>=100)
+    AND ((a.id+2=b.id AND a.id+1=c.id)
+        OR (a.id+1=b.id AND a.id-1=c.id)
+        OR (a.id-2=b.id AND a.id-1=c.id))
+ORDER BY visit_date;
+
+
+
+
 
 -- 262. Trips and Users
