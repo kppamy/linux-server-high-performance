@@ -1,0 +1,24 @@
+<diagram program="umletino" version="14.4.0-SNAPSHOT"><zoom_level>10</zoom_level><help_text></help_text><element><id>UMLClass</id><coordinates><x>84</x><y>0</y><w>80</w><h>50</h></coordinates><panel_attributes>Component
+--
++operation()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>244</x><y>120</y><w>160</w><h>80</h></coordinates><panel_attributes>Decorator
+--
+-Component  object
+--
++Decorator(Component obj)
++operattion()
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>264</x><y>290</y><w>110</w><h>90</h></coordinates><panel_attributes>ConcreteDecorator
+--
+-addedState
+--
++operattion()
++newBehavior()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>84</x><y>310</y><w>120</w><h>50</h></coordinates><panel_attributes>super.operatiion();
+newBehavior();</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>304</x><y>190</y><w>30</w><h>120</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;100</additional_attributes></element><element><id>UMLClass</id><coordinates><x>74</x><y>150</y><w>130</w><h>50</h></coordinates><panel_attributes>ConcreteComponent
+--
++operation()</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>114</x><y>40</y><w>30</w><h>130</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>195</x><y>332</y><w>100</w><h>30</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>80;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>154</x><y>20</y><w>190</w><h>120</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;170;10;170;100</additional_attributes></element><element><id>UMLNote</id><coordinates><x>467</x><y>120</y><w>230</w><h>150</h></coordinates><panel_attributes>Transparent:
+具体装饰类重载父类的共有方法，
+在改方法中调用新方法。 客户端通过
+抽象装饰类统一地使用新方法。
+Half Transparent:
+具体装饰类不通过父类的方法调用新方法，
+新的行为与已有行为完全独立。
+客户端通过具体装饰类使用新方法。</panel_attributes><additional_attributes></additional_attributes></element></diagram>
