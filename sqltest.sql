@@ -5,18 +5,20 @@ SELECT * from sqlite_master;
 -- 175. Combine Two Tables
 Drop TABLE Person;
 Create table If Not Exists Person (PersonId int, FirstName varchar(255), LastName varchar(255));
--- Truncate table Person;
+Truncate table Person;
 DELETE from person;
 insert into Person (PersonId, LastName, FirstName) values ('1', 'Wang', 'Allen');
 insert into Person (PersonId, LastName, FirstName) values ('2', 'chen', 'cay');
--- Truncate table Address;
+Truncate table Address;
 
 DELETE from Address;
 Create table If Not Exists Address (AddressId int, PersonId int, City varchar(255), State varchar(255));
 insert into Address (AddressId, PersonId, City, State) values ('1', '2', 'New York City', 'New York');
 insert into Address (AddressId, PersonId, City, State) values ('1', '2', 'New York City', 'New York');
+
 select * from  person;
 select * from address;
+--  304 ms,82.12%
 select DISTINCT person.FirstName,person.LastName,Address.City,Address.State FROM
 person LEFT JOIN Address on Person.PersonId == address.AddressId;
 
@@ -70,20 +72,27 @@ where num > 1;
 -- 183. Customers Who Never Order
 DROP TABLE Customers;
 Create table If Not Exists Customers (Id int, Name varchar(255));
-DROP TABLE Orders;
-Create table If Not Exists Orders (Id int, CustomerId int);
--- Truncate table Customers;
+Truncate table Customers;
 insert into Customers (Id, Name) values ('1', 'Joe');
 insert into Customers (Id, Name) values ('2', 'Henry');
 insert into Customers (Id, Name) values ('3', 'Sam');
 insert into Customers (Id, Name) values ('4', 'Max');
--- Truncate table Orders;
+
+SELECT * FROM Customers;
+
+Create table If Not Exists Orders (Id int, CustomerId int);
+Truncate table Orders;
 insert into Orders (Id, CustomerId) values ('1', '3');
 insert into Orders (Id, CustomerId) values ('2', '1');
-SELECT * FROM Customers;
+
 SELECT * FROM Orders;
+
+-- 426 ms, faster than 84.11%
 SELECT Name FROM Customers  LEFT JOIN Orders  ON Customers.Id = Orders.CustomerId 
 WHERE CustomerId IS NULL;
+
+--  515 ms, faster than 36.64%
+SELECT Name AS Customers FROM Customers WHERE id not in (SELECT customerid FROM Orders);
 
 -- 196. Delete Duplicate Emails
 SELECT * from Person;
