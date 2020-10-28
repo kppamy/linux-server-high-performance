@@ -94,23 +94,44 @@ WHERE CustomerId IS NULL;
 --  515 ms, faster than 36.64%
 SELECT Name AS Customers FROM Customers WHERE id not in (SELECT customerid FROM Orders);
 
+
+
 -- 196. Delete Duplicate Emails
+Create table If Not Exists Person (Id int, Email varchar(255));
+Truncate table Person;
+insert into Person (Id, Email) values ('1', 'a@b.com');
+insert into Person (Id, Email) values ('2', 'c@d.com');
+insert into Person (Id, Email) values ('3', 'a@b.com');
 SELECT * from Person;
 -- INSERT INTO Person VALUES(3,'a@b.com');
--- delete p1 from Person p1, Person p2 where p1.Email = p2.Email and p1.id > p2.id;
-DELETE FROM Person WHERE Id in (SELECT p1.Id from  Person p1, Person p2 WHERE p1.Email == p2.Email AND p1.Id > p2.Id);
--- DELETE from Person where id = (
-    -- select MAX(ID) from Person group BY Email HAVING COUNT(*)>1);
+-- 1762 ms,51.1%
+delete p1 from Person p1, Person p2 where p1.Email = p2.Email and p1.id > p2.id;
+-- DELETE FROM Person WHERE Id in (SELECT p1.Id from  Person p1, Person p2 WHERE p1.Email == p2.Email AND p1.Id > p2.Id);
 
 
 
 
 -- 197. Rising Temperature
--- DELETE FROM Weather WHERE ROWID not in (SELECT DISTINCT (id) from Weather);
+Create table If Not Exists Weather (Id int, RecordDate date, Temperature int) ;
+Truncate table Weather ;
+insert into Weather (Id, RecordDate, Temperature) values ('1', '2015-01-01', '10') ;
+insert into Weather (Id, RecordDate, Temperature) values ('2', '2015-01-02', '25') ;
+insert into Weather (Id, RecordDate, Temperature) values ('3', '2015-01-03', '20') ;
+insert into Weather (Id, RecordDate, Temperature) values ('4', '2015-01-04', '30') ;
+
 SELECT * FROM Weather;
-SELECT DATE(RecordDate),DATE(RecordDate,'-1 day') FROM Weather;
-SELECT w1.Id from Weather w1, Weather w2 WHERE w1.Temperature > w2.Temperature 
-AND DATE(w1.RecordDate,'-1 day') == DATE(w2.RecordDate);
+
+-- 307 ms, faster than 94.47%
+SELECT a.id FROM Weather a, Weather b WHERE a.RecordDate=DATE_ADD(b.RecordDate, INTERVAL 1 day) and a.Temperature > b.Temperature;
+
+-- 408 ms, faster than 75.94%
+SELECT a.id FROM Weather a, Weather b WHERE DATEDIFF(a.RecordDate,b.RecordDate)=1 and a.Temperature > b.Temperature;
+
+
+
+-- SELECT DATE(RecordDate),DATE(RecordDate,'-1 day') FROM Weather;
+-- SELECT w1.Id from Weather w1, Weather w2 WHERE w1.Temperature > w2.Temperature 
+-- AND DATE(w1.RecordDate,'-1 day') == DATE(w2.RecordDate);
 
 
 -- -- 595. Big Countries
@@ -126,11 +147,35 @@ SELECT  * FROM World;
 DELETE FROM World WHERE ROWID IN (SELECT ROWID FROM World GROUP BY name HAVING count(*)>1);
 SELECT name,population,area FROM World WHERE area > 3000000 OR population > 25000000;
 
+
+
 -- 596. Classes More Than 5 Students
-DELETE FROM courses WHERE ROWID not in (SELECT ROWID FROM courses  GROUP BY student,class HAVING count(*)>1);
-SELECT * FROM courses WHERE class == 'Math';
-INSERT INTO courses VALUES('B','English');
+Create table If Not Exists courses (student varchar(255), class varchar(255)) ;
+Truncate table courses ;
+insert into courses (student, class) values ('A', 'Math') ;
+insert into courses (student, class) values ('B', 'English') ;
+insert into courses (student, class) values ('C', 'Math') ;
+insert into courses (student, class) values ('D', 'Biology') ;
+insert into courses (student, class) values ('E', 'Math') ;
+insert into courses (student, class) values ('F', 'Computer') ;
+insert into courses (student, class) values ('G', 'Math') ;
+insert into courses (student, class) values ('H', 'Math') ;
+insert into courses (student, class) values ('I', 'Math') ;
+
+SELECT * FROM courses;
+
+-- DELETE FROM courses WHERE ROWID not in (SELECT ROWID FROM courses  GROUP BY student,class HAVING count(*)>1);
+-- 540 ms, toooo slow
 SELECT  student FROM courses GROUP BY class HAVING count( student)>1 ;
+
+-- 282 ms, faster than 56.95%
+SELECT class 
+FROM
+    (SELECT class, COUNT(DISTINCT student) AS num FROM courses
+    GROUP BY class) AS temp_table
+WHERE
+    num >= 5;
+
 
 
 -- 620. Not Boring Movies
