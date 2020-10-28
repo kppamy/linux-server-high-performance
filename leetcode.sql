@@ -266,21 +266,11 @@ insert into Users (Users_Id, Banned, Role) values ('13', 'No', 'driver');
 
 SELECT * FROM Users;
 
-SELECT Request_at, COUNT(Status)AS cnt FROM Trips 
-    WHERE (Status!='completed' AND driver_id in (SELECT Users_id FROM Users WHERE Banned='No') AND client_id in (SELECT Users_id FROM Users WHERE Banned='No'))
-        GROUP BY Request_at;
-
-
+--  424 ms, faster than 30.14%
 SELECT 
-    total.Request_at AS `Day`, convert(cancle.cnt/total.cnt,DECIMAL(3,2))AS 'Cancellation Rate' 
-FROM
-    (SELECT Request_at, COUNT(Status)AS cnt FROM Trips WHERE driver_id in (SELECT Users_id FROM Users WHERE Banned='No') AND client_id in (SELECT Users_id FROM Users WHERE Banned='No')
-     GROUP BY Request_at ) total,
-    (SELECT Request_at, COUNT(Status)AS cnt FROM Trips 
-     WHERE (Status!='completed' AND driver_id in (SELECT Users_id FROM Users WHERE Banned='No') AND client_id in (SELECT Users_id FROM Users WHERE Banned='No'))
-     GROUP BY Request_at) cancle
-WHERE total.Request_at >= '2013-10-01' 
-    AND total.Request_at<= '2013-10-03'
-    AND total.Request_at = cancle.Request_at 
-ORDER BY total.Request_at;
-
+     Request_at AS `Day`, convert(COUNT(IF(Status!='completed',TRUE,NULL ))/COUNT(*),DECIMAL(3,2))AS 'Cancellation Rate' 
+FROM Trips
+WHERE  Request_at  between '2013-10-01'  AND '2013-10-03'
+       AND (driver_id in (SELECT Users_id FROM Users WHERE Banned='No') AND client_id in (SELECT Users_id FROM Users WHERE Banned='No'))
+GROUP BY Request_at
+ORDER BY Request_at;
