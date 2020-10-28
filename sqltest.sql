@@ -49,14 +49,23 @@ where e1.Salary > e2.Salary and e1.ManagerId = e2.Id;
 -- 182. Duplicate Emails
 DROP TABLE Person;
 Create table If Not Exists Person (Id int, Email varchar(255));
--- Truncate table Person;
+Truncate table Person;
 insert into Person (Id, Email) values ('1', 'a@b.com');
 insert into Person (Id, Email) values ('2', 'c@d.com');
 insert into Person (Id, Email) values ('3', 'a@b.com');
 SELECT * from Person;
+-- 436 ms, faster than 14.94%
 SELECT email from Person group by email HAVING count(*)>1;
-
-
+-- 323 ms, faster than 67.12% 
+SELECT DISTINCT a.email FROM Person a, Person b WHERE a.id != b.id AND a.email = b.email;
+-- 309 ms, faster than 77.29%
+select Email from
+(
+  select Email, count(Email) as num
+  from Person
+  group by Email
+) as statistic
+where num > 1;
 
 -- 183. Customers Who Never Order
 DROP TABLE Customers;
