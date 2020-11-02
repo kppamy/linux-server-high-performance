@@ -657,6 +657,41 @@ string tree2str(TreeNode *t)
         return out + left + right;
 }
 
+// 94. Binary Tree Inorder Traversal
+// 4 ms, faster than 50.41% 
+vector<int> inorderTraversal(TreeNode *root)
+{
+    if (!root)
+        return {};
+    stack<TreeNode *> sta;
+    sta.push(root);
+    vector<int> out;
+    while (!sta.empty())
+    {
+        TreeNode *top = sta.top();
+        if (!top->left && !top->right)
+        {
+            out.push_back(top->val);
+            sta.pop();
+        }
+        else
+        {
+            if (top->left)
+            {
+                sta.push(top->left);
+                top->left = nullptr;
+            }
+            else if (top->right)
+            {
+                out.push_back(top->val);
+                sta.pop();
+                sta.push(top->right);
+            }
+        }
+    }
+    return out;
+}
+
 int main(int argc, char const *argv[])
 {
     // testTree(isValidBST,"isValidBST",printInt);
@@ -666,6 +701,7 @@ int main(int argc, char const *argv[])
     // testTree(postorderTraversal, "postorderTraversal", printVector);
     // testTree(isSymmetric, "isSymmetric", printInt);
     // testTree(levelOrderBottom, "levelOrderBottom", print2Vector);
-    testTree(tree2str, "tree2str", [](string res) { cout << res << endl; });
+    // testTree(tree2str, "tree2str", [](string res) { cout << res << endl; });
+    testTree(inorderTraversal, "inorderTraversal", printVector<int>);
     return 0;
 }
