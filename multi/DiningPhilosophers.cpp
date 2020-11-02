@@ -120,7 +120,7 @@ public:
                     function<void()> putLeftFork,
                     function<void()> putRightFork)
     {
-        sem->acquire();
+        sem->wait();
         cout << "philosopher: " << philosopher << " gets to eat" << endl;
         pickLeftFork();
         pickRightFork();
@@ -128,7 +128,7 @@ public:
         putLeftFork();
         putRightFork();
         cout << "philosopher: " << philosopher << " finished " << endl;
-        sem->release();
+        sem->post();
     }
 
 private:
