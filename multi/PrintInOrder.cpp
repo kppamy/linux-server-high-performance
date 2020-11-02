@@ -218,6 +218,7 @@ public:
 
         // printFirst() outputs "printFirst". Do not change or remove this line.
         printFirst();
+
         who = 2;
     }
 
@@ -262,9 +263,63 @@ void testPrintInOrder0Lck()
     }
 }
 
+#include "cocurrent.h"
+class FooSpinLck
+{
+public:
+    FooSpinLck()
+    {
+        lck1.lock();
+        lck2.lock();
+    }
+
+    void first(function<void()> printFirst)
+    {
+
+        // printFirst() outputs "printFirst". Do not change or remove this line.
+        printFirst();
+        lck1.unlock();
+    }
+
+    void second(function<void()> printSecond)
+    {
+        lck1.lock();
+        // printSecond() outputs "printSecond". Do not change or remove this line.
+        printSecond();
+        lck2.unlock();
+    }
+
+    void third(function<void()> printThird)
+    {
+        lck2.lock();
+        // printThird() outputs "printThird". Do not change or remove this line.
+        printThird();
+    }
+
+private:
+    spinlock_t lck1;
+    spinlock_t lck2;
+};
+
+void testPrintInOrderSpinLck()
+{
+    int n = 30;
+    while (n-- > 0)
+    {
+        FooSpinLck  sf;
+        thread t1(bind(&FooSpinLck::first, &sf, pFirst));
+        thread t2(bind(&FooSpinLck::second, &sf, pSecond));
+        thread t3(bind(&FooSpinLck::third, &sf, pThird));
+        t1.join();
+        t2.join();
+        t3.join();
+    }
+}
+
 int main(int argc, char const *argv[])
 {
     // testPrintInOrderSem();
-    testPrintInOrder0Lck();
+    // testPrintInOrder0Lck();
+    testPrintInOrderSpinLck();
     return 0;
 }

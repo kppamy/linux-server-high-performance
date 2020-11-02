@@ -3,7 +3,7 @@
 #include <pthread.h>
 #include <iostream>
 #include <unistd.h>
-#include "common.h"
+#include "../common.h"
 
 using namespace std;
 class Foo
@@ -340,8 +340,43 @@ void testPrintFooBar0lck()
     t2.join();
 }
 
+#include "cocurrent.h"
 
+template <typename T>
+void func(contfree_safe_ptr<T> safe_map_strings)
+{
+    contfree_safe_ptr<T> const &readonly_safe_map_string = safe_map_strings; // read-only (shared lock during access)
 
+    for (size_t i = 0; i < 100000; ++i)
+    {
+        assert(readonly_safe_map_string->at("apple") == readonly_safe_map_string->at("potato")); // two Shared locks (recursive)
+
+        std::lock_guard<decltype(safe_map_strings)> lock(safe_map_strings); // 1-st eXclusive lock
+        safe_map_strings->at("apple") += 1;                                 // 2-nd recursive eXclusive lock
+        safe_map_strings->find("potato")->second += 1;                      // 3-rd recursive eXclusive lock
+    }
+}
+
+void testMemoryOrder()
+{
+    (*safe_map_strings_global)["apple"] = 0;
+    (*safe_map_strings_global)["potato"] = 0;
+
+    // 20 threads
+    std::vector<std::thread> vec_thread(20);
+    for (auto &i : vec_thread)
+        i = std::move(std::thread([&]() { func(safe_map_strings_global); }));
+    for (auto &i : vec_thread)
+        i.join();
+
+    // 20 threads
+    for (auto &i : vec_thread)
+        i = std::move(std::thread([&]() { func(safe_map_strings_global); }));
+    for (auto &i : vec_thread)
+        i.join();
+
+    std::cout << "END: potato is " << safe_map_strings_global->at("potato") << ", apple is " << safe_map_strings_global->at("apple") << std::endl;
+}
 
 int main(int argc, char const *argv[])
 {
@@ -350,5 +385,6 @@ int main(int argc, char const *argv[])
     // timeit(testPrintInOrderModernWay);
     // timeit(testPrintFooBar);
     // timeit(testPrintFooBar0lck);
+    timeit(testMemoryOrder);
     return 0;
 }
