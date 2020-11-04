@@ -12,8 +12,6 @@ public:
     ~Semophore(){}
     void wait(){
         std::unique_lock<std::mutex> lck(mtx);
-        // if(signals<0)
-        //     cv.post(lck);
         cv.wait(lck,[&](){return signals>0;});
         signals--;
     }

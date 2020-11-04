@@ -3,121 +3,334 @@
 #include <mutex>
 #include <thread>
 #include <iostream>
+#include <chrono>
+#include "../common.h"
 using namespace std;
 
-template <typename T, typename F>
+// template <typename T, typename F>
 class ProducerConsumer
 {
 private:
-    vector<T> buffer;
-    int capacity;
+    // std::vector<T> buffer;
+    std::vector<int> buffer;
+    int capacity{0};
+    int output{0};
     size_t size{0};
-    condition_variable cv;
-    mutex mtx;
+    std::condition_variable cv;
+    std::mutex mtx;
 
 public:
-    ProducerConsumer(int cap) : capacity(cap)
+    ProducerConsumer(int op, int cap) : capacity(cap), output(op)
     {
         buffer.resize(cap);
     };
     ~ProducerConsumer(){};
-    void produce(const T &val, const chrono::microseconds dur)
+    void produce()
     {
         while (true)
         {
             unique_lock<mutex> lck(mtx);
-            cv.wait_for(lck, dur, [&]() { return size < capacity; });
+            cv.wait_for(lck, std::chrono::milliseconds(1000), [&]() { return size < capacity; });
             if (size >= capacity)
             {
-                cout << "producer timeout, quit" << endl;
+                std::cout << "finsh produce products on timeout" << std::endl;
                 break;
             }
-            buffer.emplace_back(val);
             size++;
+            buffer.emplace_back(output--);
+            std::cout << "produce " << size << " products" << std::endl;
             cv.notify_all();
+            if (output == 0)
+            {
+                std::cout << "finsh produce products" << std::endl;
+                break;
+            }
         }
     };
 
-    void produce(F fun, const chrono::microseconds dur, const chrono::microseconds interval)
+    void consume()
     {
         while (true)
         {
-            if (internal > 0)
-                this_thread::sleep_for((interval));
             unique_lock<mutex> lck(mtx);
-            cv.wait_for(lck, dur, [&]() { return size < capacity; });
-            if (size >= capacity)
-            {
-                cout << "producer timeout, quit" << endl;
-                break;
-            }
-            buffer.emplace_back(fun());
-            size++;
-            cv.notify_all();
-        }
-    };
-    T &consume(const chrono::milliseconds dur, const chrono::milliseconds interval)
-    {
-        while (true)
-        {
-            if (internal > 0)
-                this_thread::sleep_for(interval);
-            unique_lock<mutex> lck(mtx);
-            cv.wait_for(lck, dur, [&]() { return size > 0; });
+            cv.wait_for(lck, std::chrono::milliseconds(1000), [&]() { return size > 0; });
             if (size <= 0)
             {
-                cout << "consumer producer timeout, quit" << endl;
+                std::cout << "finsh produce consume on timeout" << std::endl;
                 break;
             }
-            T &res = buffer.back();
+            int res = buffer.back();
             buffer.pop_back();
             size--;
+            // if (i % 1000 == 0)
+            std::cout << ".... consume  products: " << res << std::endl;
             cv.notify_all();
-            return res;
+            if (res <= 0)
+            {
+                std::cout << "finsh consume  products" << std::endl;
+                break;
+            }
         }
     }
+
+    // void produce(int productions, F fun, const std::chrono::milliseconds dur, const std::chrono::milliseconds interval)
+    // {
+    //     int i = 0;
+    //     while (true)
+    //     {
+    //         if (internal > 0)
+    //             std::this_thread::sleep_for((interval));
+    //         unique_lock<mutex> lck(mtx);
+    //         // cv.wait_for(lck, dur, [&]() { return size < capacity; });
+    //         // if (size >= capacity)
+    //         // {
+    //         //     std::cout << "producer timeout, quit" << std::endl;
+    //         //     break;
+    //         // }
+    //         cv.wait(lck, [&]() { return size < capacity; });
+    //         buffer.emplace_back(fun());
+    //         size++;
+    //         i++;
+    //         if (i == productions)
+    //         {
+    //             std::cout << "finsh produce" << productions << " products" << std::endl;
+    //             break;
+    //         }
+    //         cv.notify_all();
+    //     }
+    // };
+    // T &consume(const std::chrono::milliseconds dur, const std::chrono::milliseconds interval)
+    // {
+    //     while (true)
+    //     {
+    //         if (internal > 0)
+    //             std::this_thread::sleep_for(interval);
+    //         unique_lock<mutex> lck(mtx);
+    //         cv.wait_for(lck, dur, [&]() { return size > 0; });
+    //         if (size <= 0)
+    //         {
+    //             std::cout << "consumer timeout, quit" << std::endl;
+    //             break;
+    //         }
+    //         T &res = buffer.back();
+    //         buffer.pop_back();
+    //         size--;
+    //         cv.notify_all();
+    //         return res;
+    //     }
+    // }
+
     int getSize()
     {
         return size;
     }
 };
 
-#include <chrono>
-int main(int argc, char const *argv[])
+#include <cassert>
+class SProducerSConsumerLockFree
+{
+private:
+    std::vector<int> buffer;
+    int capacity{0};
+    int output{0};
+    atomic<int> wx{0};
+    atomic<int> rx{0};
+    atomic<size_t> size{0};
+
+public:
+    SProducerSConsumerLockFree(int op, int cap) : capacity(cap), output(op)
+    {
+        buffer.resize(cap);
+    };
+    SProducerSConsumerLockFree(const SProducerSConsumerLockFree &) = delete;
+    void operator=(const SProducerSConsumerLockFree &) = delete;
+    ~SProducerSConsumerLockFree(){};
+    void produce()
+    {
+        int i = 0;
+        while (i < output)
+        {
+            if (size < capacity)
+            {
+                buffer[wx] = i;
+                wx++;
+                size.fetch_add(1);
+                i++;
+                if (wx == capacity)
+                    wx = 0;
+                // std::cout << "produce " << i << " products" << std::endl;
+            }
+            else
+            {
+                this_thread::yield();
+            }
+        }
+    };
+
+    void consume()
+    {
+        int j = 0;
+        while (j < output)
+        {
+            int sz = size.load();
+            if (sz > 0)
+            {
+                int res = buffer[rx];
+                rx++;
+                size.fetch_sub(1);
+                if (rx == capacity)
+                    rx = 0;
+                std::cout << ".... consume  products: " << res << std::endl;
+                j++;
+            }
+            else
+            {
+                this_thread::yield();
+            }
+        }
+    }
+};
+
+int testMPMC(int argc, char const *argv[])
 {
     int capacity = 100;
-    ProducerConsumer<chrono::steady_clock::time_point, chrono::steady_clock::time_point()> pc(capacity);
-    int i = 0;
+    ProducerConsumer pc(500000, capacity);
     auto add = [&]() {
-        pc.produce(chrono::steady_clock::now, chrono::milliseconds(100), chrono::milliseconds(10));
+        pc.produce();
     };
     auto sub = [&]() {
-        chrono::steady_clock::time_point res = pc.consume(chrono::milliseconds(100), chrono::milliseconds(0));
+        pc.consume();
     };
 
-    vector<thread> producers(1);
-    vector<thread> consumers(1);
-    for (auto &&p : producers)
+    auto testPC = [&](int M, int N) {
+        std::vector<std::thread> producers(M);
+        std::vector<std::thread> consumers(N);
+        for (auto &&p : producers)
+        {
+            std::thread th(add);
+            p = move(th);
+        }
+        for (auto &&c : consumers)
+        {
+            std::thread consumer(sub);
+            c = move(consumer);
+        }
+
+        for (auto &&p : producers)
+        {
+            p.join();
+        }
+        // std::cout << "start to consume: " <<pc.getSize()<<std::endl;
+
+        for (auto &&c : consumers)
+        {
+            c.join();
+        }
+    };
+    // timeit(testPC,1,1);//10700.9 ms
+    double t(0);
+    // t=timeit(testPC,2,1);//15817.8 ms, 15751.6 ms
+    // t=timeit(testPC,2,2);//10560 ms
+    t = timeit(testPC, 4, 4); //10615.7 ms
+
+    return 0;
+}
+
+#include "readerwriterqueue.h"
+void testSPSCTextBook()
+{
+    using namespace moodycamel;
+
+    ReaderWriterQueue<int> q(100);
+    const int OUTPUTS = 500000;
+    int i = OUTPUTS, j = OUTPUTS;
+    std::thread p([&]() {
+        while (i > 0)
+        {
+            q.enqueue(i);
+            // q.enqueue(std::chrono::steady_clock::now().time_since_epoch().count());
+            i--;
+            // std::this_thread::sleep_for(std::chrono::nanoseconds(1000));
+        }
+    });
+
+    std::thread c([&]() {
+        while (j > 0)
+        {
+            std::cout << "consume: " << *(q.peek()) << std::endl;
+            q.pop();
+            j--;
+            // std::this_thread::sleep_for(std::chrono::nanoseconds(1000));
+        }
+    });
+    p.join();
+    c.join();
+}
+
+#include "concurrentqueue.h"
+void testMPMCLockFree()
+{
+    using namespace moodycamel;
+    ConcurrentQueue<int> q(100);
+    std::thread threads[20];
+    // Producers
+    for (int i = 0; i != 5; ++i)
     {
-        thread th(add);
-        p = move(th);
-    }
-    for (auto &&c : consumers)
-    {
-        thread consumer(sub);
-        c = move(consumer);
+        threads[i] = std::thread([&](int i) {
+            for (int j = 0; j != 10000 * 5; ++j)
+            {
+                q.enqueue(i * 10 + j);
+                std::this_thread::sleep_for(std::chrono::nanoseconds(1000)); //10064.6 ms
+            }
+        },
+                                 i);
     }
 
-    for (auto &&p : producers)
+    // Consumers
+    for (int i = 5; i != 10; ++i)
     {
-        p.join();
+        threads[i] = std::thread([&]() {
+            int item;
+            for (int j = 0; j != 10000 * 5; ++j)
+            {
+                if (q.try_dequeue(item))
+                {
+                    std::cout << item << std::endl;
+                }
+                std::this_thread::sleep_for(std::chrono::nanoseconds(1000)); //10064.6 ms, no sleep slowerrrrrrrrrrrr: 12178.5 ms
+            }
+        });
     }
-    // cout << "start to consume: " <<pc.getSize()<<endl;
 
-    for (auto &&c : consumers)
+    // Wait for all threads
+    for (int i = 0; i != 10; ++i)
     {
-        c.join();
+        threads[i].join();
     }
+}
+
+void testSPSCLockFreeMy()
+{
+    int capacity = 100;
+    SProducerSConsumerLockFree pc(500000, capacity);
+    std::thread p(&SProducerSConsumerLockFree::produce, &pc);
+    std::thread c(&SProducerSConsumerLockFree::consume, &pc);
+    p.join();
+    c.join();
+}
+
+int main(int argc, char const *argv[])
+{
+    double summary(0.0);
+    int times = 10;
+    while (times-- > 0)
+    {
+        // timeit(testSPSCTextBook);//1326.73 ms
+        // timeit(testMPMCLockFree); // 12178.5 ms, 5 producers, 5 consumers
+        // summary+=timeit(testSPSCTextBook); // averag time cost: 1245.28 for 10 loops
+        summary += timeit(testSPSCLockFreeMy); //averag time cost: 6242.29 ms(seq_cst+yield), 6476.18ms (seq_cst+busy wait)
+    }
+    std::cout << "averag time cost: " << summary / 10 << std::endl;
 
     return 0;
 }

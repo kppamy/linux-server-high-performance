@@ -11,41 +11,56 @@
                 "-g",
                 "-Wall",
                 "-std=c++14",
+                "-I",
+                "/Users/chenay/ws/programs/relacy/",
+                "-I",
+                "/Users/chenay/ws/programs/readerwriterqueue/",
+                "-I",
+                "/Users/chenay/ws/programs/concurrentqueue",
                 // "-fsanitize=address",
                 // "-fno-omit-frame-pointer",
                 // "-O1",
-                // "common.cpp"
-                // "AlgoTest.cpp",
-                // "LinkedList.cpp",
-                // "TreeTest.cpp",
-                // "NaryTree.cpp"
-                // "sort.cpp",
-                // "lqueue.cpp"
-                // "lstack.cpp"
-                // "DynamicProgramming.cpp",
-                // "ArrayTest.cpp",
-                // "EffectiveC.cpp",
-                // "saima.cpp"
-                // "todo.cpp"
-                // "lamada.cpp"
-                // "StringTest.cpp"
-                // "graph.cpp"
-                // "file-test.cpp"
-                // "newFeatures.cpp"
-                //  "multi.cpp"
-                 "ZeroEvenOdd.cpp"
-                // "Ufind.cpp"
-                // "maxProfit.cpp"
-                // "punch.cpp"
-                // "DiningPhilosophers.cpp"
-                // "FizzBuzz.cpp"
-                // "H2O.cpp"
+                // "algo/common.cpp"
+                // "algo/AlgoTest.cpp",
+                // "algo/LinkedList.cpp",
+                // "algo/TreeTest.cpp",
+                // "algo/NaryTree.cpp"
+                // "algo/sort.cpp",
+                // "algo/lqueue.cpp"
+                // "algo/lstack.cpp"
+                // "algo/heap.cpp"
+                // "algo/greedy.cpp"
+                // "algo/DynamicProgramming.cpp",
+                // "algo/ArrayTest.cpp",
+                // "algo/StringTest.cpp"
+                // "algo/graph.cpp"
+                // "algo/maxProfit.cpp"
+                // "algo/Ufind.cpp"
+                // "lang/saima.cpp"
+                // "lang/todo.cpp"
+                // "lang/lamada.cpp"
+                // "lang/newFeatures.cpp"
+                // "lang/EffectiveC.cpp",
+                // "lang/punch.cpp"
+                //  "multi/multi.cpp"
+                //  "multi/ZeroEvenOdd.cpp"
+                // "multi/DiningPhilosophers.cpp"
+                // "multi/PrintInOrder.cpp"
+                // "multi/FizzBuzz.cpp"
+                // "multi/H2O.cpp"
+                "multi/ProducerConsumer.cpp"
+                // "desgin/single.cpp"
+                // "desgin/FactoryMethod.cpp"
+                // "desgin/AbstractFactory.cpp"
+                // "desgin/BrowserHistory.cpp"
+                 // "file-test.cpp"
+                //  "13-3-ipc_private.c"
                 "-o",
                 "LeetCode"
             ],
             "group": {
                 "kind": "build",
-                "isDefault":true
+                "isDefault": true
             }
         }
     ]

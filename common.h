@@ -18,13 +18,16 @@ struct TreeNode
     TreeNode(int val, TreeNode *l, TreeNode *r) : val(0), left(l), right(r) {}
 };
 
-void timeit(std::function<void()> func)
+#include<chrono>
+template<typename F, typename ... Args>
+double timeit(F func, Args&& ... arg)
 {
     Timer t;
     t.start();
-    func();
+    func(arg...);
     t.stop();
-    std::cout << "time cost: " << t.miniSeconds() << " ms" << endl;
+    std::cout << "time cost: " << t.miniSeconds() << " ms" << std::endl;
+    return t.miniSeconds();
 }
 
 void printInt(int n){
@@ -37,7 +40,7 @@ void printVector(std::vector<T> &input)
     for(auto&& val:input){
         std::cout<<val<<" ";
     }
-    std::cout << endl;
+    std::cout << std::endl;
 }
 
 
@@ -57,12 +60,12 @@ void printInput(int input[], int len)
         {
             std::cout << input[i] << " ";
         }
-        std::cout << endl;
+        std::cout << std::endl;
     }
 }
 
 
-vector<int> generateArray(int num, int max)
+std::vector<int> generateArray(int num, int max)
 {
     std::vector<int> arr(num);
 
@@ -105,14 +108,14 @@ my2arr generateArrayInput()
 }
 
 template<typename f, typename u, typename p>
-void testArray(f fun, string name, u input=generateArrayInput, p print=printVector){
+void testArray(f fun, std::string name, u input=generateArrayInput, p print=printVector){
     my2arr&& cases=input();
     for(auto&& cs:cases){
         printVector(cs);
-        std::cout<<name<<" :"<<endl;
+        std::cout<<name<<" :"<<std::endl;
         auto res=fun(cs);
         print(res);
-        std::cout<<endl;
+        std::cout<<std::endl;
     }
 }
 
@@ -198,12 +201,12 @@ class Test:public Object
 {
         DECLARE_CLASS()
 public:
-        Test(){cout << "Test constructor" << endl;}
-        ~Test(){cout << "Test destructor" << endl;}
+        Test(){std::cout << "Test constructor" << std::endl;}
+        ~Test(){std::cout << "Test destructor" << std::endl;}
 };
 
 #include <regex>
-std::vector<std::string> split(const string &input, const string &regex)
+std::vector<std::string> split(const std::string &input, const std::string &regex)
 {
     // passing -1 as the submatch index parameter performs splitting
     std::regex re(regex);

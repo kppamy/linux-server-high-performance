@@ -2,12 +2,12 @@
 #define _TIMER_H_
 
 #include<time.h>
-using namespace std;
+#include <iostream>
 class Timer
 {
 private:
     /* data */
-    int sta;
+    long sta;
     int end;
 public:
     Timer(/* args */):sta(0),end(0){}
@@ -19,8 +19,8 @@ public:
         end=clock();
     };
     double miniSeconds(){
- double elaps = (static_cast<float>(end - sta)) / CLOCKS_PER_SEC;
- return elaps * 1000;
+     double elaps = ((static_cast<float>(end - sta)) / CLOCKS_PER_SEC)*1000;
+    return elaps ;
     };
 };
 #endif
