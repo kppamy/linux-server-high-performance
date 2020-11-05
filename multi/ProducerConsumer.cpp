@@ -127,6 +127,7 @@ public:
 };
 
 #include <cassert>
+#include "cocurrent.h"
 class SProducerSConsumerLockFree
 {
 private:
@@ -150,11 +151,11 @@ public:
         int i = 0;
         while (i < output)
         {
-            if (size < capacity)
+            if (size.load(memory_order_acquire) < capacity)
             {
                 buffer[wx] = i;
                 wx++;
-                size.fetch_add(1);
+                size.fetch_add(1, memory_order_release);
                 i++;
                 if (wx == capacity)
                     wx = 0;
@@ -172,16 +173,18 @@ public:
         int j = 0;
         while (j < output)
         {
-            int sz = size.load();
+            int sz = size.load(memory_order_acquire);
             if (sz > 0)
             {
                 int res = buffer[rx];
+                assert(res < output);
                 rx++;
-                size.fetch_sub(1);
+                size.fetch_sub(1, memory_order_release);
                 if (rx == capacity)
                     rx = 0;
-                std::cout << ".... consume  products: " << res << std::endl;
                 j++;
+                if (j == output)
+                    std::cout << ".... consume  products: " << res << std::endl;
             }
             else
             {
@@ -190,6 +193,80 @@ public:
         }
     }
 };
+
+class SProducerSConsumerSpin
+{
+private:
+    std::vector<int> buffer;
+    int capacity{0};
+    int output{0};
+    // SpinLockCAS lck;
+    SpinLockTAS lck; //486.814 ms
+    // std::mutex lck;  //4993.43 ms
+    std::atomic<int> size{0};
+
+public:
+    SProducerSConsumerSpin(int op, int cap) : capacity(cap), output(op)
+    {
+        buffer.resize(cap);
+    };
+    SProducerSConsumerSpin(const SProducerSConsumerSpin &) = delete;
+    void operator=(const SProducerSConsumerSpin &) = delete;
+    ~SProducerSConsumerSpin(){};
+    void produce()
+    {
+        int i = 0;
+        while (i < output)
+        {
+            lck.lock();
+            if (size.load(std::memory_order_acquire) < capacity)
+            {
+                buffer[size] = i;
+                size.fetch_add(1, memory_order_release);
+                i++;
+                // std::cout << "produce " << i << " products" << std::endl;
+            }
+            else
+            {
+                assert(size >= capacity);
+            }
+            lck.unlock();
+        }
+    };
+
+    void consume()
+    {
+        int j = 0;
+        while (j < output)
+        {
+            lck.lock();
+            if (size.load(std::memory_order_release) > 0)
+            {
+                assert(size > 0);
+                int res = buffer[size - 1];
+                size.fetch_sub(1, std::memory_order_release);
+                j++;
+                if (j == output)
+                    std::cout << ".... consume  products: " << res << std::endl;
+            }
+            else
+            {
+                assert(size <= 0);
+            }
+            lck.unlock();
+        }
+    }
+};
+
+void testSPSCLockFreeSpin()
+{
+    int capacity = 100;
+    SProducerSConsumerSpin pc(500000, capacity);
+    std::thread p(&SProducerSConsumerSpin::produce, &pc);
+    std::thread c(&SProducerSConsumerSpin::consume, &pc);
+    p.join();
+    c.join();
+}
 
 int testMPMC(int argc, char const *argv[])
 {
@@ -260,6 +337,8 @@ void testSPSCTextBook()
             std::cout << "consume: " << *(q.peek()) << std::endl;
             q.pop();
             j--;
+            // if (j == 0)
+            //     std::cout << "consume: " << *(q.peek())<< std::endl;
             // std::this_thread::sleep_for(std::chrono::nanoseconds(1000));
         }
     });
@@ -322,15 +401,18 @@ void testSPSCLockFreeMy()
 int main(int argc, char const *argv[])
 {
     double summary(0.0);
-    int times = 10;
-    while (times-- > 0)
+    int times = 100;
+    int i = 0;
+    while (i < times)
     {
         // timeit(testSPSCTextBook);//1326.73 ms
         // timeit(testMPMCLockFree); // 12178.5 ms, 5 producers, 5 consumers
-        // summary+=timeit(testSPSCTextBook); // averag time cost: 1245.28 for 10 loops
-        summary += timeit(testSPSCLockFreeMy); //averag time cost: 6242.29 ms(seq_cst+yield), 6476.18ms (seq_cst+busy wait)
+        // summary += timeit(testSPSCTextBook); // averag time cost: 122.192ms
+        // summary += timeit(testSPSCLockFreeMy); //averag time cost: 169.619ms? , 6242.29 ms(seq_cst+yield), 6476.18ms (seq_cst+busy wait), 6887.83ms(acquire_release+yield)
+        summary += timeit(testSPSCLockFreeSpin); //averag time cost: 178.081 ms, 178.538 ms, standard mutex 4993.43 ms
+        i++;
+        std::cout << "averag time cost: " << summary / i << std::endl; //
     }
-    std::cout << "averag time cost: " << summary / 10 << std::endl;
-
+    std::cout << "averag time cost: " << summary / times << std::endl;
     return 0;
 }
