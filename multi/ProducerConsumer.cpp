@@ -347,6 +347,7 @@ void testSPSCTextBook()
 }
 
 #include "concurrentqueue.h"
+// https://zhuanlan.zhihu.com/p/55583561
 void testMPMCLockFree()
 {
     using namespace moodycamel;
@@ -398,18 +399,131 @@ void testSPSCLockFreeMy()
     c.join();
 }
 
+class SProducerMConsumer
+{
+private:
+    std::vector<int> buffer;
+    int capacity{0};
+    int output{0};
+    ReadWriteLock lck;
+    std::atomic<int> size{0};
+
+public:
+    SProducerMConsumer(int op, int cap) : capacity(cap), output(op)
+    {
+        buffer.resize(cap);
+    };
+    SProducerMConsumer(const SProducerMConsumer &) = delete;
+    void operator=(const SProducerMConsumer &) = delete;
+    ~SProducerMConsumer(){};
+    void produce()
+    {
+        int i = 0;
+        auto start = chrono::system_clock::now();
+        while (i < output)
+        {
+            lck.lockWrite();
+            if (size.load(std::memory_order_acquire) < capacity)
+            {
+                buffer[size] = i;
+                size.fetch_add(1, memory_order_release);
+                i++;
+                if (i % 10000 == 0)
+                    Log::info("produce ", i, " products");
+                // std::cout << "produce " << i << " products" << std::endl;
+            }
+            else
+            {
+                assert(size >= capacity);
+                size.store(0, memory_order_acquire);
+            }
+            lck.unlockWrite();
+        }
+        auto end = chrono::system_clock::now();
+        Log::info(this_thread::get_id(), "Writer consumes " + std::to_string((end - start).count() / 1000) + " ms");
+    };
+
+    void consume()
+    {
+        int j = 0;
+        auto start = chrono::system_clock::now();
+        while (j < output)
+        {
+            lck.lockRead();
+            if (size.load(std::memory_order_release) > 0)
+            {
+                assert(size > 0);
+                int res = buffer[size - 1];
+                j++;
+                if (j % 10000 == 0)
+                {
+                    Log::info(".... consume  products: ", res);
+                }
+            }
+            else
+            {
+                assert(size <= 0);
+            }
+            lck.unlockRead();
+        }
+        auto end = chrono::system_clock::now();
+        Log::info(this_thread::get_id(), "Reader consumes " + std::to_string((end - start).count() / 1000) + " ms");
+    }
+};
+
+void testReadWriteLock()
+{
+    int capacity = 100;
+    SProducerMConsumer pc(500000, capacity);
+    auto add = [&]() {
+        pc.produce();
+    };
+    auto sub = [&]() {
+        pc.consume();
+    };
+
+    auto testPC = [&](int M, int N) {
+        std::vector<std::thread> producers(M);
+        std::vector<std::thread> consumers(N);
+        for (auto &&p : producers)
+        {
+            std::thread th(add);
+            p = move(th);
+        }
+        for (auto &&c : consumers)
+        {
+            std::thread consumer(sub);
+            c = move(consumer);
+        }
+
+        for (auto &&p : producers)
+        {
+            p.join();
+        }
+        // std::cout << "start to consume: " <<pc.getSize()<<std::endl;
+
+        for (auto &&c : consumers)
+        {
+            c.join();
+        }
+    };
+    // timeit(testPC,2,2);
+    testPC(2, 2);
+}
+
 int main(int argc, char const *argv[])
 {
     double summary(0.0);
     int times = 100;
     int i = 0;
-    while (i < times)
+    while (i < 1)
     {
         // timeit(testSPSCTextBook);//1326.73 ms
         // timeit(testMPMCLockFree); // 12178.5 ms, 5 producers, 5 consumers
         // summary += timeit(testSPSCTextBook); // averag time cost: 122.192ms
         // summary += timeit(testSPSCLockFreeMy); //averag time cost: 169.619ms? , 6242.29 ms(seq_cst+yield), 6476.18ms (seq_cst+busy wait), 6887.83ms(acquire_release+yield)
-        summary += timeit(testSPSCLockFreeSpin); //averag time cost: 178.081 ms, 178.538 ms, standard mutex 4993.43 ms
+        // summary += timeit(testSPSCLockFreeSpin); //averag time cost: 178.081 ms, 178.538 ms, standard mutex 4993.43 ms
+        summary += timeit(testReadWriteLock);
         i++;
         std::cout << "averag time cost: " << summary / i << std::endl; //
     }
