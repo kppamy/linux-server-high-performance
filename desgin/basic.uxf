@@ -1,0 +1,69 @@
+<diagram program="umletino" version="14.4.0-SNAPSHOT"><zoom_level>10</zoom_level><help_text></help_text><element><id>Relation</id><coordinates><x>211</x><y>6</y><w>180</w><h>50</h></coordinates><panel_attributes>lt=&lt;-
+contains
+关联 
+group=3</panel_attributes><additional_attributes>160;24;10;24</additional_attributes></element><element><id>UMLClass</id><coordinates><x>118</x><y>0</y><w>100</w><h>60</h></coordinates><panel_attributes>Dialog
+-
+-buttons: Button
+-
+group=3</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>368</x><y>10</y><w>100</w><h>60</h></coordinates><panel_attributes>Button
+-
+
+-
+
+group=3</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>148</x><y>90</y><w>270</w><h>50</h></coordinates><panel_attributes>lt=-
+m1=0..n
+m2=0..1
+双向关联 &gt;</panel_attributes><additional_attributes>10;20;250;20</additional_attributes></element><element><id>Relation</id><coordinates><x>228</x><y>160</y><w>160</w><h>60</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
+Aggregation
+聚合
+可以独立存在
+group=1</panel_attributes><additional_attributes>10;20;140;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>378</x><y>160</y><w>100</w><h>30</h></coordinates><panel_attributes>Engine
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>108</x><y>160</y><w>130</w><h>70</h></coordinates><panel_attributes>/Car/
+-
+-eng: Engine
+-
++ Car(Engine eng)
+
+
+group=1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>128</x><y>300</y><w>100</w><h>70</h></coordinates><panel_attributes>/Head/
+-
+mouth: Mounth
+-
++ Head()
+group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>378</x><y>310</y><w>100</w><h>30</h></coordinates><panel_attributes>/Mouth/
+
+group=2</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>218</x><y>300</y><w>180</w><h>60</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+composition
+组合
+不能独立存在
+group=2</panel_attributes><additional_attributes>10;20;160;20</additional_attributes></element><element><id>UMLNote</id><coordinates><x>59</x><y>431</y><w>80</w><h>40</h></coordinates><panel_attributes>mouth=
+ new Mouth()
+group=2
+bg=green</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>109</x><y>361</y><w>70</w><h>90</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>50;10;10;70</additional_attributes></element><element><id>UMLClass</id><coordinates><x>99</x><y>492</y><w>100</w><h>70</h></coordinates><panel_attributes>Driver
+-
+
+-
++drive(Car car)
+group=4</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>379</x><y>512</y><w>100</w><h>40</h></coordinates><panel_attributes>Car
+group=4</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>189</x><y>510</y><w>210</w><h>50</h></coordinates><panel_attributes>lt=&lt;.
+depends
+依赖
+group=4</panel_attributes><additional_attributes>190;20;10;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>569</x><y>20</y><w>100</w><h>30</h></coordinates><panel_attributes>Person
+group=6</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>569</x><y>160</y><w>100</w><h>30</h></coordinates><panel_attributes>Student
+group=6</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>609</x><y>40</y><w>60</w><h>140</h></coordinates><panel_attributes>lt=&lt;&lt;-
+inherit
+继承
+group=6</panel_attributes><additional_attributes>10;10;10;120</additional_attributes></element><element><id>UMLClass</id><coordinates><x>720</x><y>30</y><w>100</w><h>30</h></coordinates><panel_attributes>/interface/
+
+group=5</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>720</x><y>140</y><w>100</w><h>30</h></coordinates><panel_attributes>implementation
+group=5</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>760</x><y>50</y><w>90</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;.
+implements
+实现
+group=5</panel_attributes><additional_attributes>10;10;10;90</additional_attributes></element><element><id>UMLNote</id><coordinates><x>590</x><y>317</y><w>260</w><h>160</h></coordinates><panel_attributes>单一职责原则（SRP）
+开闭（OCP）
+里氏代换：子类可以代替基类
+接口隔离
+依赖倒转：细节依赖于抽象
+合成复用：组合》继承
+迪米特：尽可能少地与外界练习
+bg=blue</panel_attributes><additional_attributes></additional_attributes></element></diagram>

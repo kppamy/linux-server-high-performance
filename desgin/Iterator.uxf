@@ -1,0 +1,29 @@
+<diagram program="umletino" version="14.4.0-SNAPSHOT"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>370</x><y>210</y><w>200</w><h>110</h></coordinates><panel_attributes>ConcreteIterator
+--
+- data: ConcreteAggregate 
+-cursor:int
+--
++Iterator(ConcreteAggregate data)
++next()
++prev()
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>80</x><y>10</y><w>190</w><h>80</h></coordinates><panel_attributes>Aggregate
+--
+
+-
++createInterator()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>80</x><y>210</y><w>190</w><h>110</h></coordinates><panel_attributes>ConcreteAggregate
+--
++ Iterator: public
+-
++createInterator()
++push (i: int): int
++pop (i: int): int</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>380</x><y>0</y><w>200</w><h>110</h></coordinates><panel_attributes>Iterator:
+--
+
+--
++Iterator(Container)
++next()
++prev()
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>450</x><y>101</y><w>30</w><h>130</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>150</x><y>81</y><w>30</w><h>150</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;130</additional_attributes></element><element><id>Relation</id><coordinates><x>260</x><y>231</y><w>130</w><h>40</h></coordinates><panel_attributes>lt=&lt;..
+依赖</panel_attributes><additional_attributes>110;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>260</x><y>281</y><w>130</w><h>50</h></coordinates><panel_attributes>lt=&lt;-
+构造注入
+</panel_attributes><additional_attributes>10;20;110;20</additional_attributes></element></diagram>
