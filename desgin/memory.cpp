@@ -21,60 +21,106 @@
 
 #include <vector>
 using namespace std;
+template <typename T>
 struct Node
 {
-    int val;
+    T val;
     vector<Node *> children;
 
 public:
-    Node(int _val, int forks)
+    Node(T _val, int cap)
     {
         val = _val;
-        children.resize(forks);
+        children.resize(cap, nullptr);
+    }
+
+    ~Node()
+    {
+        for (auto &&nd : children)
+        {
+            if (nd)
+            {
+                delete nd;
+                nd = nullptr;
+            }
+        }
     }
 };
 
-Node *buildNaryNode(int n, int m)
+using myNode = Node<int>;
+
+#include <queue>
+myNode *buildNaryNode(int n, int m)
 {
+
     if (n <= 0)
         return nullptr;
-    int len = n;
-    Node *root = new Node(len, m);
-    vector<Node *> child(m);
-    for (int i = 0; i < m; i++)
+    myNode *root = new myNode(1, m);
+    vector<myNode *> child(m);
+    queue<myNode *> que;
+    que.push(root);
+    int i = 1;
+    while (!que.empty() && i < n)
     {
-        Node *node = buildNaryNode(len - i, m);
-        child.emplace_back(node);
+        myNode *tp = que.front();
+        que.pop();
+        int j = 1;
+        for (; j <= m; j++)
+        {
+            if (i + j <= n)
+            {
+                myNode *nd = new myNode(i + j, m);
+                tp->children[j - 1] = nd;
+                que.push(nd);
+            }
+            else
+                break;
+        }
+        i = i + j - 1;
     }
-    root->children = child;
     return root;
 }
 
-#include<iostream>
-class A{
-    private:
+#include <iostream>
+class A
+{
+private:
     int a{0};
-    public:
-    virtual void print(){
-        cout<< "I am father "<< a<<endl;
+
+public:
+    virtual void print()
+    {
+        cout << "I am father " << a << endl;
     }
     virtual ~A(){};
 };
 
-class B:public A{
-    private:
+class B : public A
+{
+private:
     int a{1};
-     virtual void print(){
-        cout<< "I am child "<< a<<endl;
+    virtual void print()
+    {
+        cout << "I am child " << a << endl;
     }
 };
 
 int main(int argc, char const *argv[])
 {
-    // Node *tree = buildNaryNode(3, 1);
+    myNode *tree = buildNaryNode(7, 4);
+    vector<myNode *> child = tree->children;
+    delete tree;
+    tree = nullptr;
+
     // unique_ptr<A> p= make_unique<new B[10]>;
-    A* p=new B[10];
-    p->print();
-    delete[] p;
+
+    // A *p = new B[10];
+    // p->print();
+    // delete[] p;
+
+    // char *pc = (char *)malloc(sizeof(char) * 10);
+    // cout << pc << endl;
+    // free(pc);
+
     return 0;
 }
