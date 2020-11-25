@@ -1,26 +1,36 @@
 
+#include<mm_malloc.h>
+#include<memory.h>
+#include<iostream>
+using namespace std;
 
-// struct block
-// {
-//     char *data;
-//     block(size_t sze) : size(sz)
-//     {
-//         data = malloc(size * sizeof(char))
-//     }
+struct block
+{
+    char *chunk{nullptr};
 
-//     ~block()
-//     {
-//         delete data;
-//     }
+    void allocate(size_t size){
+        chunk = (char*)malloc(size); 
+        cout<<"allocate(chunk);    "<<endl;
+    }
 
-// private:
-//     constexpr size_t size;
-// };
+    void myfree(){
+        free(chunk);
+        cout<<"free(chunk);    "<<endl;
+    }
 
-// block *myallocate(size_t size);
+};
+
+
+void testAllocator(){
+    block blk;
+    blk.allocate(10);
+    memset(blk.chunk,2,10);
+    //  cout<<blk.chunk<<endl;
+    blk.myfree();
+}
+
 
 #include <vector>
-using namespace std;
 template <typename T>
 struct Node
 {
@@ -81,7 +91,6 @@ myNode *buildNaryNode(int n, int m)
     return root;
 }
 
-#include <iostream>
 class A
 {
 private:
@@ -107,11 +116,12 @@ private:
 
 int main(int argc, char const *argv[])
 {
-    myNode *tree = buildNaryNode(7, 4);
-    vector<myNode *> child = tree->children;
-    delete tree;
-    tree = nullptr;
+    // myNode *tree = buildNaryNode(7, 4);
+    // vector<myNode *> child = tree->children;
+    // delete tree;
+    // tree = nullptr;
 
+    testAllocator();
     // unique_ptr<A> p= make_unique<new B[10]>;
 
     // A *p = new B[10];
