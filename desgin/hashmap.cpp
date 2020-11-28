@@ -1,44 +1,47 @@
-// #include <array>
+#include <array>
 #include <vector>
 #include <list>
 using namespace std;
 
 // 706. Design HashMap
-// 192 ms, faster than 22.05%;  56.7 MB, less than 44.70% 
+// allocat heap memory dynamically: 192 ms, faster than 22.05%;  56.7 MB, less than 44.70%
+// initialize enough memory at the begining: 164 ms, faster than 52.59% ;  54.9 MB, less than 52.43% ,
+// using array: 144 ms, faster than 90.27%;  54.8 MB, less than 52.43%,
 class MyHashMap
 {
 public:
     /** Initialize your data structure here. */
     MyHashMap()
     {
-        data.resize(capacity);
+        // data.resize(capacity);
+        // data.fill({});
     }
 
     /** value will always be non-negative. */
     void put(int key, int value)
     {
-        if (size >= capacity / 2)
-        {
-            // copy all to newqas
-            capacity *= 2;
-            data.resize(capacity);
-            for (int i = 0; i < capacity / 2; i++)
-            {
-                auto pairs = data[i];
-                // auto& pairs = data[i]; // invalid iterator after data[i].remove(p)
-                for (auto &&p : pairs)
-                {
-                    int npos = mhash(p.first);
-                    if (npos != i)
-                    {
-                        data[i].remove(p);
-                        data[npos].emplace_back(move(p));
-                    }
-                }
-            }
-        }
+        // if (size >= capacity / 2)
+        // {
+        //     // copy all to newqas
+        //     capacity *= 2;
+        //     data.resize(capacity);
+        //     for (int i = 0; i < capacity / 2; i++)
+        //     {
+        //         auto pairs = data[i];
+        //         // auto& pairs = data[i]; // invalid iterator after data[i].remove(p)
+        //         for (auto &&p : pairs)
+        //         {
+        //             int npos = mhash(p.first);
+        //             if (npos != i)
+        //             {
+        //                 data[i].remove(p);
+        //                 data[npos].emplace_back(move(p));
+        //             }
+        //         }
+        //     }
+        // }
         auto val = make_pair(key, value);
-        auto &samekeys = data[mhash(key)];// [] on vector return T&, samekeys is a reference to lvalue
+        auto &samekeys = data[mhash(key)]; // [] on vector return T&, samekeys is a reference to lvalue
         // auto tt = data[mhash(key)];// tt is a deduced to a lvalue, copy
         if (samekeys.empty())
             samekeys.emplace_back(move(val));
@@ -54,7 +57,7 @@ public:
             }
             samekeys.emplace_back(move(val));
         }
-        size++;
+        // size++;
     }
 
     //  don't consider hash collision
@@ -87,10 +90,10 @@ public:
     void remove(int key)
     {
         auto &samekeys = data[mhash(key)];
-        samekeys.remove_if([key, this](auto &&x) {
+        samekeys.remove_if([key, this](auto x) {
             if (x.first == key)
             {
-                size--;
+                // size--;
                 return true;
             }
             return false;
@@ -98,10 +101,11 @@ public:
     }
 
 private:
-    int capacity{20};
-    // array<int, capacity> data;
-    int size{0};
-    vector<list<pair<int, int>>> data;
+    // int capacity{20};
+    constexpr static int capacity{10000};
+    // int size{0};
+    // vector<list<pair<int, int>>> data;
+    array<list<pair<int, int>>, capacity> data;
 };
 
 #include <assert.h>
