@@ -10,13 +10,7 @@
             "args": [
                 "-g",
                 "-Wall",
-                "-std=c++14",
-                "-I",
-                "/Users/chenay/ws/programs/relacy/",
-                "-I",
-                "/Users/chenay/ws/programs/readerwriterqueue/",
-                "-I",
-                "/Users/chenay/ws/programs/concurrentqueue",
+                "-std=c++1z",
                 // "-fsanitize=address",
                 // "-fno-omit-frame-pointer",
                 // "-O1",
@@ -42,19 +36,28 @@
                 // "lang/newFeatures.cpp"
                 // "lang/EffectiveC.cpp",
                 // "lang/punch.cpp"
+                // "-I",
+                // "/Users/chenay/ws/programs/relacy/",
+                // "-I",
+                // "/Users/chenay/ws/programs/readerwriterqueue/",
+                // "-I",
+                // "/Users/chenay/ws/programs/concurrentqueue",
                 //  "multi/multi.cpp"
                 //  "multi/ZeroEvenOdd.cpp"
                 // "multi/DiningPhilosophers.cpp"
                 // "multi/PrintInOrder.cpp"
                 // "multi/FizzBuzz.cpp"
                 // "multi/H2O.cpp"
-                "multi/ProducerConsumer.cpp"
+                // "multi/ProducerConsumer.cpp"
+                // "multi/memoryconsistency.cpp"
                 // "desgin/single.cpp"
                 // "desgin/FactoryMethod.cpp"
                 // "desgin/AbstractFactory.cpp"
                 // "desgin/BrowserHistory.cpp"
+                 "desgin/LRUCache.cpp"
                  // "file-test.cpp"
                 //  "13-3-ipc_private.c"
+                // "file-test.cpp"
                 "-o",
                 "LeetCode"
             ],
