@@ -5,8 +5,28 @@ from math import floor
 
 class Solution:
     # 167. Two Sum II - Input array is sorted
-    #  116 ms, faster than 6.95%
+    #  64 ms, faster than 54.07%
     def twoSum(self, numbers: List[int], target: int) -> List[int]:
+        i, j = 0, len(numbers) - 1
+        while i < j:
+            twos = numbers[i] + numbers[j]
+            if twos == target:
+                return [i + 1, j + 1]
+            elif twos > target:
+                j = j - 1
+            else:
+                i = i + 1
+
+    # 64 ms, faster than 54.07%
+    def twoSumDC(self, numbers: List[int], target: int) -> List[int]:
+        dc = {}
+        for i, val in enumerate(numbers):
+            if target - val in dc:
+                return [dc[target - val], i + 1]
+            dc[val] = i + 1
+
+    #  116 ms, faster than 6.95%
+    def twoSumBS(self, numbers: List[int], target: int) -> List[int]:
         l = len(numbers)
         mid = floor(l / 2)
         rightest = l - 1
