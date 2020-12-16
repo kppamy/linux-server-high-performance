@@ -4,6 +4,61 @@ from math import floor
 
 
 class Solution:
+    # 34. Find First and Last Position of Element in Sorted Array
+    #  80 ms, faster than 83.36%
+    def searchRange(self, nums: List[int], target: int) -> List[int]:
+        l = len(nums)
+        if l == 0:
+            return [-1, -1]
+        left = self.searchBorder(nums, target, 0, l - 1)
+        if left == -1:
+            return [-1, -1]
+        if left == l - 1 or nums[left + 1] > nums[left]:
+            return [left, left]
+        right = self.searchBorder(nums, target, 0, l - 1, True)
+        return [left, right]
+
+    def searchBorder(self, numbers: List[int], target: int, start: int, end: int, rightB=False) -> List[int]:
+        if start >= end:
+            if numbers[start] == target:
+                return start
+            else:
+                return -1
+        if rightB:
+            mid = start + floor((end - start + 1) / 2)
+            if target >= numbers[mid]:
+                left = mid
+                right = end
+            else:
+                left = start
+                right = mid - 1
+        else:
+            mid = start + floor((end - start) / 2)
+            if target <= numbers[mid]:
+                left = start
+                right = mid
+            else:
+                left = mid + 1
+                right = end
+        return self.searchBorder(numbers, target, left, right, rightB)
+
+    def generate_range(self):
+        cases = []
+
+        nums = [5, 7, 7, 8, 8, 10]
+        target = 6
+        cases = cases + [[nums, target]]
+
+        nums = [5, 7, 7, 8, 8, 10]
+        target = 8
+        cases = cases + [[nums, target]]
+
+        nums = []
+        target = 0
+        cases = cases + [[nums, target]]
+
+        return cases
+
     # 744. Find Smallest Letter Greater Than Target
     # 112 ms, faster than 34.94%
     def nextGreatestLetter(self, letters: List[str], target: str) -> str:
@@ -130,4 +185,5 @@ class Solution:
 if __name__ == "__main__":
     solu = Solution()
     # format_test(solu.twoSum, solu.generate_input)
-    format_test(solu.nextGreatestLetter, solu.genrate_letter)
+    # format_test(solu.nextGreatestLetter, solu.genrate_letter)
+    format_test(solu.searchRange, solu.generate_range)
