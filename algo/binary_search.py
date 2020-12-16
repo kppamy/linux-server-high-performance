@@ -4,6 +4,62 @@ from math import floor
 
 
 class Solution:
+    # 744. Find Smallest Letter Greater Than Target
+    # 112 ms, faster than 34.94%
+    def nextGreatestLetter(self, letters: List[str], target: str) -> str:
+        if target == 'z':
+            return letters[0]
+        idx = self.searchLetter(letters, target, 0, len(letters) - 1)
+        if letters[idx] <= target:
+            return letters[0]
+        return letters[idx]
+
+    def searchLetter(self, letters: List[str], target: str, start: int, end: int):
+        if start >= end:
+            return end
+        if letters[start] > target:
+            return start
+        mid = start + floor((end - start + 1) / 2)
+        if letters[mid] > target and mid >= 1 and letters[mid - 1] <= target:
+            return mid
+        elif letters[mid] <= target:
+            return self.searchLetter(letters, target, mid + 1, end)
+        elif letters[mid] > target:
+            return self.searchLetter(letters, target, start, mid)
+
+    def genrate_letter(self):
+        cases = []
+
+        letters = ['a', 'b']
+        target = "z"
+        cases = cases + [[letters, target]]
+
+        letters = ["c", "f", "j"]
+        target = "a"
+        cases = cases + [[letters, target]]
+
+        letters = ["c", "f", "j"]
+        target = "c"
+        cases = cases + [[letters, target]]
+
+        letters = ["c", "f", "j"]
+        target = "d"
+        cases = cases + [[letters, target]]
+
+        letters = ["c", "f", "j"]
+        target = "g"
+        cases = cases + [[letters, target]]
+
+        letters = ["c", "f", "j"]
+        target = "j"
+        cases = cases + [[letters, target]]
+
+        letters = ["c", "f", "j"]
+        target = "k"
+        cases = cases + [[letters, target]]
+
+        return cases
+
     # 167. Two Sum II - Input array is sorted
     #  64 ms, faster than 54.07%
     def twoSum(self, numbers: List[int], target: int) -> List[int]:
@@ -73,4 +129,5 @@ class Solution:
 
 if __name__ == "__main__":
     solu = Solution()
-    format_test(solu.twoSum, solu.generate_input)
+    # format_test(solu.twoSum, solu.generate_input)
+    format_test(solu.nextGreatestLetter, solu.genrate_letter)
