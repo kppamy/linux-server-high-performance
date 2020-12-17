@@ -4,6 +4,126 @@ from math import floor
 
 
 class Solution:
+    # 33. Search in Rotated Sorted Array
+    def search(self, nums: List[int], target: int) -> int:
+        maxi = len(nums) - 1
+        start, end = 0, maxi
+        while start <= end:
+            mid = (start+end)//2
+            if nums[mid] == target:
+                return mid
+            if nums[end] == target:
+                return end
+            if nums[start] == target:
+                return start
+            if nums[mid] < nums[end]:
+                if nums[end] < target:
+                    end = mid - 1
+                else:
+                    end = end - 1
+            elif nums[mid] > nums[start]:
+                if nums[mid] < target:
+                    start = mid + 1
+                else:
+                    start = start + 1
+            else:
+                 # end< mid <start
+
+        return -1
+
+
+    # 81. Search in Rotated Sorted Array II
+    # 52 ms, faster than 69.28%
+    def searchWithDuplicates(self, nums: List[int], target: int) -> bool:
+        # [2,5,6,0,0,1,2]
+        maxi = len(nums) - 1
+        start, end = 0, maxi
+        while start <= end:
+            mid = floor((start + end) / 2)
+            if nums[mid] == target or nums[start] == target or nums[end] == target:
+                return True
+            if nums[mid] < nums[end]:
+                if nums[end] < target:
+                    end = mid - 1
+                else:
+                    end = end - 1
+            elif nums[mid] > nums[start]:
+                if nums[mid] < target:
+                    start = mid + 1
+                else:
+                    start = start + 1
+            elif nums[end] == nums[mid]:
+                 end = end - 1
+            elif nums[start] == nums[mid]:
+                 start = start +1
+        return False
+
+    def generate_rotate_unique(self):
+        cases = []
+
+        nums = [1]
+        target = 0
+        cases = cases + [[nums, target]]
+
+        nums = [4, 5, 6, 7, 0, 1, 2]
+        target = 0
+        cases = cases + [[nums, target]]
+
+        target = 3
+        cases = cases + [[nums, target]]
+
+        return  cases
+
+
+    def generate_rotate(self):
+        cases = []
+
+        nums = [1, 1]
+        target = 0
+        cases = cases + [[nums, target]]
+
+        nums = [1]
+        target = 0
+        cases = cases + [[nums, target]]
+
+        nums = [2, 2, 2, 0, 2, 2]
+        target = 0
+        cases = cases + [[nums, target]]
+
+        nums = [1, 1, 3, 1]
+        target = 3
+        cases = cases + [[nums, target]]
+
+        nums = [4, 5, 6, 7, 0, 1, 2]
+        target = 5
+        cases = cases + [[nums, target]]
+
+        nums = [2, 5, 6, 0, 0, 1, 2]
+        target = 0
+        cases = cases + [[nums, target]]
+
+        nums = [2, 5, 6, 0, 0, 1, 2]
+        target = 1
+        cases = cases + [[nums, target]]
+
+        nums = [2, 5, 6, 0, 0, 1, 2]
+        target = 2
+        cases = cases + [[nums, target]]
+
+        nums = [2, 5, 6, 0, 0, 1, 2]
+        target = 3
+        cases = cases + [[nums, target]]
+
+        nums = [2, 5, 6, 0, 0, 1, 2]
+        target = 4
+        cases = cases + [[nums, target]]
+
+        nums = [2, 5, 6, 0, 0, 1, 2]
+        target = 5
+        cases = cases + [[nums, target]]
+
+        return cases
+
     # 34. Find First and Last Position of Element in Sorted Array
     #  80 ms, faster than 83.36%
     def searchRange(self, nums: List[int], target: int) -> List[int]:
@@ -186,4 +306,6 @@ if __name__ == "__main__":
     solu = Solution()
     # format_test(solu.twoSum, solu.generate_input)
     # format_test(solu.nextGreatestLetter, solu.genrate_letter)
-    format_test(solu.searchRange, solu.generate_range)
+    # format_test(solu.searchRange, solu.generate_range)
+    # format_test(solu.search, solu.generate_rotate)
+    format_test(solu.search, solu.generate_rotate_unique)
