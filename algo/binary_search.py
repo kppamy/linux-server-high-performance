@@ -5,32 +5,24 @@ from math import floor
 
 class Solution:
     # 33. Search in Rotated Sorted Array
-    # 44 ms, faster than 34.25%
+    # Runtime: 40 ms, faster than 67.77%
     def search(self, nums: List[int], target: int) -> int:
         maxi = len(nums) - 1
         start, end = 0, maxi
         while start <= end:
-            if nums[start] == target:
-                return start
-            if start == end:
-                return -1
             mid = (start + end) // 2
             if nums[mid] == target:
                 return mid
-            if nums[end] == target:
-                return end
-            if mid == start:
-                return -1
             if nums[mid] < nums[end]:
-                if nums[end] < target:
-                    end = mid - 1
-                else:
-                    end = end - 1
-            elif nums[mid] > nums[start]:
-                if nums[mid] < target:
+                if nums[mid] < target <= nums[end]:
                     start = mid + 1
                 else:
-                    start = start + 1
+                    end = mid - 1
+            elif nums[start] <= nums[mid]:
+                if nums[start] <= target < nums[mid]:
+                    end = mid - 1
+                else:
+                    start = mid + 1
         return -1
 
     # 81. Search in Rotated Sorted Array II
@@ -133,18 +125,57 @@ class Solution:
         return cases
 
     # 34. Find First and Last Position of Element in Sorted Array
-    #  80 ms, faster than 83.36%
+    #  80 ms, faster than 83.36% :recursion
+    # 84 ms, faster than 62.98% : iteration
     def searchRange(self, nums: List[int], target: int) -> List[int]:
         l = len(nums)
         if l == 0:
             return [-1, -1]
-        left = self.searchBorder(nums, target, 0, l - 1)
+        # left = self.searchBorder(nums, target, 0, l - 1)
+        left = self.findLeft(nums, target, 0, l - 1)
         if left == -1:
             return [-1, -1]
-        if left == l - 1 or nums[left + 1] > nums[left]:
+        # right = self.searchBorder(nums, target, 0, l - 1, True)
+        right = self.findRight(nums, target, left + 1, l - 1)
+        if right == -1:
             return [left, left]
-        right = self.searchBorder(nums, target, 0, l - 1, True)
         return [left, right]
+
+    def findLeft(self, numbers: List[int], target: int, start: int, end: int) -> List[int]:
+        while start <= end:
+            if start == end:
+                if target == numbers[start]:
+                    return start
+                else:
+                    return -1
+            mid = (start + end) // 2
+            if target <= numbers[mid]:
+                end = mid
+            else:
+                start = mid + 1
+        return -1
+
+    def findRight(self, numbers: List[int], target: int, start: int, end: int) -> List[int]:
+        while start <= end:
+            if start == end:
+                if target == numbers[start]:
+                    return start
+                else:
+                    return -1
+            mid = (start + end) // 2
+            if target > numbers[mid]:
+                start = mid + 1
+            elif target == numbers[mid]:
+                if mid == start:
+                    if numbers[end] == target:
+                        return end
+                    else:
+                        return start
+                else:
+                    start = mid
+            else:
+                end = mid - 1
+        return -1
 
     def searchBorder(self, numbers: List[int], target: int, start: int, end: int, rightB=False) -> List[int]:
         if start >= end:
@@ -172,6 +203,10 @@ class Solution:
 
     def generate_range(self):
         cases = []
+
+        nums = [3, 3, 3]
+        target = 3
+        cases = cases + [[nums, target]]
 
         nums = [5, 7, 7, 8, 8, 10]
         target = 6
@@ -314,6 +349,6 @@ if __name__ == "__main__":
     solu = Solution()
     # format_test(solu.twoSum, solu.generate_input)
     # format_test(solu.nextGreatestLetter, solu.genrate_letter)
-    # format_test(solu.searchRange, solu.generate_range)
+    format_test(solu.searchRange, solu.generate_range)
     # format_test(solu.search, solu.generate_rotate)
-    format_test(solu.search, solu.generate_rotate_unique)
+    # format_test(solu.search, solu.generate_rotate_unique)
