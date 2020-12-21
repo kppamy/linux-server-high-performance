@@ -1,13 +1,13 @@
  b 15-5-http_conn.cpp:173
-r 10.41.20.68 12345
+r 10.11.68.138 12345
  set scheduler-locking step
 b 16-4-stresstest.cpp:116
-r 10.41.20.68 12345 2
-./webserver 10.41.20.68 12345
-./stresstest 10.41.20.68 12345 2
+r 10.11.68.138 12345 2
+./webserver 10.11.68.138 12345
+./stresstest 10.11.68.138 12345 2
 b 15-6-web-main.cpp:130
-scp 15-6-web-main.cpp 15-5-http_conn.cpp chenay@10.41.20.68:/workspace/chenay/data/
-scp 16-4-stresstest.cpp chenay@10.41.20.68:/workspace/chenay/data/
+scp 15-6-web-main.cpp 15-5-http_conn.cpp chenay@10.11.68.138:/workspace/chenay/data/
+scp 16-4-stresstest.cpp chenay@10.11.68.138:/workspace/chenay/data/
 kill -9 $(ps -ef|grep -i web|awk -F  ' '  'NR==2{print $3 " " $4}') 2>&1
 
 awk '{print $0 ";"}' test |sed 's/^ *//'|cat

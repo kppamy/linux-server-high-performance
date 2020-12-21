@@ -5,17 +5,22 @@ from math import floor
 
 class Solution:
     # 33. Search in Rotated Sorted Array
+    # 44 ms, faster than 34.25%
     def search(self, nums: List[int], target: int) -> int:
         maxi = len(nums) - 1
         start, end = 0, maxi
         while start <= end:
-            mid = (start+end)//2
+            if nums[start] == target:
+                return start
+            if start == end:
+                return -1
+            mid = (start + end) // 2
             if nums[mid] == target:
                 return mid
             if nums[end] == target:
                 return end
-            if nums[start] == target:
-                return start
+            if mid == start:
+                return -1
             if nums[mid] < nums[end]:
                 if nums[end] < target:
                     end = mid - 1
@@ -26,11 +31,7 @@ class Solution:
                     start = mid + 1
                 else:
                     start = start + 1
-            else:
-                 # end< mid <start
-
         return -1
-
 
     # 81. Search in Rotated Sorted Array II
     # 52 ms, faster than 69.28%
@@ -53,13 +54,21 @@ class Solution:
                 else:
                     start = start + 1
             elif nums[end] == nums[mid]:
-                 end = end - 1
+                end = end - 1
             elif nums[start] == nums[mid]:
-                 start = start +1
+                start = start + 1
         return False
 
     def generate_rotate_unique(self):
         cases = []
+
+        nums = [3, 5, 1]
+        target = 3
+        cases = cases + [[nums, target]]
+
+        nums = [3, 1]
+        target = 0
+        cases = cases + [[nums, target]]
 
         nums = [1]
         target = 0
@@ -72,8 +81,7 @@ class Solution:
         target = 3
         cases = cases + [[nums, target]]
 
-        return  cases
-
+        return cases
 
     def generate_rotate(self):
         cases = []
