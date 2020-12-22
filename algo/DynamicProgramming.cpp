@@ -78,7 +78,6 @@ int rob(vector<int> &nums)
     for (int i = 0; i < len; i++)
     {
         dp2 = (dp0 + nums[i]) >= dp1 ? (dp0 + nums[i]) : dp1;
-        ;
         dp0 = dp1;
         dp1 = dp2;
     }
@@ -93,6 +92,36 @@ my2arr testrob()
         {2, 7, 9, 3, 1}};
 }
 
+// 413. Arithmetic Slices
+// 0 ms, faster than 100.00%
+//  7.7 MB, less than 63.12%
+int numberOfArithmeticSlices(vector<int> &A)
+{
+    int len = A.size();
+    if (len < 3)
+        return 0;
+    int dp0 = 0, dp1 = 0, dp2 = 0;
+    for (int i = 2; i < len; i++)
+    {
+        // no i: dp1, has i--> has i-1 also, has i-1= (has i-1) - (has i-2)
+        dp2 = (A[i] - A[i - 1] == A[i - 1] - A[i - 2]) ? (dp1 + 1 + dp1 - dp0) : dp1;
+        dp0 = dp1;
+        dp1 = dp2;
+    }
+    return dp2;
+}
+
+my2arr testnumberOfArithmeticSlices()
+{
+    return {
+        {1, 2, 3, 8, 9, 10},
+        {1, 2, 3, 4},
+        {1, 3, 5, 7, 9},
+        {1, 3, 5, 7, 9, 11},
+        {7, 7, 7, 7},
+        {3, -1, -5, -9},
+        {1, 1, 2, 5, 7}};
+}
 void DynamicProgramming::shuffleArray(vector<int> &arr)
 {
     int sz = arr.size();
@@ -133,12 +162,14 @@ int DynamicProgramming::getHammingWeight(int n)
 // knapsack problems
 bool canPartition(vector<int> &nums)
 {
+    return false;
 }
 
 // knapsack problems
 // 322. Coin Change
 int coinChange(vector<int> &coins, int amount)
 {
+    return 0;
 }
 
 // 面试题 08.11. 硬币
@@ -199,7 +230,7 @@ bool isSubsequence(string s, string t, bool two_pointer)
     int n = t.size();
     if (m > n)
         return false;
-    int i, j = 0;
+    int i = 0, j = 0;
     while (i < m && j < n)
     {
         if (s[i] == t[j])
@@ -239,7 +270,6 @@ int findTargetSumWays(vector<int> &nums, int S)
     vector<vector<int>> ways(2, vector<int>(2 * MAX + 1, 0));
     ways[0][nums[0] + MAX] = 1 + ways[0][nums[0] + MAX];
     ways[0][-1 * nums[0] + MAX] = 1 + ways[0][-1 * nums[0] + MAX];
-    int pos, neg = 0;
     for (int i = 1; i < len; i++)
     {
         for (int j = -MAX; j <= MAX; j++)
@@ -288,6 +318,7 @@ void testFindTargetSumWays()
 // 474. Ones and Zeroes
 int findMaxForm(vector<string> &strs, int m, int n)
 {
+    return 0;
 }
 
 void exchange(vector<vector<int>> &intervals, int i, int j)
@@ -464,5 +495,6 @@ int main(int argc, char const *argv[])
     // timeit(testML);
     // timeit(testClimbStairs);
     // format_test(minCostClimbingStairs, testminCostClimbingStairs, printInt);
-    format_test(rob, testrob, printInt);
+    // format_test(rob, testrob, printInt);
+    format_test(numberOfArithmeticSlices, testnumberOfArithmeticSlices, printInt);
 }
