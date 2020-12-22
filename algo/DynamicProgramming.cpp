@@ -41,7 +41,7 @@ void testClimbStairs()
 }
 
 // 746. Min Cost Climbing Stairs
-//  8 ms, faster than 82.51% o
+//  8 ms, faster than 82.51%
 // 13.7 MB, less than 93.69%
 int minCostClimbingStairs(vector<int> &cost)
 {
@@ -66,6 +66,31 @@ vector<vector<int>> testminCostClimbingStairs()
     return {
         {10, 15, 20},
         {1, 100, 1, 1, 1, 100, 1, 1, 100, 1}};
+}
+
+// 198. House Robber
+// 4 ms, faster than 46.28% o
+// 7.9 MB, less than 97.27%
+int rob(vector<int> &nums)
+{
+    int len = nums.size();
+    int dp0 = 0, dp1 = 0, dp2 = 0;
+    for (int i = 0; i < len; i++)
+    {
+        dp2 = (dp0 + nums[i]) >= dp1 ? (dp0 + nums[i]) : dp1;
+        ;
+        dp0 = dp1;
+        dp1 = dp2;
+    }
+    return dp2;
+}
+
+my2arr testrob()
+{
+    return {
+        {},
+        {1, 2, 3, 1},
+        {2, 7, 9, 3, 1}};
 }
 
 void DynamicProgramming::shuffleArray(vector<int> &arr)
@@ -438,5 +463,6 @@ int main(int argc, char const *argv[])
     // timeit(testFindTargetSumWays);
     // timeit(testML);
     // timeit(testClimbStairs);
-    format_test(minCostClimbingStairs, testminCostClimbingStairs, printInt);
+    // format_test(minCostClimbingStairs, testminCostClimbingStairs, printInt);
+    format_test(rob, testrob, printInt);
 }
