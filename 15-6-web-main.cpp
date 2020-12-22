@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
                 if (!users[sockfd].write())
                 {
                     users[sockfd].close_conn();
-                    fprintf(stdout, "write error, close connection: %d\n",sockfd);
+                    fprintf(stdout, "write false, close connection: %d\n",sockfd);
                 }{
                     responses++;
                 }

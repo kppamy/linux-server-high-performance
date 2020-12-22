@@ -1,7 +1,7 @@
 #include "15-4-http_conn.h"
 #include <sys/time.h> /* for gettimeofday,struct timespec */
 #include <time.h>     /* for strftime */
-#include <unistd.h>    /* for write  read*/
+#include <unistd.h>   /* for write  read*/
 
 //定义HTTP响应的一些状态
 //
@@ -22,34 +22,37 @@ void threadId(const char *tag)
     fprintf(stdout, "\n****  %s thread id: %ld\n", tag, pthread_self());
 }
 
-
 /// 计算两个用于性能统计的前后两个 timespec 的差值.以纳秒返回
-long diff_timespec_to_nsec(struct timespec start, struct timespec end) {
-  if (start.tv_sec > end.tv_sec) {
-    return diff_timespec_to_nsec(end, start);
-  }
-  long s = end.tv_sec - start.tv_sec;
-  long ns = s * 1000000000L + end.tv_nsec - start.tv_nsec;
-  return ns;
+long diff_timespec_to_nsec(struct timespec start, struct timespec end)
+{
+    if (start.tv_sec > end.tv_sec)
+    {
+        return diff_timespec_to_nsec(end, start);
+    }
+    long s = end.tv_sec - start.tv_sec;
+    long ns = s * 1000000000L + end.tv_nsec - start.tv_nsec;
+    return ns;
 }
 
-
-typedef struct TimeSpecRange {
-  struct timespec start;
-  struct timespec end;
+typedef struct TimeSpecRange
+{
+    struct timespec start;
+    struct timespec end;
 } TimeSpecRange;
 
-int perf_start(TimeSpecRange *range) {
-  return clock_gettime(CLOCK_THREAD_CPUTIME_ID, &range->start);
+int perf_start(TimeSpecRange *range)
+{
+    return clock_gettime(CLOCK_THREAD_CPUTIME_ID, &range->start);
 }
-double perf_end_count_ns(TimeSpecRange *range) {
-  int ret = clock_gettime(CLOCK_THREAD_CPUTIME_ID, &range->end);
-  if (ret == -1) {
-    return ret;
-  }
-  return diff_timespec_to_nsec(range->start, range->end)/1000000.0;
+double perf_end_count_ns(TimeSpecRange *range)
+{
+    int ret = clock_gettime(CLOCK_THREAD_CPUTIME_ID, &range->end);
+    if (ret == -1)
+    {
+        return ret;
+    }
+    return diff_timespec_to_nsec(range->start, range->end) / 1000000.0;
 }
-
 
 int setnonblocking(int fd)
 {
@@ -147,8 +150,8 @@ http_conn::LINE_STATUS http_conn::parse_line()
             else if (m_read_buf[m_checked_idx + 1] == '\n')
             {
                 m_read_buf[m_checked_idx] = '\0';
-                m_read_buf[m_checked_idx+1] = '\0';
-                m_checked_idx = m_checked_idx+2;
+                m_read_buf[m_checked_idx + 1] = '\0';
+                m_checked_idx = m_checked_idx + 2;
                 return LINE_OK;
             }
             return LINE_BAD;
@@ -159,7 +162,7 @@ http_conn::LINE_STATUS http_conn::parse_line()
             {
                 m_read_buf[m_checked_idx - 1] = '\0';
                 m_read_buf[m_checked_idx++] = '\0';
-                 m_checked_idx = m_checked_idx+1;
+                m_checked_idx = m_checked_idx + 1;
                 return LINE_OK;
             }
             return LINE_BAD;
@@ -194,15 +197,15 @@ bool http_conn::read()
         }
         else if (bytes_read == 0)
         {
-          printf("oop!  peer close connection?  %d\n", m_sockfd);
-          return false;
+            printf("oop!  peer close connection?  %d\n", m_sockfd);
+            return false;
         }
         m_read_idx += bytes_read;
-        if(m_read_idx == READ_BUFFER_SIZE){
+        if (m_read_idx == READ_BUFFER_SIZE)
+        {
             printf("read buffer is overflow??  %d\n", m_sockfd);
             break;
         }
-
     }
 
     printf("read   %d  bytes\n", m_read_idx);
@@ -324,11 +327,10 @@ http_conn::HTTP_CODE http_conn::process_read()
     LINE_STATUS line_status = LINE_OK;
     HTTP_CODE ret = NO_REQUEST;
     char *text = 0;
-    
-    // threadId("http_conn::process_read()"); 
 
-    while (((m_check_state == CHECK_STATE_CONTENT) && (line_status == LINE_OK)) 
-    || ((line_status = parse_line()) == LINE_OK))
+    // threadId("http_conn::process_read()");
+
+    while (((m_check_state == CHECK_STATE_CONTENT) && (line_status == LINE_OK)) || ((line_status = parse_line()) == LINE_OK))
     {
         text = get_line();
         m_start_line = m_checked_idx;
@@ -377,8 +379,9 @@ http_conn::HTTP_CODE http_conn::process_read()
     return NO_REQUEST;
 }
 
-bool is_index_path(const char *uri) {
-  return strcasecmp(uri, "/") == 0 || strcasecmp(uri, "/index.html") == 0;
+bool is_index_path(const char *uri)
+{
+    return strcasecmp(uri, "/") == 0 || strcasecmp(uri, "/index.html") == 0;
 }
 
 /*当得到一个完整、正确的HTTP请求时，我们就分析目标文件的属性。如果目标文件存在，
@@ -387,10 +390,13 @@ http_conn::HTTP_CODE http_conn::do_request()
 {
     strcpy(m_real_file, doc_root);
     int len = strlen(doc_root);
-    if(is_index_path(m_url)){
-         strncpy(m_real_file + len, "/index.html", 12);
-    }else{
-          return BAD_REQUEST;
+    if (is_index_path(m_url))
+    {
+        strncpy(m_real_file + len, "/index.html", 12);
+    }
+    else
+    {
+        return BAD_REQUEST;
     }
     if (stat(m_real_file, &m_file_stat) < 0)
     {
@@ -424,7 +430,7 @@ bool http_conn::write()
     // threadId("http_conn::write");
     int temp = 0;
     int bytes_have_send = 0;
-    int bytes_to_send = m_write_idx;
+    int bytes_to_send = m_write_idx + m_file_stat.st_size;
     if (bytes_to_send == 0)
     {
         modfd(m_epollfd, m_sockfd, EPOLLIN);
@@ -433,8 +439,9 @@ bool http_conn::write()
     }
 
     while (1)
-    {    
+    {
         temp = writev(m_sockfd, m_iv, m_iv_count);
+
         if (temp <= -1)
         {
             /*如果TCP写缓冲没有空间，
@@ -450,7 +457,7 @@ bool http_conn::write()
 
         bytes_to_send -= temp;
         bytes_have_send += temp;
-        if (bytes_to_send <= bytes_have_send)
+        if (bytes_to_send <= 0)
         {
             /*发送HTTP响应成功，
              * 根据HTTP请求中的Connection字段决定是否立即关闭连接*/
@@ -464,10 +471,13 @@ bool http_conn::write()
             else
             {
                 modfd(m_epollfd, m_sockfd, EPOLLIN);
-                printf("close connection as not keep-alive \n");
+                printf("will close connection as not keep-alive \n");
                 return false;
             }
         }
+        m_iv[0].iov_len = 0;
+        m_iv[1].iov_base = m_file_address + temp;
+        m_iv[1].iov_len = bytes_to_send;
     }
 }
 
@@ -500,7 +510,7 @@ bool http_conn::add_status_line(int status, const char *title)
 
 bool http_conn::add_headers(int content_len)
 {
-    add_content_length(32768);
+    add_content_length(content_len);
     add_linger();
     add_blank_line();
     return true;
