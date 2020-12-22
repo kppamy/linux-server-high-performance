@@ -31,7 +31,7 @@ double timeit(F func, Args&& ... arg)
 }
 
 void printInt(int n){
-    std::cout<<" "<<n<<" ";
+    std::cout<<" "<<n<<" "<<std::endl;
 }
 
 template<typename T>
@@ -87,12 +87,13 @@ std::vector<int> generateArray(int num, int max)
     return arr;
 }
 
-template<typename f, typename u, typename t>
-void format_test(f func, u inputf, t print){
- auto&& cases=u();
+template<typename F, typename I, typename P>
+void format_test(F func, I inputf, P print){
+ auto&& cases=inputf();
  for(auto&& item :cases){
-     func(item);
-     print(item);
+     printVector(item);
+     auto&& res=func(item);
+     print(res);
  }
 }
 

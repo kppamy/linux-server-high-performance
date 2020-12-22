@@ -1,7 +1,7 @@
-#include "common.h"
+#include "../common.h"
 #include "DynamicProgramming.h"
 #include <math.h>
-#include "Timer.h"
+#include "../Timer.h"
 
 int DynamicProgramming::climbStairs(int stairs)
 {
@@ -31,13 +31,41 @@ int climbStairs(int n)
 }
 
 void testClimbStairs()
-{ 
+{
     int n = 1;
     while (n <= 45)
     {
         cout << "ways to climbStairs " << n << " is " << climbStairs(n) << endl;
         n++;
     }
+}
+
+// 746. Min Cost Climbing Stairs
+//  8 ms, faster than 82.51% o
+// 13.7 MB, less than 93.69%
+int minCostClimbingStairs(vector<int> &cost)
+{
+    int len = cost.size();
+    // vector<int> dp(len + 1,0);
+    int dp0 = 0;
+    int dp1 = 0;
+    int dp2 = 0;
+    for (int i = 1; i < len; i++)
+    {
+        // dp[i + 1] = min(dp[i - 1] + cost[i - 1], dp[i] + cost[i]);
+        dp2 = min(dp0 + cost[i - 1], dp1 + cost[i]);
+        dp0 = dp1;
+        dp1 = dp2;
+    }
+    // return dp[len];
+    return dp2;
+}
+
+vector<vector<int>> testminCostClimbingStairs()
+{
+    return {
+        {10, 15, 20},
+        {1, 100, 1, 1, 1, 100, 1, 1, 100, 1}};
 }
 
 void DynamicProgramming::shuffleArray(vector<int> &arr)
@@ -184,7 +212,7 @@ int findTargetSumWays(vector<int> &nums, int S)
     if (S > MAX || S < -MAX)
         return 0;
     vector<vector<int>> ways(2, vector<int>(2 * MAX + 1, 0));
-    ways[0][nums[0] + MAX] = 1 + ways[0][nums[0] + MAX] ;
+    ways[0][nums[0] + MAX] = 1 + ways[0][nums[0] + MAX];
     ways[0][-1 * nums[0] + MAX] = 1 + ways[0][-1 * nums[0] + MAX];
     int pos, neg = 0;
     for (int i = 1; i < len; i++)
@@ -194,41 +222,41 @@ int findTargetSumWays(vector<int> &nums, int S)
 
             if ((j - nums[i] + MAX) >= 0 && (j + nums[i]) <= MAX)
                 ways[i % 2][j + MAX] = ways[1 - i % 2][j - nums[i] + MAX] + ways[1 - i % 2][j + nums[i] + MAX];
-            else if(j - nums[i] + MAX < 0 && (j + nums[i]) <= MAX)
+            else if (j - nums[i] + MAX < 0 && (j + nums[i]) <= MAX)
             {
                 ways[i % 2][j + MAX] = ways[1 - i % 2][j + nums[i] + MAX];
-            }else if(j - nums[i] + MAX >= 0 && j + nums[i] > MAX){
+            }
+            else if (j - nums[i] + MAX >= 0 && j + nums[i] > MAX)
+            {
                 ways[i % 2][j + MAX] = ways[1 - i % 2][j - nums[i] + MAX];
             }
         }
     }
-   
-    return ways[(len-1) % 2][S + MAX];
+
+    return ways[(len - 1) % 2][S + MAX];
 }
 
 void testFindTargetSumWays()
 {
 
-    vector<int> nums2{0,0,0,0,0,0,0,0,1};
+    vector<int> nums2{0, 0, 0, 0, 0, 0, 0, 0, 1};
     // vector<int> nums2{0,0,1};
     printVector(nums2);
     int S = 0;
     while (S < 3)
     {
         int res = findTargetSumWays(nums2, S++);
-        cout << "ways to have " << S -1 << " is " << res << endl;
+        cout << "ways to have " << S - 1 << " is " << res << endl;
     }
-    
+
     vector<int> nums{1, 1, 1, 1, 1};
     printVector(nums);
-     S = 3;
+    S = 3;
     while (S < 7)
     {
         int res = findTargetSumWays(nums, S++);
-        cout << "ways to have " << S -1 << " is " << res << endl;
+        cout << "ways to have " << S - 1 << " is " << res << endl;
     }
-
-
 }
 
 // knapsack problems
@@ -409,5 +437,6 @@ int main(int argc, char const *argv[])
     // timeit(testSubSequence);
     // timeit(testFindTargetSumWays);
     // timeit(testML);
-    timeit(testClimbStairs);
+    // timeit(testClimbStairs);
+    format_test(minCostClimbingStairs, testminCostClimbingStairs, printInt);
 }
