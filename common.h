@@ -134,8 +134,10 @@ template<typename F, typename I>
 void format_test(F func, I inputf){
  auto&& cases=inputf();
  for(auto&& item :cases){
+     std::cout<<"test case: "<<std::endl;
      printVector(item);
      auto&& res=func(item);
+     std::cout<<"test result: "<<std::endl;
      print(res);
  }
 }
