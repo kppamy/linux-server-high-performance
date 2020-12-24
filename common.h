@@ -30,6 +30,31 @@ double timeit(F func, Args&& ... arg)
     return t.miniSeconds();
 }
 
+
+void print(int n){
+    std::cout<<" "<<n<<" "<<std::endl;
+}
+
+template<typename T>
+void print(std::vector<T> &input)
+{
+    for(auto&& val:input){
+        std::cout<<val<<" ";
+    }
+    std::cout << std::endl;
+}
+
+template<typename T>
+void print(std::vector<std::vector<T>> &input)
+{
+    for(auto&& val:input){
+        print(val);
+    }
+    std::cout << std::endl;
+}
+
+
+
 void printInt(int n){
     std::cout<<" "<<n<<" "<<std::endl;
 }
@@ -43,6 +68,13 @@ void printVector(std::vector<T> &input)
     std::cout << std::endl;
 }
 
+template<typename T>
+void printVector(std::vector<std::vector<T>> &input)
+{
+    for(auto&& val:input){
+        printVector(val);
+    }
+}
 
 
 void print2Vector(std::vector<std::vector<int>> &input)
@@ -89,6 +121,17 @@ std::vector<int> generateArray(int num, int max)
 
 template<typename F, typename I, typename P>
 void format_test(F func, I inputf, P print){
+ auto&& cases=inputf();
+ for(auto&& item :cases){
+     printVector(item);
+     auto&& res=func(item);
+     print(res);
+ }
+}
+
+
+template<typename F, typename I>
+void format_test(F func, I inputf){
  auto&& cases=inputf();
  for(auto&& item :cases){
      printVector(item);
