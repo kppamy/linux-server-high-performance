@@ -9,6 +9,49 @@ using namespace std;
 
 vector<int> directions = {-1, 0, 1, 0, -1}; //up,right,down,left
 
+void dfsnumIslands(vector<vector<char>> &grid,int i , int j){
+    grid[i][j]='2';
+    for(int d=0;d<4;++d){
+        int x=i+directions[d],y=j+directions[d+1];
+        if(x<0||y<0||x>=grid.size()||y>=grid[0].size())
+            continue;
+        if(grid[x][y]=='1'){
+            dfsnumIslands(grid,x,y);
+        }
+    }
+}
+
+// 200. Number of Islands
+// 24 ms, faster than 75.72%
+int numIslands(vector<vector<char>> &grid)
+{
+    int rows=grid.size(),cols=grid[0].size();
+    int nums=0;
+    for(int i=0;i<rows;++i){
+        for(int j=0;j<cols;++j){
+            if(grid[i][j]=='1'){
+                dfsnumIslands(grid,i,j);
+                nums++;
+            }
+        }
+    }
+    return nums;
+}
+
+vector<vector<vector<char>>> testnumIslands()
+{
+    return {
+        {{'1', '1', '1', '1', '0'},
+         {'1', '1', '0', '1', '0'},
+         {'1', '1', '0', '0', '0'},
+         {'0', '0', '0', '0', '0'}},
+
+        {{'1', '1', '0', '0', '0'},
+         {'1', '1', '0', '0', '0'},
+         {'0', '0', '1', '0', '0'},
+         {'0', '0', '0', '1', '1'}}};
+}
+
 class Employee
 {
 public:
@@ -547,6 +590,7 @@ int main(int argc, char const *argv[])
     // format_test(pacificAtlantic, testpacificAtlantic);
     // format_test(permute, testpermute);
     // format_test(shortestBridge, testshortestBridge);
-    testgetImportance();
+    // testgetImportance();
+        format_test(numIslands, testnumIslands);
     return 0;
 }
