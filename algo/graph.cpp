@@ -1,10 +1,89 @@
 #include <vector>
 #include <stack>
+#include <queue>
 #include <iostream>
 #include <type_traits>
 #include "../common.h"
 
 using namespace std;
+
+vector<int> directions = {-1, 0, 1, 0, -1}; //up,right,down,left
+
+void findIslandDfs(vector<vector<int>> &A, queue<pair<int, int>> &found, int i, int j)
+{
+    found.push(make_pair(i, j));
+    A[i][j] = 2;
+    for (int d = 0; d < 4; d++)
+    {
+        int x = i + directions[d], y = j + directions[d + 1];
+        if (x < 0 || y < 0 || x >= A.size() || y >= A[0].size())
+            continue;
+        if (A[x][y] == 1)
+        {
+            findIslandDfs(A, found, x, y);
+        }
+    }
+}
+
+// 934. Shortest Bridge
+// 84 ms, faster than 84.43%
+int shortestBridge(vector<vector<int>> &A)
+{
+    int rows = A.size(), cols = A[0].size();
+    queue<pair<int, int>> islandA;
+    bool found = false;
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < cols; ++j)
+        {
+            if (A[i][j] == 1)
+            {
+                findIslandDfs(A, islandA, i, j);
+                found = true;
+            }
+            if (found)
+                break;
+        }
+        if (found)
+            break;
+    }
+
+    int depth = 0;
+
+    while (!islandA.empty())
+    {
+
+        depth++;
+        int sz = islandA.size();
+        while (sz-- > 0)
+        {
+            auto [r, c] = islandA.front();
+            islandA.pop();
+            for (int d = 0; d < 4; ++d)
+            {
+                int x = r + directions[d], y = c + directions[d + 1];
+                if (x < 0 || y < 0 || x >= A.size() || y >= A[0].size())
+                    continue;
+                if (A[x][y] == 2)
+                    continue;
+                if (A[x][y] == 1)
+                    return depth - 1;
+                A[x][y] = 2;
+                islandA.push(make_pair(x, y));
+            }
+        }
+    }
+    return 0;
+}
+
+vector<my2arr> testshortestBridge()
+{
+    return {
+        {{0, 0, 1, 0, 1}, {0, 1, 1, 0, 1}, {0, 1, 0, 0, 1}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}},
+        {{0, 1}, {1, 0}},
+        {{0, 1, 0}, {0, 0, 0}, {0, 0, 1}},
+        {{1, 1, 1, 1, 1}, {1, 0, 0, 0, 1}, {1, 0, 1, 0, 1}, {1, 0, 0, 0, 1}, {1, 1, 1, 1, 1}}};
+}
 
 static const int DEAFAULT = -1;
 static const int DISCOVERED = 0;
@@ -258,7 +337,6 @@ vector<my2arr> testmaxAreaOfIsland()
     };
 }
 
-vector<int> directions = {-1, 0, 1, 0, -1}; //up,right,down,left
 void canFlowdfs(vector<vector<int>> &matrix, vector<vector<bool>> &flowup, int r, int c)
 {
     if (flowup[r][c])
@@ -401,6 +479,7 @@ int main(int argc, char const *argv[])
     // ts.testfindOrder();
     // format_test(maxAreaOfIsland, testmaxAreaOfIsland, printInt);
     // format_test(pacificAtlantic, testpacificAtlantic);
-    format_test(permute, testpermute);
+    // format_test(permute, testpermute);
+    format_test(shortestBridge, testshortestBridge);
     return 0;
 }
