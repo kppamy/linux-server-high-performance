@@ -9,6 +9,72 @@ using namespace std;
 
 vector<int> directions = {-1, 0, 1, 0, -1}; //up,right,down,left
 
+class Employee
+{
+public:
+    int id;
+    int importance;
+    vector<int> subordinates;
+    Employee(int i, int imp, vector<int> subor) : id(i), importance(imp)
+    {
+        subordinates = subor;
+    }
+};
+
+#include <unordered_map>
+
+int getimpdfs(vector<vector<int>> &graph, int id)
+{
+    int imp = graph[id - 1][id - 1];
+    for (int i = 0; i < graph.size(); ++i)
+    {
+        if (i != id - 1 && graph[id - 1][i] == 1)
+        {
+            imp += getimpdfs(graph, i + 1);
+        }
+    }
+    return imp;
+}
+// 690. Employee Importance
+// 48 ms, faster than 23.68%
+int getImportance(vector<Employee *> employees, int id)
+{
+    int len = INT_MIN;
+    for (auto &&emp : employees)
+    {
+        if (emp->id > len)
+            len = emp->id;
+    }
+    vector<vector<int>> graph(len, vector<int>(len, 0));
+    for (auto &&e : employees)
+    {
+        graph[e->id - 1][e->id - 1] = e->importance;
+        for (auto &&child : e->subordinates)
+        {
+            graph[e->id - 1][child - 1] = 1;
+        }
+    }
+
+    return getimpdfs(graph, id);
+}
+
+void testgetImportance()
+{
+    {
+        Employee *e1 = new Employee(2, 5, {});
+        vector<Employee *> employees = {e1};
+        cout << "getImportance: " << getImportance(employees, 2) << endl;
+    }
+
+    {
+        Employee *e1 = new Employee(1, 5, {2, 3});
+        Employee *e2 = new Employee(2, 3, {});
+        Employee *e3 = new Employee(3, 3, {});
+        vector<Employee *> employees = {e1, e2, e3};
+        cout << "getImportance: " << getImportance(employees, 1) << endl;
+    }
+}
+
 void findIslandDfs(vector<vector<int>> &A, queue<pair<int, int>> &found, int i, int j)
 {
     found.push(make_pair(i, j));
@@ -480,6 +546,7 @@ int main(int argc, char const *argv[])
     // format_test(maxAreaOfIsland, testmaxAreaOfIsland, printInt);
     // format_test(pacificAtlantic, testpacificAtlantic);
     // format_test(permute, testpermute);
-    format_test(shortestBridge, testshortestBridge);
+    // format_test(shortestBridge, testshortestBridge);
+    testgetImportance();
     return 0;
 }
