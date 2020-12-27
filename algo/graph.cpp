@@ -9,14 +9,97 @@ using namespace std;
 
 vector<int> directions = {-1, 0, 1, 0, -1}; //up,right,down,left
 
-void dfsnumIslands(vector<vector<char>> &grid,int i , int j){
-    grid[i][j]='2';
-    for(int d=0;d<4;++d){
-        int x=i+directions[d],y=j+directions[d+1];
-        if(x<0||y<0||x>=grid.size()||y>=grid[0].size())
+// 130. Surrounded Regions
+// 32 ms, faster than 15.27%
+void solve(vector<vector<char>> &board)
+{
+    queue<pair<int, int>> bfs;
+    int rows = board.size();
+    if (rows == 0)
+        return;
+    int cols = board[0].size();
+    map<char, bool> canflip;
+    int islands = 0;
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < cols; ++j)
+        {
+            if (board[i][j] != 'O')
+                continue;
+            islands++;
+            bfs.push(make_pair(i, j));
+            board[i][j] = 'Y' + islands;
+            bool flip = true;
+            int prer = -1, prec = -1;
+            while (!bfs.empty())
+            {
+                auto [r, c] = bfs.front();
+                if (r == prer && c == prec)
+                {
+                    cout << "pop: " << r << " " << c << endl;
+                }
+                prer = r;
+                prec = c;
+                bfs.pop();
+                if (flip && (r == 0 || r == rows - 1 || c == 0 || c == cols - 1))
+                    flip = false;
+                for (int d = 0; d < 4; d++)
+                {
+                    int x = r + directions[d], y = c + directions[d + 1];
+                    if (x < 0 || y < 0 || x == rows || y == cols)
+                        continue;
+                    if (board[x][y] == 'O')
+                    {
+                        board[x][y] = 'Y' + islands;
+                        bfs.push(make_pair(x, y));
+                    }
+                }
+            }
+            canflip['Y' + islands] = flip;
+        }
+    }
+
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < cols; ++j)
+        {
+            char flag = board[i][j];
+            if (flag == 'X' || flag == 'O')
+                continue;
+            if (canflip[flag])
+                board[i][j] = 'X';
+            else
+                board[i][j] = 'O';
+        }
+    }
+}
+
+vector<vector<vector<char>>> testSurroundedRegions()
+{
+    vector<vector<char>> board =
+        {{'X', 'X', 'X', 'X'},
+         {'X', 'O', 'O', 'X'},
+         {'X', 'X', 'O', 'X'},
+         {'X', 'O', 'X', 'X'}};
+
+    // vector<vector<char>> board = {{'O','O','O','O','O','O','O','O','X','O','O','O','O','O','X','O','O','O','O','O'},{'O','O','O','O','O','O','O','X','O','O','O','O','O','O','O','O','O','O','O','O'},{'X','O','O','X','O','X','O','O','O','O','X','O','O','X','O','O','O','O','O','O'},{'O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','X','X','O'},{'O','X','X','O','O','O','O','O','O','X','O','O','O','O','O','O','O','O','O','O'},{'O','O','O','O','X','O','O','O','O','O','O','X','O','O','O','O','O','X','X','O'},{'O','O','O','O','O','O','O','X','O','O','O','O','O','O','O','O','O','O','O','O'},{'O','O','O','O','O','O','O','O','O','O','O','O','O','X','O','O','O','O','O','O'},{'O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','X','O'},{'O','O','O','O','O','X','O','O','O','O','O','O','O','O','O','O','O','O','O','O'},{'O','O','O','O','O','O','O','O','X','O','O','O','O','O','O','O','O','O','O','O'},{'O','O','O','O','X','O','O','O','O','X','O','O','O','O','O','O','O','O','O','O'},{'O','O','O','O','O','O','O','O','X','O','O','O','O','O','O','O','O','O','O','O'},{'X','O','O','O','O','O','O','O','O','X','X','O','O','O','O','O','O','O','O','O'},{'O','O','O','O','O','O','O','O','O','O','O','X','O','O','O','O','O','O','O','O'},{'O','O','O','O','X','O','O','O','O','O','O','O','O','X','O','O','O','O','O','X'},{'O','O','O','O','O','X','O','O','O','O','O','O','O','O','O','X','O','X','O','O'},{'O','X','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O'},{'O','O','O','O','O','O','O','O','X','X','O','O','O','X','O','O','X','O','O','X'},{'O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O','O'}};
+    printVector(board);
+    solve(board);
+    cout << "flippped: " << endl;
+    printVector(board);
+}
+
+void dfsnumIslands(vector<vector<char>> &grid, int i, int j)
+{
+    grid[i][j] = '2';
+    for (int d = 0; d < 4; ++d)
+    {
+        int x = i + directions[d], y = j + directions[d + 1];
+        if (x < 0 || y < 0 || x >= grid.size() || y >= grid[0].size())
             continue;
-        if(grid[x][y]=='1'){
-            dfsnumIslands(grid,x,y);
+        if (grid[x][y] == '1')
+        {
+            dfsnumIslands(grid, x, y);
         }
     }
 }
@@ -25,12 +108,15 @@ void dfsnumIslands(vector<vector<char>> &grid,int i , int j){
 // 24 ms, faster than 75.72%
 int numIslands(vector<vector<char>> &grid)
 {
-    int rows=grid.size(),cols=grid[0].size();
-    int nums=0;
-    for(int i=0;i<rows;++i){
-        for(int j=0;j<cols;++j){
-            if(grid[i][j]=='1'){
-                dfsnumIslands(grid,i,j);
+    int rows = grid.size(), cols = grid[0].size();
+    int nums = 0;
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < cols; ++j)
+        {
+            if (grid[i][j] == '1')
+            {
+                dfsnumIslands(grid, i, j);
                 nums++;
             }
         }
@@ -591,6 +677,7 @@ int main(int argc, char const *argv[])
     // format_test(permute, testpermute);
     // format_test(shortestBridge, testshortestBridge);
     // testgetImportance();
-        format_test(numIslands, testnumIslands);
+    // format_test(numIslands, testnumIslands);
+    testSurroundedRegions();
     return 0;
 }
