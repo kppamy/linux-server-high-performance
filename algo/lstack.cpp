@@ -1,8 +1,99 @@
 #include <string>
 #include <stack>
 #include <map>
+#include <unordered_map>
 #include "../common.h"
+#include <queue>
 using namespace std;
+
+// 503. Next Greater Element II
+// 60 ms, faster than 55.70%
+vector<int> nextGreaterElements(vector<int> &nums2)
+{
+    int len = nums2.size();
+    if (len == 0)
+        return {};
+    vector<int> ans(len, -1);
+    stack<int> next;
+    for (int i = 2 * len - 1; i >= 0; --i)
+    {
+        int pos = i % len;
+        while (!next.empty() && nums2[next.top()] <= nums2[pos])
+        {
+            next.pop();
+        }
+        ans[pos] = next.empty() ? -1 : nums2[next.top()];
+        next.push(pos);
+    }
+    return ans;
+}
+
+// 496. Next Greater Element I
+// 8 ms, faster than 93.87%
+vector<int> nextGreaterElementI(vector<int> &nums1, vector<int> &nums2)
+{
+    if (nums2.size() * nums1.size() == 0)
+        return {};
+    unordered_map<int, int> dict;
+    stack<int> next;
+    for (int i = 0; i < nums2.size() - 1; ++i)
+    {
+        if (nums2[i] < nums2[i + 1])
+        {
+            dict[nums2[i]] = nums2[i + 1];
+            while (!next.empty())
+            {
+                int tp = next.top();
+                if (tp < nums2[i + 1])
+                {
+                    dict[tp] = nums2[i + 1];
+                    next.pop();
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        else
+        {
+            next.push(nums2[i]);
+        }
+    }
+    vector<int> ans(nums1.size(), -1);
+    for (int i = 0; i < nums1.size(); ++i)
+    {
+        auto itr = dict.find(nums1[i]);
+        if (itr != dict.end())
+        {
+            ans[i] = (*itr).second;
+        }
+    }
+    return ans;
+}
+
+my2arr testnextGreaterElementII()
+{
+    return {
+        {3, 8, 4, 1, 2},
+        {1, 2, 1},
+        {4, 1, 2},
+        {1, 3, 4, 2},
+        {2, 4},
+        {1, 2, 3, 4}};
+}
+
+vector<int> nextGreaterElementWrapper(my2arr &cas)
+{
+    return nextGreaterElementI(cas[0], cas[1]);
+}
+
+vector<my2arr> testnextGreaterElement()
+{
+    return {
+        {{4, 1, 2}, {1, 3, 4, 2}},
+        {{2, 4}, {1, 2, 3, 4}}};
+}
 
 // 739. Daily Temperatures
 // 100 ms, faster than 95.00%
@@ -487,6 +578,8 @@ int main(int argc, char const *argv[])
     // formatCall();
     // testQstack();
     // testisValidSerialization();
-    format_test(dailyTemperatures,testdailyTemperatures);
+    // format_test(dailyTemperatures,testdailyTemperatures);
+    // format_test(nextGreaterElementWrapper, testnextGreaterElement);
+    format_test(nextGreaterElement, testnextGreaterElementII);
     return 0;
 }
