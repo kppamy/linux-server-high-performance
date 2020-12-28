@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    users[sockfd].close_conn();
+                    users[sockfd].close_conn(true);
                     fprintf(stdout, "read error, close connection: %d\n",sockfd);
                 }
             }
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
             {
                 if (!users[sockfd].write())
                 {
-                    users[sockfd].close_conn();
+                    users[sockfd].close_conn(true);
                     fprintf(stdout, "write false, close connection: %d\n",sockfd);
                 }{
                     responses++;
@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
                 //if abnormal, close close connection directly
                 fprintf(stdout, "EPOLLRDHUP | EPOLLHUP | EPOLLERR %d\n", events[i].events);
 
-                users[sockfd].close_conn();
+                users[sockfd].close_conn(true);
             }
             else
             {
@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        printf("handles %d requests, send %d responses:\n", requests, responses);
+        // printf("handles %d requests, send %d responses:\n", requests, responses);
 
     }
     close(epollfd);

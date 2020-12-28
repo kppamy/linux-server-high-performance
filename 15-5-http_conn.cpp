@@ -209,6 +209,7 @@ bool http_conn::read()
     }
 
     printf("read   %d  bytes\n", m_read_idx);
+    printf("text: %s \n", m_read_buf);
     return true;
 }
 
