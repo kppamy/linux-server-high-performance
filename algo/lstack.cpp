@@ -1,7 +1,49 @@
 #include <string>
 #include <stack>
 #include <map>
+#include "../common.h"
 using namespace std;
+
+// 739. Daily Temperatures
+// 100 ms, faster than 95.00%
+vector<int> dailyTemperatures(vector<int> &T)
+{
+    int len = T.size();
+    vector<int> ans(len, 0);
+    stack<pair<int, int>> decline;
+    for (int i = 0; i < len - 1; ++i)
+    {
+        if (T[i] < T[i + 1])
+        {
+            ans[i] = 1;
+            while (!decline.empty())
+            {
+                auto [idx, val] = decline.top();
+                if (val < T[i + 1])
+                {
+                    ans[idx] = i - idx + 1;
+                    decline.pop();
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        else
+        {
+            decline.push(make_pair(i, T[i]));
+        }
+    }
+    return ans;
+}
+
+my2arr testdailyTemperatures()
+{
+    return {
+        {73},
+        {73, 74, 75, 71, 69, 72, 76, 73}};
+}
 
 // 20. Valid Parentheses
 // Runtime: 0 ms, faster than 100.00% of C++ online submissions for Valid Parentheses.
@@ -61,7 +103,6 @@ void testsValid()
 
 #include <vector>
 #include <algorithm>
-#include "common.h"
 
 // 155. Min Stack
 // Runtime: 40 ms, faster than 95.85% of C++ online submissions for Min Stack.
@@ -387,7 +428,7 @@ bool isValidSerialization(string preorder)
         while (true)
         {
             if (sta.empty())
-                return len==0;
+                return len == 0;
             if (sta.top() == "#")
             {
                 sta.pop();
@@ -445,6 +486,7 @@ int main(int argc, char const *argv[])
     // testMinStack4();
     // formatCall();
     // testQstack();
-    testisValidSerialization();
+    // testisValidSerialization();
+    format_test(dailyTemperatures,testdailyTemperatures);
     return 0;
 }
