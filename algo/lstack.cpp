@@ -6,6 +6,31 @@
 #include <queue>
 using namespace std;
 
+
+// 496. Next Greater Element I
+// 8 ms, faster than 93.78%
+vector<int> nextGreaterElement(vector<int> &nums1, vector<int> &nums2)
+{
+    if (nums2.size() * nums1.size() == 0)
+        return {};
+    stack<int> next;
+    unordered_map<int,int> dct;
+    for (int i = nums2.size()-1; i >=0 ; --i)
+    {
+        while(!next.empty()&&next.top()<nums2[i]){
+            next.pop();
+        }
+        dct[nums2[i]]=next.empty()?-1:next.top();
+        next.push(nums2[i]);
+    }
+    vector<int> ans(nums1.size(), -1);
+    for(int i=0;i<nums1.size();++i){
+        ans[i]=dct[nums1[i]];
+    }
+    return ans;
+}
+
+
 // 503. Next Greater Element II
 // 60 ms, faster than 55.70%
 vector<int> nextGreaterElements(vector<int> &nums2)
@@ -85,7 +110,7 @@ my2arr testnextGreaterElementII()
 
 vector<int> nextGreaterElementWrapper(my2arr &cas)
 {
-    return nextGreaterElementI(cas[0], cas[1]);
+    return nextGreaterElement(cas[0], cas[1]);
 }
 
 vector<my2arr> testnextGreaterElement()
@@ -579,7 +604,7 @@ int main(int argc, char const *argv[])
     // testQstack();
     // testisValidSerialization();
     // format_test(dailyTemperatures,testdailyTemperatures);
-    // format_test(nextGreaterElementWrapper, testnextGreaterElement);
-    format_test(nextGreaterElement, testnextGreaterElementII);
+    format_test(nextGreaterElementWrapper, testnextGreaterElement);
+    // format_test(nextGreaterElement, testnextGreaterElementII);
     return 0;
 }
