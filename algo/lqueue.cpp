@@ -1,9 +1,52 @@
 
 #include <queue>
+#include <deque>
 #include <cassert>
 #include <iostream>
 #include <vector>
+#include "../common.h"
 using namespace std;
+
+// 1696. Jump Game VI
+// 356 ms, faster than 43.79%
+// 215.9 MB, less than 5.08%
+int maxResult(vector<int> &nums, int k)
+{
+    deque<int> window;
+    window.push_front(0);
+    int len = nums.size();
+    for (int i = 1; i < len; ++i)
+    {
+        // maintain k elements at the queue
+        while (!window.empty() && i - window.front() > k)
+        {
+            window.pop_front();
+        }
+        if (!window.empty())
+            nums[i] += nums[window.front()];
+        while (!window.empty() && nums[i] > nums[window.back()])
+        {
+            window.pop_back();
+        }
+        window.push_back(i);
+    }
+
+    return nums[len - 1];
+}
+
+int maxResultWrapper(my2arr &cases)
+{
+    return maxResult(cases[0], cases[1][0]);
+}
+vector<my2arr> testmaxResult()
+{
+    return {
+        {{100, -100, -300, -300, -300, -100, 100}, {4}},
+        {{10, -5, -2, 4, 0, 3}, {3}},
+        {{1, -1, -2, 4, -7, 3}, {2}},
+        {{1, -5, -20, 4, -1, 3, -6, -3}, {2}},
+    };
+}
 
 // 641. Design Circular Deque
 // 36 ms, faster than 82.92%
@@ -417,6 +460,7 @@ int main(int argc, char const *argv[])
     /* code */
     // testRecentCounter();
     // testCircularQueue();
-    testMyCircularDeque();
+    // testMyCircularDeque();
+    format_test(maxResultWrapper, testmaxResult);
     return 0;
 }
