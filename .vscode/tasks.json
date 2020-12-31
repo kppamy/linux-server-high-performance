@@ -11,7 +11,7 @@
                 "-g",
                 "-Wall",
                 "-std=c++1z",
-                // "-fsanitize=address",
+                "-fsanitize=address",
                 // "-fno-omit-frame-pointer",
                 // "-O1",
                 // "algo/common.cpp"
@@ -28,14 +28,19 @@
                 // "algo/ArrayTest.cpp",
                 // "algo/StringTest.cpp"
                 // "algo/graph.cpp"
+                // "algo/backtracking.cpp"
                 // "algo/maxProfit.cpp"
                 // "algo/Ufind.cpp"
+                "algo/slidingWindow.cpp"
                 // "lang/saima.cpp"
                 // "lang/todo.cpp"
                 // "lang/lamada.cpp"
                 // "lang/newFeatures.cpp"
                 // "lang/EffectiveC.cpp",
                 // "lang/punch.cpp"
+                // "lang/memoryModel.cpp"
+                // "lang/malloctest.cpp"
+                // "lang/memoryfragment.cpp"
                 // "-I",
                 // "/Users/chenay/ws/programs/relacy/",
                 // "-I",
@@ -57,7 +62,7 @@
                 // "desgin/pattern/AbstractFactory.cpp"
                 // "desgin/pattern/Strategy.cpp"
                 // "desgin/pattern/TemplateMethod.cpp"
-                 "desgin/pattern/Observer.cpp"
+                //  "desgin/pattern/Observer.cpp"
                  // "file-test.cpp"
                 //  "13-3-ipc_private.c"
                 // "file-test.cpp"

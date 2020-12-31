@@ -1,26 +1,80 @@
 #include <vector>
 #include "../common.h"
-#include<iostream>
+#include <iostream>
 using namespace std;
 
 // 395. Longest Substring with At Least K Repeating Characters
-    int longestSubstring(string s, int k) {
-        
+//  4 ms, faster than 77.54%
+//  6.6 MB, less than 87.19%
+int longestSubstring(string s, int k)
+{
+    int len = s.size();
+    if (k == 1)
+        return len;
+    vector<int> lettersm(26, 0);
+    int maxUnique = 0;
+    for (int i = 0; i <= len - 1; ++i)
+    {
+        if (lettersm[s[i] - 'a'] == 0)
+            maxUnique++;
+        lettersm[s[i] - 'a']++;
     }
-
-    void testlongestSubstring(){
-        string s="";
-        int k=0;
-
-        s = "aaabb", k = 3;
-        cout<<"longestSubstring of "<<s << " with at least "<<k <<" Repeating Characters is "<<longestSubstring(s,k)<<endl;
-
-       s = "ababbc", k = 2;
-        cout<<"longestSubstring of "<<s << " with at least "<<k <<" Repeating Characters is "<<longestSubstring(s,k)<<endl;
-
+    lettersm.clear();
+    int ans = 0;
+    for (int unique = 1; unique <= maxUnique; ++unique)
+    {
+        int start = 0, end = -1, uni = 0;
+        vector<int> letters(26, 0);
+        int counterAtLeastK = 0;
+        while (end < len)
+        {
+            // expand
+            if (uni <= unique)
+            {
+                end++;
+                if (end == len)
+                    break;
+                if (letters[s[end] - 'a'] == 0)
+                {
+                    uni++;
+                }
+                letters[s[end] - 'a']++;
+                if (letters[s[end] - 'a'] == k)
+                    counterAtLeastK++;
+            }
+            else // shrink
+            {
+                if (letters[s[start] - 'a'] == 1)
+                {
+                    uni--;
+                }
+                letters[s[start] - 'a']--;
+                if (letters[s[start] - 'a'] == k - 1)
+                    counterAtLeastK--;
+                start++;
+            }
+            if (uni == unique && counterAtLeastK == unique)
+            {
+                ans = max(ans, end - start + 1);
+            }
+        }
     }
+    return ans;
+}
 
+void testlongestSubstring()
+{
+    string s = "";
+    int k = 0;
+    s = "abababbdabcabc", k = 2;
+    cout << "longestSubstring of " << s << " with at least " << k << " Repeating Characters is " << longestSubstring(s, k) << endl;
 
+    s = "aaabb", k = 3;
+    cout << "longestSubstring of " << s << " with at least " << k << " Repeating Characters is " << longestSubstring(s, k) << endl;
+
+    s = "ababbc", k = 2;
+    cout << "longestSubstring of " << s << " with at least " << k << " Repeating Characters is " << longestSubstring(s, k) << endl;
+}
 
 // 239. Sliding Window Maximum
 vector<int> maxSlidingWindow(vector<int> &nums, int k)
@@ -45,6 +99,7 @@ my2DCases testmaxSlidingWindow()
 
 int main(int argc, char const *argv[])
 {
-    format_test(maxSlidingWindowWrapper,testmaxSlidingWindow);
+    testlongestSubstring();
+    // format_test(maxSlidingWindowWrapper, testmaxSlidingWindow);
     return 0;
 }
