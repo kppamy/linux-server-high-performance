@@ -52,7 +52,7 @@ void testmmap()
 
     printf("System page size: %zu bytes\n", pagesize);
 
-    char *region = mmap(
+    char *region = (char*) mmap(
         (void *)(pagesize * (1 << 20)), // Map from the start of the 2^20th page
         pagesize,                       // for one page length
         PROT_READ | PROT_WRITE | PROT_EXEC,
@@ -72,12 +72,26 @@ void testmmap()
     if (unmap_result != 0)
     {
         perror("Could not munmap");
-        return 1;
     }
+}
+
+class A
+{
+public:
+    void f1() {cout<<"normal function"<<endl; }
+    virtual void f2() {cout<<"virtual function "<<endl;}
+};
+
+
+void testVirtual(){
+    A *a = nullptr;
+    a->f1();
+    // a->f2();
 }
 
 int main()
 {
+    testVirtual();
     cout << "address of global string: " << &gs << " " << gs << endl;
     cout << "address of global const string: " << &gcs << " " << gcs << endl;
 
