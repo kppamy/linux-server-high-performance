@@ -31,7 +31,7 @@
                 // "algo/backtracking.cpp"
                 // "algo/maxProfit.cpp"
                 // "algo/Ufind.cpp"
-                "algo/slidingWindow.cpp"
+                // "algo/slidingWindow.cpp"
                 // "lang/saima.cpp"
                 // "lang/todo.cpp"
                 // "lang/lamada.cpp"
@@ -41,6 +41,7 @@
                 // "lang/memoryModel.cpp"
                 // "lang/malloctest.cpp"
                 // "lang/memoryfragment.cpp"
+                "lang/asm.cpp"
                 // "-I",
                 // "/Users/chenay/ws/programs/relacy/",
                 // "-I",
