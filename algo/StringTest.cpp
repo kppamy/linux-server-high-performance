@@ -2,6 +2,52 @@
 #include <iostream>
 #include <vector>
 using namespace std;
+
+// 28. Implement strStr()
+//  0 ms, faster than 100.00%
+//  7 MB, less than 79.47% o
+int strStr(string haystack, string needle)
+{
+    int hlen = haystack.size();
+    int nlen = needle.size();
+    int start = 0, i = start, j = 0;
+    while (i < hlen && j < nlen)
+    {
+        if (needle[j] == haystack[i])
+        {
+            j++;
+            i++;
+        }
+        else
+        {
+            j = 0;
+            start++;
+            i = start;
+        }
+    }
+    if (j == nlen)
+        return i - nlen;
+    return -1;
+}
+
+void testStrStr()
+{
+    string haystack = "mississippi", needle = "issip";
+    cout << needle << " is at " << strStr(haystack, needle) << "th of " << haystack << endl;
+
+    haystack = "mississippi", needle = "issipi";
+    cout << needle << " is at " << strStr(haystack, needle) << "th of " << haystack << endl;
+
+    haystack = "hello", needle = "ll";
+    cout << needle << " is at " << strStr(haystack, needle) << "th of " << haystack << endl;
+
+    haystack = "aaaaa", needle = "bba";
+    cout << needle << " is at " << strStr(haystack, needle) << "th of " << haystack << endl;
+
+    haystack = "", needle = "";
+    cout << needle << " is at " << strStr(haystack, needle) << "th of " << haystack << endl;
+}
+
 class StringTest
 {
 public:
@@ -401,7 +447,7 @@ void testbuddyStrings()
     cout << A << " and " << B << " is " << ((buddyStrings(A, B)) ? "" : "not") << " buddy string" << endl;
 }
 
-#include "common.h"
+#include "../common.h"
 
 // 1455. Check If a Word Occurs As a Prefix of Any Word in a Sentence
 // Runtime: 0 ms, faster than 100.00% of C++ online submissions for Check If a Word Occurs As a Prefix of Any Word in a Sentence.
@@ -1013,6 +1059,7 @@ int main(int argc, char const *argv[])
     // testlongestCommonPrefix();
     // testreverseString();
     // testreverseStr();
-    testshortestPalindrome();
+    // testshortestPalindrome();
+    testStrStr();
     return 0;
 }
