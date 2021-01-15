@@ -51,16 +51,16 @@ void testisIsomorphic()
 vector<int> kmpJump(const string &str)
 {
     int len = str.size();
-    vector<int> next(len, 0);
+    vector<int> next(len, -1);
     for (int i = 1, p = -1; i < len; i++)
     {
+        while (p != -1 && str[p + 1] != str[i])
+        {
+            p = next[p];
+        }
         if (str[p + 1] == str[i])
         {
             p++;
-        }
-        else if (p != -1)
-        {
-            p = next[p];
         }
         next[i] = p;
     }
@@ -68,27 +68,30 @@ vector<int> kmpJump(const string &str)
 }
 
 // 28. Implement strStr()
+// 4 ms, faster than 65.35%
+// 7 MB, less than 96.63%
 int strStr(string haystack, string needle)
 {
     int hlen = haystack.size();
     int nlen = needle.size();
-    int i = 0, j = 0;
+    int i = 0;
     vector<int> &&next = kmpJump(needle);
-    while (i < hlen && j < nlen)
+    int matched = -1;
+    while (i < hlen)
     {
-        if (needle[j] == haystack[i])
+        while (matched != -1 && haystack[i] != needle[matched + 1])
         {
-            j++;
-            i++;
+            matched = next[matched];
         }
-        else
+        if (needle[matched + 1] == haystack[i])
         {
-            i = i - next[j - 1];
-            j = next[j - 1] - 1;
+            matched++;
         }
+        if (matched == nlen - 1)
+            return i - nlen + 1;
+        i++;
     }
-    if (j == nlen)
-        return i - nlen;
+
     return -1;
 }
 
@@ -1149,7 +1152,7 @@ int main(int argc, char const *argv[])
     // testreverseString();
     // testreverseStr();
     // testshortestPalindrome();
-    // testStrStr();
-    testisIsomorphic();
+    testStrStr();
+    // testisIsomorphic();
     return 0;
 }
