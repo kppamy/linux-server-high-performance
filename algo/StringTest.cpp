@@ -1,12 +1,101 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <map>
 using namespace std;
+
+// 205. Isomorphic Strings
+//  4 ms, faster than 94.72%
+//  6.9 MB, less than 99.64%
+bool isIsomorphic(string s, string t)
+{
+    int ls = s.size();
+    map<char, char> dcts;
+    map<char, char> rdcts;
+    for (int i = 0; i < ls; ++i)
+    {
+        if (dcts.find(s[i]) != dcts.end())
+        {
+            s[i] = dcts[s[i]];
+        }
+        else
+        {
+            if (rdcts.find(t[i]) != rdcts.end() && rdcts[t[i]] != s[i])
+                return false;
+            dcts[s[i]] = t[i];
+            rdcts[t[i]] = s[i];
+            s[i] = t[i];
+        }
+    }
+    return s == t;
+}
+
+void testisIsomorphic()
+{
+    string s = "egcd", t = "adfd";
+    cout << s << " and " << t << " is " << (isIsomorphic(s, t) ? "" : " not ") << "isomorphic" << endl;
+
+    s = "badc", t = "baba";
+    cout << s << " and " << t << " is " << (isIsomorphic(s, t) ? "" : " not ") << "isomorphic" << endl;
+
+    s = "egg", t = "add";
+    cout << s << " and " << t << " is " << (isIsomorphic(s, t) ? "" : " not ") << "isomorphic" << endl;
+
+    s = "foo", t = "bar";
+    cout << s << " and " << t << " is " << (isIsomorphic(s, t) ? "" : " not ") << "isomorphic" << endl;
+
+    s = "paper", t = "title";
+    cout << s << " and " << t << " is " << (isIsomorphic(s, t) ? "" : " not ") << "isomorphic" << endl;
+}
+
+vector<int> kmpJump(const string &str)
+{
+    int len = str.size();
+    vector<int> next(len, 0);
+    for (int i = 1, p = -1; i < len; i++)
+    {
+        if (str[p + 1] == str[i])
+        {
+            p++;
+        }
+        else if (p != -1)
+        {
+            p = next[p];
+        }
+        next[i] = p;
+    }
+    return move(next);
+}
+
+// 28. Implement strStr()
+int strStr(string haystack, string needle)
+{
+    int hlen = haystack.size();
+    int nlen = needle.size();
+    int i = 0, j = 0;
+    vector<int> &&next = kmpJump(needle);
+    while (i < hlen && j < nlen)
+    {
+        if (needle[j] == haystack[i])
+        {
+            j++;
+            i++;
+        }
+        else
+        {
+            i = i - next[j - 1];
+            j = next[j - 1] - 1;
+        }
+    }
+    if (j == nlen)
+        return i - nlen;
+    return -1;
+}
 
 // 28. Implement strStr()
 //  0 ms, faster than 100.00%
 //  7 MB, less than 79.47% o
-int strStr(string haystack, string needle)
+int strStrBruteForce(string haystack, string needle)
 {
     int hlen = haystack.size();
     int nlen = needle.size();
@@ -1060,6 +1149,7 @@ int main(int argc, char const *argv[])
     // testreverseString();
     // testreverseStr();
     // testshortestPalindrome();
-    testStrStr();
+    // testStrStr();
+    testisIsomorphic();
     return 0;
 }
