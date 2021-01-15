@@ -4,6 +4,45 @@
 #include <map>
 using namespace std;
 
+// 459. Repeated Substring Pattern
+// 20 ms, faster than 77.21%
+// 44.1 MB, less than 28.37%
+bool repeatedSubstringPattern(string s)
+{
+
+    int len = s.size();
+    for (int win = len / 2; win > 0; win--)
+    {
+        if (len % win)
+            continue;
+        int rpt = len / win;
+        string pre = s.substr(0, win);
+        string ns = pre;
+        while (rpt > 1)
+        {
+            ns += pre;
+            rpt--;
+        }
+        if (ns == s)
+            return true;
+    }
+    return false;
+}
+
+void testrepeatedSubstringPattern()
+{
+    vector<string> cases = {
+        "ababab",
+        "bb",
+        "abab",
+        "aba",
+        "abcabcabcabc"};
+    for (auto &&str : cases)
+    {
+        cout << str << " is " << (repeatedSubstringPattern(str) ? "" : " not ") << "repeatedSubstringPattern" << endl;
+    }
+}
+
 // 205. Isomorphic Strings
 //  4 ms, faster than 94.72%
 //  6.9 MB, less than 99.64%
@@ -1152,7 +1191,8 @@ int main(int argc, char const *argv[])
     // testreverseString();
     // testreverseStr();
     // testshortestPalindrome();
-    testStrStr();
+    // testStrStr();
     // testisIsomorphic();
+    testrepeatedSubstringPattern();
     return 0;
 }
