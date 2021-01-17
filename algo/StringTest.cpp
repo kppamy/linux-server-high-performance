@@ -4,6 +4,42 @@
 #include <map>
 using namespace std;
 
+// 686. Repeated String Match
+// 172 ms, faster than 20.30%
+// 341.6 MB, less than 6.11%
+int repeatedStringMatch(string a, string b)
+{
+    int lena = a.size();
+    int lenb = b.size();
+    string ra = "";
+    int rpt = 1;
+    while (true)
+    {
+        ra = ra + a;
+        if (ra.find(b) != -1)
+            return rpt;
+        if (ra.size() > lena + lenb - 1)
+            return -1;
+        rpt++;
+    }
+    return -1;
+}
+
+void testRepeatedStringMatch()
+{
+    string a = "abcd", b = "cdabcdab";
+    cout << a << " repeat " << repeatedStringMatch(a, b) << " times can be " << b << endl;
+
+    "a", b = "aa";
+    cout << a << " repeat " << repeatedStringMatch(a, b) << " times can be " << b << endl;
+
+    a = "a", b = "a";
+    cout << a << " repeat " << repeatedStringMatch(a, b) << " times can be " << b << endl;
+
+    a = "abc", b = "wxyz";
+    cout << a << " repeat " << repeatedStringMatch(a, b) << " times can be " << b << endl;
+}
+
 // 459. Repeated Substring Pattern
 // 20 ms, faster than 77.21%
 // 44.1 MB, less than 28.37%
@@ -1193,6 +1229,7 @@ int main(int argc, char const *argv[])
     // testshortestPalindrome();
     // testStrStr();
     // testisIsomorphic();
-    testrepeatedSubstringPattern();
+    // testrepeatedSubstringPattern();
+    testRepeatedStringMatch();
     return 0;
 }
