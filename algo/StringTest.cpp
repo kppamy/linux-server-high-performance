@@ -4,6 +4,47 @@
 #include <map>
 using namespace std;
 
+// 647. Palindromic Substrings
+//  188 ms, faster than 15.31%
+// 6.3 MB, less than 97.71%
+int countSubstrings(string s)
+{
+    int len = s.size();
+    int ans = len;
+    auto isPalindromic = [&s](int start, int end) {
+        while (start <= end)
+        {
+            if (s[start] != s[end])
+                return false;
+            start++;
+            end--;
+        }
+        return true;
+    };
+    for (int i = 0; i < len - 1; ++i)
+    {
+        for (int j = i + 1; j < len; ++j)
+        {
+            if (isPalindromic(i, j))
+                ans++;
+        }
+    }
+    return ans;
+}
+
+void testcountSubstrings()
+{
+    vector<string> cases = {
+        "abc",
+        "aaa",
+        "abab",
+    };
+    for (auto &&str : cases)
+    {
+        cout << str << " has " << countSubstrings(str) << " repeated palindromic Substring" << endl;
+    }
+}
+
 // 686. Repeated String Match
 // 172 ms, faster than 20.30%
 // 341.6 MB, less than 6.11%
@@ -1230,6 +1271,7 @@ int main(int argc, char const *argv[])
     // testStrStr();
     // testisIsomorphic();
     // testrepeatedSubstringPattern();
-    testRepeatedStringMatch();
+    // testRepeatedStringMatch();
+    testcountSubstrings();
     return 0;
 }
