@@ -2,7 +2,119 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <stack>
 using namespace std;
+
+// 227. Basic Calculator II
+// 16 ms, faster than 47.73%
+//  9.1 MB, less than 50.52%
+int calculate(string s)
+{
+    int nlen = s.size();
+    deque<int> sta;
+    auto peek = [&s, nlen](int i, int *number) {
+        int num = 0;
+        while (i < nlen)
+        {
+            if (s[i] == ' ')
+            {
+                i++;
+                continue;
+            }
+            int c = s[i] - '0';
+            if (c >= 0 && c <= 9)
+            {
+                num = num * 10 + c;
+                i++;
+            }
+            else
+                break;
+        }
+        *number = num;
+        return i;
+    };
+
+    for (int i = 0; i < nlen;)
+    {
+
+        if (s[i] == ' ')
+        {
+            i++;
+            continue;
+        }
+        if (s[i] == '+' || s[i] == '-')
+        {
+            sta.push_back(s[i] - '0');
+            i++;
+            continue;
+        }
+        else if (s[i] >= '0' && s[i] <= '9')
+        {
+            int left;
+            i = peek(i, &left);
+            sta.push_back(left);
+        }
+        else
+        {
+            int left = sta.back();
+            sta.pop_back();
+            char oper = s[i];
+            int right = 0;
+            i = peek(i + 1, &right);
+            int expr = 0;
+            if (oper == '*')
+                expr = left * right;
+            else
+                expr = left / right;
+            sta.push_back(expr);
+        }
+    }
+    while (!sta.empty())
+    {
+        int left = sta.front();
+        sta.pop_front();
+        if (sta.empty())
+            return left;
+        char oper = sta.front() + '0';
+        sta.pop_front();
+        int right = sta.front();
+        sta.pop_front();
+        int exp = 0;
+        if (oper == '-')
+        {
+            exp = left - right;
+        }
+        else if (oper == '+')
+        {
+            exp = left + right;
+        }
+        if (!sta.empty())
+        {
+            sta.push_front(exp);
+        }
+        else
+            return exp;
+    }
+    return 0;
+}
+
+void testCalculate()
+{
+    vector<string> cases = {
+        "0-2147483647",
+        "1-1+1",
+        "42",
+        "42+3*4",
+        "42+3*40",
+        "3+2*2",
+        " 3/2 ",
+        " 3+5 / 2 ",
+    };
+    for (auto &&str : cases)
+    {
+        cout << str << " = " << calculate(str) << endl;
+    }
+}
 
 // 647. Palindromic Substrings
 //  188 ms, faster than 15.31%
@@ -1272,6 +1384,7 @@ int main(int argc, char const *argv[])
     // testisIsomorphic();
     // testrepeatedSubstringPattern();
     // testRepeatedStringMatch();
-    testcountSubstrings();
+    // testcountSubstrings();
+    testCalculate();
     return 0;
 }
