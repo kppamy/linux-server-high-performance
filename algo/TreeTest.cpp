@@ -2,6 +2,52 @@
 #include <iomanip>
 #include <math.h>
 
+#include <queue>
+using namespace std;
+
+// 100. Same Tree
+//  4 ms, faster than 48.02%
+// 8.9 MB, less than 100.00%
+bool isSameTree(TreeNode *p, TreeNode *q)
+{
+    if (!p && !q)
+        return true;
+    if (!p || !q)
+        return false;
+    queue<TreeNode *> psta;
+    psta.push(p);
+    queue<TreeNode *> qsta;
+    qsta.push(q);
+    while (!psta.empty() && !qsta.empty())
+    {
+        TreeNode *ptop = psta.front();
+        psta.pop();
+        TreeNode *qtop = qsta.front();
+        qsta.pop();
+        if (ptop->val != qtop->val)
+            return false;
+        if (ptop->left != nullptr && qtop->left != nullptr)
+        {
+            psta.push(ptop->left);
+            ptop->left = nullptr;
+            qsta.push(qtop->left);
+            qtop->left = nullptr;
+        }else if(ptop->left||qtop->left){
+            return false;
+        }
+        if (ptop->right != nullptr && qtop->right != nullptr)
+        {
+            psta.push(ptop->right);
+            ptop->right = nullptr;
+            qsta.push(qtop->right);
+            qtop->right = nullptr;
+        }else if(ptop->right||qtop->right){
+            return false;
+        }
+    }
+    return psta.empty() && qsta.empty();
+}
+
 void getLine(TreeNode *root, int depth, vector<int> &vals)
 {
     if (depth <= 0 && root != nullptr)
@@ -585,6 +631,32 @@ void testTree(f fuc, string name, u print = nullptr)
     }
 }
 
+template <typename f, typename u>
+void test2Tree(f fuc, string name, u print = nullptr)
+{
+    vector<my2arr> cases = {
+         {{1, 2, 3}, {1, -1, 3}},
+        {{}, {}},
+        {{1, 2}, {1, -1, 2}},
+        {{1, 2, 1}, {1, 1, 2}},
+        {{1, 2, 3}, {1, 2, 3}}};
+    for (auto &&test : cases)
+    {
+        cout<<"====================new case===================="<<endl;
+        printVector(test);
+        TreeNode *root = buildTree(test[0]);
+        cout << "The first tree: " << endl;
+        prettyPrintTree(root, maxDepth(root));
+        cout << "The second tree: " << endl;
+        TreeNode *root1 = buildTree(test[1]);
+        prettyPrintTree(root1, maxDepth(root1));
+        cout << name + ": " << endl;
+        auto &&res = fuc(root, root1);
+        print(res);
+        cout << endl;
+    }
+}
+
 // 107. Binary Tree Level Order Traversal II
 // Runtime: 8 ms, faster than 50.37% of C++ online submissions for Binary Tree Level Order Traversal II.
 // Memory Usage: 13.9 MB, less than 18.22% of C++ online submissions for Binary Tree Level Order Traversal II.
@@ -658,7 +730,7 @@ string tree2str(TreeNode *t)
 }
 
 // 94. Binary Tree Inorder Traversal
-// 4 ms, faster than 50.41% 
+// 4 ms, faster than 50.41%
 vector<int> inorderTraversal(TreeNode *root)
 {
     if (!root)
@@ -702,6 +774,9 @@ int main(int argc, char const *argv[])
     // testTree(isSymmetric, "isSymmetric", printInt);
     // testTree(levelOrderBottom, "levelOrderBottom", print2Vector);
     // testTree(tree2str, "tree2str", [](string res) { cout << res << endl; });
-    testTree(inorderTraversal, "inorderTraversal", printVector<int>);
+    // testTree(inorderTraversal, "inorderTraversal", printVector<int>);
+    test2Tree(isSameTree, "isSameTree", [](bool result) {
+        cout << (result ? " true " : " false ") << endl;
+    });
     return 0;
 }

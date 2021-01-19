@@ -1,8 +1,9 @@
 #include <stddef.h>
 #include <vector>
 #include <iostream>
-#include "common.h"
+#include "../common.h"
 
+using namespace std;
 template <typename T=int>
 struct TreeNodeT
 {
