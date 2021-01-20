@@ -3,6 +3,39 @@
 #include <bitset>
 using namespace std;
 
+// 190. Reverse Bits
+// 4 ms, faster than 55.64%
+uint32_t reverseBits(uint32_t n)
+{
+    int ans = 0;
+    for (int i = 1; i <= 32 && n > 0; ++i)
+    {
+        int half = n >> 1;
+        int bit = n - (half << 1);
+        n = half;
+        ans = (ans << 1) + bit;
+        if (n == 0)
+            ans = ans << (32 - i);
+    }
+    return ans;
+}
+
+void testreverseBits()
+{
+    vector<uint32_t> cs = {
+        // 0000 0010 1001 0100 0001 1110 1001 1100
+        0x2941E9C,
+        0xFFFFFFFF,
+        3,
+        0x10000000,
+        4294967293};
+
+    for (auto &&num : cs)
+    {
+        cout << num << "  reverseBits is " << reverseBits(num) << endl;
+    }
+}
+
 // 191. Number of 1 Bits
 //  0 ms, faster than 100.00%
 // 6 MB, less than 93.28%
@@ -92,6 +125,7 @@ int main(int argc, char const *argv[])
 {
 
     // testhammingDistance();
-    testhammingWeight();
+    // testhammingWeight();
+    testreverseBits();
     return 0;
 }
