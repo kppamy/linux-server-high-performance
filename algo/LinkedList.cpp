@@ -6,16 +6,63 @@
 #include "../common.h"
 using namespace std;
 
+// 21. Merge Two Sorted Lists
+// 8 ms, faster than 85.20%
+// 14.8 MB, less than 95.62%
+
+ListNode *mergeTwoLists(ListNode *l1, ListNode *l2)
+{
+  ListNode *first = l1;
+  ListNode *second = l2;
+  ListNode *head = new ListNode(0);
+  ListNode *dummy = head;
+  while (first && second)
+  {
+    if (first->val < second->val)
+    {
+      dummy->next = first;
+      first = first->next;
+    }
+    else
+    {
+      dummy->next = second;
+      second = second->next;
+    }
+    dummy = dummy->next;
+  }
+  if (first)
+    dummy->next = first;
+  else if (second)
+    dummy->next = second;
+  dummy = head->next;
+  delete head;
+  head = nullptr;
+  return dummy;
+}
+
+vector<my2arr> testmergeTwoLists()
+{
+  vector<my2arr> cases = {
+      {{1, 2, 3}, {4, 5, 6}},
+      {{1, 2, 4}, {1, 3, 4}},
+      {{}, {}},
+      {{}, {1}},
+
+  };
+
+  return move(cases);
+}
+
 // 206. Reverse Linked List
 // 8 ms, faster than 77.19%
-//  8.5 MB, less than 85.01% 
+//  8.5 MB, less than 85.01%
 ListNode *reverseList(ListNode *head)
 {
-  if(!head || !head->next)
+  if (!head || !head->next)
     return head;
-  ListNode* nhead = reverseList(head->next);
-  head->next->next=head;
-  head->next=nullptr;
+  ListNode *nhead = reverseList(head->next);
+  head->next->next = head;
+  head->next = nullptr;
   return nhead;
 }
 
@@ -44,7 +91,7 @@ my2arr testreverseList()
       {1},
       {1, 2},
       {1, 2, 3},
-      {1, 2, 3,4},
+      {1, 2, 3, 4},
       {4, 2, 2, 3},
       {3, 2, 2, 3},
   };
@@ -464,12 +511,31 @@ void testLinkedList(F func, my2arr cases, P print)
   }
 }
 
+template <typename F>
+void test2LinkedList(F func, vector<my2arr> &&cas)
+{
+  vector<my2arr> &&cases = std::move(cas);
+  for (auto &&item : cases)
+  {
+    ListNode *l1 = vectorToListNode(item[0]);
+    prettyPrintLinkedList(l1);
+
+    ListNode *l2 = vectorToListNode(item[1]);
+    prettyPrintLinkedList(l2);
+    ListNode *res = func(l1, l2);
+    cout << "result: " << endl;
+    prettyPrintLinkedList(res);
+    cout << endl;
+  }
+}
+
 int main()
 {
 
   // testsortList();
   // testinsertionSortList();
   // testLinkedList(isPalindrome, testisPalindrome(), [](bool result){cout<<"isPalindrome: "<<result<<endl;});
-  testLinkedList(reverseList, testreverseList());
+  // testLinkedList(reverseList, testreverseList());
+  test2LinkedList(mergeTwoLists, testmergeTwoLists());
   return 0;
 }
