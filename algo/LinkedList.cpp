@@ -3,8 +3,54 @@
 #include <iostream>
 #include <string>
 #include "LinkedList.h"
-
+#include "../common.h"
 using namespace std;
+
+// 234. Palindrome Linked List
+// 12 ms, faster than 99.51%
+// 13.8 MB, less than 97.36%
+ bool isPalindrome(ListNode* head) {
+   ListNode* slow=head;
+   ListNode* fast=head;
+
+   while(fast&&fast->next){
+     fast=fast->next->next;
+     slow=slow->next;
+   }
+
+   if(fast)
+      slow = slow->next;
+    
+    ListNode* dummy=slow;
+    ListNode* next=nullptr;
+    ListNode* last=nullptr;
+    
+    while(dummy){
+      next=dummy->next;
+      dummy->next=last;
+      last = dummy;
+      dummy=next;
+    }
+
+    while (last)
+    {
+      if(head->val!=last->val)
+        return false;
+        head=head->next;
+        last=last->next;
+    }
+   return true;
+ }
+
+my2arr testisPalindrome(){
+  return {
+    {1},
+          {1, 2},
+                {1, 2, 1},
+      {4, 2, 2, 3},
+      {3, 2, 2, 3},
+  };
+}
 
 ListNode *vectorToListNode(const vector<int> &list)
 {
@@ -251,7 +297,7 @@ ListNode *sortList(ListNode *head)
   return qSortList(head, tail);
 }
 
-#include "common.h"
+
 void testsortList()
 {
   my2arr cases = {
@@ -339,10 +385,39 @@ void testinsertionSortList(){
   }
 }
 
+
+template<typename F>
+void testLinkedList(F func, my2arr cases){
+  for (auto &&item : cases)
+  {
+    ListNode *head = vectorToListNode(item);
+    prettyPrintLinkedList(head);
+    func(head);
+    cout << "result: " << endl;
+    prettyPrintLinkedList(head);
+    cout << endl;
+  }
+}
+
+
+template<typename F, typename P>
+void testLinkedList(F func, my2arr cases, P print ){
+  for (auto &&item : cases)
+  {
+    ListNode *head = vectorToListNode(item);
+    prettyPrintLinkedList(head);
+    auto res=func(head);
+    cout << "result: " << endl;
+    print(res);
+    cout << endl;
+  }
+}
+
 int main()
 {
 
   // testsortList();
-  testinsertionSortList();
+  // testinsertionSortList();
+  testLinkedList(isPalindrome, testisPalindrome(), [](bool result){cout<<"isPalindrome: "<<result<<endl;});
   return 0;
 }
