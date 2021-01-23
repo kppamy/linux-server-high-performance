@@ -7,7 +7,22 @@
 using namespace std;
 
 // 206. Reverse Linked List
+// 8 ms, faster than 77.19%
+//  8.5 MB, less than 85.01% 
 ListNode *reverseList(ListNode *head)
+{
+  if(!head || !head->next)
+    return head;
+  ListNode* nhead = reverseList(head->next);
+  head->next->next=head;
+  head->next=nullptr;
+  return nhead;
+}
+
+// 206. Reverse Linked List
+//  0 ms, faster than 100.00%
+// 8.1 MB, less than 98.97%
+ListNode *reverseListI(ListNode *head)
 {
   ListNode *dummy = head;
   ListNode *last = nullptr;
@@ -25,9 +40,11 @@ ListNode *reverseList(ListNode *head)
 my2arr testreverseList()
 {
   my2arr cases = {
+      {},
       {1},
       {1, 2},
       {1, 2, 3},
+      {1, 2, 3,4},
       {4, 2, 2, 3},
       {3, 2, 2, 3},
   };
