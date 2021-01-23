@@ -6,47 +6,79 @@
 #include "../common.h"
 using namespace std;
 
+// 206. Reverse Linked List
+ListNode *reverseList(ListNode *head)
+{
+  ListNode *dummy = head;
+  ListNode *last = nullptr;
+  ListNode *next = nullptr;
+  while (dummy)
+  {
+    next = dummy->next;
+    dummy->next = last;
+    last = dummy;
+    dummy = next;
+  }
+  return last;
+}
+
+my2arr testreverseList()
+{
+  my2arr cases = {
+      {1},
+      {1, 2},
+      {1, 2, 3},
+      {4, 2, 2, 3},
+      {3, 2, 2, 3},
+  };
+  return move(cases);
+}
+
 // 234. Palindrome Linked List
 // 12 ms, faster than 99.51%
 // 13.8 MB, less than 97.36%
- bool isPalindrome(ListNode* head) {
-   ListNode* slow=head;
-   ListNode* fast=head;
+bool isPalindrome(ListNode *head)
+{
+  ListNode *slow = head;
+  ListNode *fast = head;
 
-   while(fast&&fast->next){
-     fast=fast->next->next;
-     slow=slow->next;
-   }
+  while (fast && fast->next)
+  {
+    fast = fast->next->next;
+    slow = slow->next;
+  }
 
-   if(fast)
-      slow = slow->next;
-    
-    ListNode* dummy=slow;
-    ListNode* next=nullptr;
-    ListNode* last=nullptr;
-    
-    while(dummy){
-      next=dummy->next;
-      dummy->next=last;
-      last = dummy;
-      dummy=next;
-    }
+  if (fast)
+    slow = slow->next;
 
-    while (last)
-    {
-      if(head->val!=last->val)
-        return false;
-        head=head->next;
-        last=last->next;
-    }
-   return true;
- }
+  ListNode *dummy = slow;
+  ListNode *next = nullptr;
+  ListNode *last = nullptr;
 
-my2arr testisPalindrome(){
+  while (dummy)
+  {
+    next = dummy->next;
+    dummy->next = last;
+    last = dummy;
+    dummy = next;
+  }
+
+  while (last)
+  {
+    if (head->val != last->val)
+      return false;
+    head = head->next;
+    last = last->next;
+  }
+  return true;
+}
+
+my2arr testisPalindrome()
+{
   return {
-    {1},
-          {1, 2},
-                {1, 2, 1},
+      {1},
+      {1, 2},
+      {1, 2, 1},
       {4, 2, 2, 3},
       {3, 2, 2, 3},
   };
@@ -297,7 +329,6 @@ ListNode *sortList(ListNode *head)
   return qSortList(head, tail);
 }
 
-
 void testsortList()
 {
   my2arr cases = {
@@ -354,18 +385,20 @@ void insert(ListNode *head, ListNode *node)
 // Memory Usage: 10 MB, less than 18.80% of C++ online submissions for Insertion Sort List.
 ListNode *insertionSortList(ListNode *head)
 {
-  ListNode* end=head;
-  while(end && end->next){
-    insert(head,end->next);
-    end=end->next;
+  ListNode *end = head;
+  while (end && end->next)
+  {
+    insert(head, end->next);
+    end = end->next;
   }
   return head;
 }
 
-void testinsertionSortList(){
+void testinsertionSortList()
+{
   my2arr cases = {
-          {1, 2},
-                {2, 1},
+      {1, 2},
+      {2, 1},
       {4, 2, 1, 3},
       {1, 3, 2},
       {4, 3, 2, 1},
@@ -385,28 +418,29 @@ void testinsertionSortList(){
   }
 }
 
-
-template<typename F>
-void testLinkedList(F func, my2arr cases){
+template <typename F>
+void testLinkedList(F func, my2arr &&cas)
+{
+  my2arr &&cases = std::move(cas);
   for (auto &&item : cases)
   {
     ListNode *head = vectorToListNode(item);
     prettyPrintLinkedList(head);
-    func(head);
+    ListNode *res = func(head);
     cout << "result: " << endl;
-    prettyPrintLinkedList(head);
+    prettyPrintLinkedList(res);
     cout << endl;
   }
 }
 
-
-template<typename F, typename P>
-void testLinkedList(F func, my2arr cases, P print ){
+template <typename F, typename P>
+void testLinkedList(F func, my2arr cases, P print)
+{
   for (auto &&item : cases)
   {
     ListNode *head = vectorToListNode(item);
     prettyPrintLinkedList(head);
-    auto res=func(head);
+    auto res = func(head);
     cout << "result: " << endl;
     print(res);
     cout << endl;
@@ -418,6 +452,7 @@ int main()
 
   // testsortList();
   // testinsertionSortList();
-  testLinkedList(isPalindrome, testisPalindrome(), [](bool result){cout<<"isPalindrome: "<<result<<endl;});
+  // testLinkedList(isPalindrome, testisPalindrome(), [](bool result){cout<<"isPalindrome: "<<result<<endl;});
+  testLinkedList(reverseList, testreverseList());
   return 0;
 }
