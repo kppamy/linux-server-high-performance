@@ -8,9 +8,60 @@
 using namespace std;
 
 // 160. Intersection of Two Linked Lists
+// 36 ms, faster than 95.71% 
+// 14.5 MB, less than 88.89%
+ListNode *getIntersectionNode(ListNode *headA, ListNode *headB)
+{
+  auto getlen = [](ListNode *head) {
+    ListNode *slow = head;
+    ListNode *fast = head;
+    int sz = 0;
+    while (fast && fast->next)
+    {
+      fast = fast->next->next;
+      slow = slow->next;
+      sz++;
+    }
+    if (!fast)
+      sz *= 2;
+    else
+      sz = sz * 2 + 1;
+    return sz;
+  };
+  int la = getlen(headA);
+  int lb = getlen(headB);
+  if (la > lb)
+  {
+    int skipa = la - lb;
+    while (skipa > 0)
+    {
+      headA = headA->next;
+      skipa--;
+    }
+  }
+  else if (la < lb)
+  {
+    int skipb = lb - la;
+    while (skipb > 0)
+    {
+      headB = headB->next;
+      skipb--;
+    }
+  }
+  while (headA && headB)
+  {
+    if (headA == headB)
+      return headA;
+    headA = headA->next;
+    headB = headB->next;
+  }
+  return nullptr;
+}
+
+// 160. Intersection of Two Linked Lists
 //  60 ms, faster than 26.00%
 // 17.8 MB, less than 9.96%
-ListNode *getIntersectionNode(ListNode *headA, ListNode *headB)
+ListNode *getIntersectionNodeHM(ListNode *headA, ListNode *headB)
 {
 
   map<ListNode *, int> amap;
