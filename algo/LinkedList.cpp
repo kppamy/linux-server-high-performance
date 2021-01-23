@@ -2,9 +2,31 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
+#include <map>
 #include "LinkedList.h"
 #include "../common.h"
 using namespace std;
+
+// 160. Intersection of Two Linked Lists
+//  60 ms, faster than 26.00%
+// 17.8 MB, less than 9.96%
+ListNode *getIntersectionNode(ListNode *headA, ListNode *headB)
+{
+
+  map<ListNode *, int> amap;
+  while (headA)
+  {
+    amap[headA] = headA->val;
+    headA = headA->next;
+  }
+  while (headB)
+  {
+    if (amap.find(headB) != amap.end())
+      return headB;
+    headB = headB->next;
+  }
+  return nullptr;
+}
 
 // 21. Merge Two Sorted Lists
 // 8 ms, faster than 85.20%
