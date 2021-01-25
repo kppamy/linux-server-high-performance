@@ -1,9 +1,31 @@
 #include "TreeTest.h"
 #include <iomanip>
 #include <math.h>
-
+#include <stack>
 #include <queue>
 using namespace std;
+
+int height(TreeNode *root, int &ans)
+{
+    if (!root)
+        return 0;
+    int left = height(root->left, ans);
+    int right = height(root->right, ans);
+    ans = max(ans, left + right);
+    return max(left, right) + 1;
+}
+
+// 543. Diameter of Binary Tree
+//  8 ms, faster than 86.03%
+// 20.2 MB, less than 91.34%
+int diameterOfBinaryTree(TreeNode *root)
+{
+    if (!root)
+        return 0;
+    int ans = 0;
+    height(root, ans);
+    return ans;
+}
 
 // 100. Same Tree
 //  4 ms, faster than 48.02%
@@ -32,7 +54,9 @@ bool isSameTree(TreeNode *p, TreeNode *q)
             ptop->left = nullptr;
             qsta.push(qtop->left);
             qtop->left = nullptr;
-        }else if(ptop->left||qtop->left){
+        }
+        else if (ptop->left || qtop->left)
+        {
             return false;
         }
         if (ptop->right != nullptr && qtop->right != nullptr)
@@ -41,7 +65,9 @@ bool isSameTree(TreeNode *p, TreeNode *q)
             ptop->right = nullptr;
             qsta.push(qtop->right);
             qtop->right = nullptr;
-        }else if(ptop->right||qtop->right){
+        }
+        else if (ptop->right || qtop->right)
+        {
             return false;
         }
     }
@@ -594,9 +620,48 @@ bool isSymmetric(TreeNode *root)
 }
 
 template <typename f, typename u>
-void testTree(f fuc, string name, u print = nullptr)
+void testTree(f fuc, string name, u print)
 {
     my2arr cases = {
+        {1, 2, 3, 4},
+        {1, 2, 3, -1, 4},
+        {1, -1, 2},
+        {},
+        {1},
+        {1, 1},
+        {1, 2},
+        {2, 1, 3},
+        {3, 1, 2},
+        {1, -1, 2, 3},
+        {1, 2, -1, -1, 3},
+        {5, 1, 4, -1, -1, 3, 6},
+        {10, 5, 15, -1, -1, 6, 20},
+        {3, 9, 20, -1, -1, 15, 7},
+        {1, 2, 2, 3, 3, -1, -1, 4, 4},
+        {10, 5, 15, -1, -1, 6, 20},
+        {2, 3, 3, 4, 5, 5, 4, -1, -1, 8, 9, -1, -1, 9, 8},
+        {1, 2, 2, 3, -1, -1, 3, 4, -1, -1, 4},
+        {1, 2, 2, 3, 4, 4, 3},
+        {1, 2, 2, -1, 3, -1, 3},
+    };
+
+    for (auto &&test : cases)
+    {
+        printVector(test);
+        TreeNode *root = buildTree(test);
+        prettyPrintTree(root, maxDepth(root));
+        cout << name + ": " << endl;
+        auto &&res = fuc(root);
+        print(res);
+        cout << endl;
+    }
+}
+
+template <typename f>
+void testTree(f fuc, string name)
+{
+    my2arr cases = {
+        {4, -7, -3, -1, -1, -9, -3, 9, -7, -4, -1, 6, -1, -6, -6, -1, -1, 0, 6, 5, -1, 9, -1, -1, -1, -4, -1, -1, -1, -2},
         {1, 2, 3, 4},
         {1, 2, 3, -1, 4},
         {1, -1, 2},
@@ -635,14 +700,14 @@ template <typename f, typename u>
 void test2Tree(f fuc, string name, u print = nullptr)
 {
     vector<my2arr> cases = {
-         {{1, 2, 3}, {1, -1, 3}},
+        {{1, 2, 3}, {1, -1, 3}},
         {{}, {}},
         {{1, 2}, {1, -1, 2}},
         {{1, 2, 1}, {1, 1, 2}},
         {{1, 2, 3}, {1, 2, 3}}};
     for (auto &&test : cases)
     {
-        cout<<"====================new case===================="<<endl;
+        cout << "====================new case====================" << endl;
         printVector(test);
         TreeNode *root = buildTree(test[0]);
         cout << "The first tree: " << endl;
@@ -774,9 +839,10 @@ int main(int argc, char const *argv[])
     // testTree(isSymmetric, "isSymmetric", printInt);
     // testTree(levelOrderBottom, "levelOrderBottom", print2Vector);
     // testTree(tree2str, "tree2str", [](string res) { cout << res << endl; });
-    // testTree(inorderTraversal, "inorderTraversal", printVector<int>);
-    test2Tree(isSameTree, "isSameTree", [](bool result) {
-        cout << (result ? " true " : " false ") << endl;
-    });
+    // testTree(inorderTraversal, "inorderTraversal");
+    // test2Tree(isSameTree, "isSameTree", [](bool result) {
+    //     cout << (result ? " true " : " false ") << endl;
+    // });
+    testTree(diameterOfBinaryTree, "diameterOfBinaryTree");
     return 0;
 }
