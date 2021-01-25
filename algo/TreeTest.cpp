@@ -3,7 +3,79 @@
 #include <math.h>
 #include <stack>
 #include <queue>
+
 using namespace std;
+
+// 112. Path Sum
+// 8 ms, faster than 96.15%
+// 12.5 MB, less than 99.70%
+bool hasPathSum(TreeNode *root, int targetSum)
+{
+    if (!root)
+        return false;
+    stack<TreeNode *> sta;
+    sta.push(root);
+    map<TreeNode *, bool> isLeaf;
+    while (!sta.empty())
+    {
+        TreeNode *tp = sta.top();
+        if (!tp->left && !tp->right)
+        {
+            if (isLeaf.find(tp) == isLeaf.end() && tp->val == targetSum)
+                return true;
+            sta.pop();
+            continue;
+        }
+        isLeaf[tp] = false;
+        if (tp->left)
+        {
+            tp->left->val += tp->val;
+            sta.push(tp->left);
+            tp->left = nullptr;
+        }
+        else
+        {
+            tp->right->val += tp->val;
+            sta.push(tp->right);
+            tp->right = nullptr;
+        }
+    }
+    return false;
+}
+
+void testhasPathSum()
+{
+    vector<int> tarr = {5, 4, 8, 11, -1, 13, 4, 7, 2, -1, -1, -1, 1};
+    TreeNode *root = buildTree(tarr);
+    prettyPrintTree(root, maxDepth(root));
+    int targetsum = 22;
+    cout << " tree has path sum : " << targetsum << "  " << hasPathSum(root, targetsum) << endl;
+
+    tarr = {5, 4, 8, 11, -1, 13, 4, 7, 2, -1, -1, -1, 1};
+    root = buildTree(tarr);
+    prettyPrintTree(root, maxDepth(root));
+    targetsum = 17;
+    cout << " tree has path sum : " << targetsum << "  " << hasPathSum(root, targetsum) << endl;
+
+    tarr = {5, 4, 8, 11, -1, 13, 4, 7, 2, -1, -1, -1, 1};
+    root = buildTree(tarr);
+    prettyPrintTree(root, maxDepth(root));
+    targetsum = 20;
+    cout << " tree has path sum : " << targetsum << "  " << hasPathSum(root, targetsum) << endl;
+
+    tarr = {1, 2, 3};
+    root = buildTree(tarr);
+    prettyPrintTree(root, maxDepth(root));
+    targetsum = 5;
+    cout << " tree has path sum : " << targetsum << "  " << hasPathSum(root, targetsum) << endl;
+
+    tarr = {1, 2};
+    root = buildTree(tarr);
+    prettyPrintTree(root, maxDepth(root));
+    targetsum = 0;
+    cout << " tree has path sum : " << targetsum << "  " << hasPathSum(root, targetsum) << endl;
+    ;
+}
 
 int height(TreeNode *root, int &ans)
 {
@@ -74,75 +146,6 @@ bool isSameTree(TreeNode *p, TreeNode *q)
     return psta.empty() && qsta.empty();
 }
 
-void getLine(TreeNode *root, int depth, vector<int> &vals)
-{
-    if (depth <= 0 && root != nullptr)
-    {
-        vals.push_back(root->val);
-        return;
-    }
-    if (root->left != nullptr)
-        getLine(root->left, depth - 1, vals);
-    else if (depth - 1 <= 0)
-        vals.push_back(-2);
-    if (root->right != nullptr)
-        getLine(root->right, depth - 1, vals);
-    else if (depth - 1 <= 0)
-        vals.push_back(-2);
-}
-
-void printRow(TreeNode *p, const int height, int depth)
-{
-    vector<int> vec;
-    getLine(p, depth, vec);
-    cout << setw((height - depth) * 2); // scale setw with depth
-    bool toggle = true;                 // start with left
-    if (vec.size() > 1)
-    {
-        for (int v : vec)
-        {
-            if (v != -2)
-            {
-                if (toggle)
-                    cout << "/"
-                         << "   ";
-                else
-                    cout << "\\"
-                         << "   ";
-            }
-            else
-            {
-                cout << "   ";
-            }
-            toggle = !toggle;
-        }
-        cout << endl;
-        cout << setw((height - depth) * 2);
-    }
-    for (int v : vec)
-    {
-        if (v != -2)
-        {
-            cout << v << "   ";
-        }
-        else
-            cout << "   ";
-    }
-    cout << endl;
-}
-
-// create a pretty vertical tree
-// after this function, the p changed
-void prettyPrintTree(TreeNode *p, int hgt)
-{
-    //   int height = getHeight(p) * 2;
-    int height = hgt;
-    for (int i = 0; i < height; i++)
-    {
-        printRow(p, height, i);
-    }
-}
-
 TreeNode *buildTree()
 {
     int r;
@@ -152,36 +155,6 @@ TreeNode *buildTree()
     TreeNode *root = new TreeNode(r);
     root->left = buildTree();
     root->right = buildTree();
-    return root;
-}
-
-void build(TreeNode *pare, int i, const vector<int> &arr, int len)
-{
-    pare->val = arr[i];
-    int li = 2 * i + 1;
-    if (li <= len - 1 && arr[li] != -1)
-    {
-        TreeNode *left = new TreeNode();
-        pare->left = left;
-        build(left, li, arr, len);
-    }
-    int ri = 2 * i + 2;
-    if (ri <= len - 1 && arr[ri] != -1)
-    {
-        TreeNode *right = new TreeNode();
-        pare->right = right;
-        build(right, ri, arr, len);
-    }
-};
-
-// build tree from arr storage, BFS storage
-TreeNode *buildTree(const vector<int> &arr)
-{
-    int len = arr.size();
-    if (len == 0)
-        return NULL;
-    TreeNode *root = new TreeNode();
-    build(root, 0, arr, len);
     return root;
 }
 
@@ -199,22 +172,6 @@ int Tree::maxDepth(const TreeNode *root)
         int right = maxDepth(root->right);
         return (left >= right ? (left + 1) : (right + 1));
     }
-}
-
-// 104. Maximum Depth of Binary Tree
-// Runtime: 16 ms, faster than 44.65% of C++ online submissions for Maximum Depth of Binary Tree.
-// Memory Usage: 19.5 MB, less than 6.95% of C++ online submissions for Maximum Depth of Binary Tree.
-int maxDepth(TreeNode *root)
-{
-    if (!root)
-        return 0;
-    int left = 0;
-    if (root->left)
-        left = maxDepth(root->left);
-    int right = 0;
-    if (root->right)
-        right = maxDepth(root->right);
-    return (max(left, right) + 1);
 }
 
 // 111. Minimum Depth of Binary Tree
@@ -843,6 +800,7 @@ int main(int argc, char const *argv[])
     // test2Tree(isSameTree, "isSameTree", [](bool result) {
     //     cout << (result ? " true " : " false ") << endl;
     // });
-    testTree(diameterOfBinaryTree, "diameterOfBinaryTree");
+    // testTree(diameterOfBinaryTree, "diameterOfBinaryTree");
+    testhasPathSum();
     return 0;
 }
