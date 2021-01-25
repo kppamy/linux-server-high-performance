@@ -3,8 +3,90 @@
 #include <math.h>
 #include <stack>
 #include <queue>
-
+#include <iostream>
 using namespace std;
+
+// 437. Path Sum III
+int pathSum(TreeNode *root, int sum)
+{
+}
+
+// 113. Path Sum II
+// 12 ms, faster than 72.81%
+// 12.4 MB, less than 99.77%
+vector<vector<int>> pathSumII(TreeNode *root, int targetSum)
+{
+    if (!root)
+        return {};
+    stack<TreeNode *> sta;
+    sta.push(root);
+    map<TreeNode *, bool> isLeaf;
+    vector<vector<int>> ans;
+    auto getPath = [](stack<TreeNode *> sta) {
+        int sz = sta.size();
+        int len = sz;
+        vector<int> path(sz, INT_MAX);
+        while (!sta.empty())
+        {
+            TreeNode *tp = sta.top();
+            path[sz - 1] = tp->val;
+            sz--;
+            sta.pop();
+        }
+        for (int i = len - 1; i > 0; --i)
+        {
+            path[i] -= path[i - 1];
+        }
+        return path;
+    };
+    while (!sta.empty())
+    {
+        TreeNode *tp = sta.top();
+        if (!tp->left && !tp->right)
+        {
+            if (isLeaf.find(tp) == isLeaf.end() && tp->val == targetSum)
+            {
+                vector<int> path = getPath(sta);
+                ans.push_back(path);
+            }
+            sta.pop();
+            continue;
+        }
+        isLeaf[tp] = false;
+        if (tp->left)
+        {
+            tp->left->val += tp->val;
+            sta.push(tp->left);
+            tp->left = nullptr;
+        }
+        else
+        {
+            tp->right->val += tp->val;
+            sta.push(tp->right);
+            tp->right = nullptr;
+        }
+    }
+    return ans;
+}
+
+void testPathSum()
+{
+    vector<int> tarr = {5, 4, 8, 11, -1, 13, 4, 7, 2, -1, -1, -1, 1};
+    TreeNode *root = buildTree(tarr);
+    prettyPrintTree(root, maxDepth(root));
+    int targetsum = 22;
+    my2arr paths = pathSum(root, targetsum);
+    cout << "paths has sum: " << targetsum << endl;
+    print(paths);
+
+    tarr = {5, 4, 8, 11, -1, 13, 4, 7, 2, -1, -1, -1, 1};
+    root = buildTree(tarr);
+    prettyPrintTree(root, maxDepth(root));
+    targetsum = 27;
+    paths = pathSum(root, targetsum);
+    cout << "paths has sum: " << targetsum << endl;
+    print(paths);
+}
 
 // 112. Path Sum
 // 8 ms, faster than 96.15%
@@ -801,6 +883,7 @@ int main(int argc, char const *argv[])
     //     cout << (result ? " true " : " false ") << endl;
     // });
     // testTree(diameterOfBinaryTree, "diameterOfBinaryTree");
-    testhasPathSum();
+    // testhasPathSum();
+    testPathSum();
     return 0;
 }
