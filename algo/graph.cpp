@@ -4,10 +4,67 @@
 #include <iostream>
 #include <type_traits>
 #include "../common.h"
+#include <vector>
+#include <map>
 
 using namespace std;
 
 vector<int> directions = {-1, 0, 1, 0, -1}; //up,right,down,left
+
+// 997. Find the Town Judge
+// 180 ms, faster than 88.43%
+// 66.5 MB, less than 35.92%
+int findJudge(int N, vector<vector<int>> &trust)
+{
+    if (N == 1 && trust.empty())
+        return N;
+    map<int, int> trusted;
+    vector<vector<int>> fj;
+    fj.resize(N);
+    for (auto &item : trust)
+    {
+        trusted[item[1]]++;
+        fj[item[0] - 1].push_back(item[1]);
+    }
+    for (auto &[k, v] : trusted)
+    {
+        if (v == N - 1 && fj[k - 1].size() == 0)
+        {
+            return k;
+        }
+    }
+    return -1;
+}
+
+void testFindJudge()
+{
+    int N = 0;
+    my2arr trust;
+
+    N = 1, trust = {};
+    cout << findJudge(N, trust) << " is the judge of: " << endl;
+    printVector(trust);
+
+    N = 2, trust = {{1, 2}};
+    cout << findJudge(N, trust) << " is the judge of: " << endl;
+    printVector(trust);
+
+    N = 3, trust = {{1, 3}, {2, 3}};
+    cout << findJudge(N, trust) << " is the judge of: " << endl;
+    printVector(trust);
+
+    N = 3, trust = {{1, 3}, {2, 3}, {3, 1}};
+    cout << findJudge(N, trust) << " is the judge of: " << endl;
+    printVector(trust);
+
+    N = 3, trust = {{1, 2}, {2, 3}};
+    cout << findJudge(N, trust) << " is the judge of: " << endl;
+    printVector(trust);
+
+    N = 4, trust = {{1, 3}, {1, 4}, {2, 3}, {2, 4}, {4, 3}};
+    cout << findJudge(N, trust) << " is the judge of: " << endl;
+    printVector(trust);
+}
 
 // 130. Surrounded Regions
 // 32 ms, faster than 15.27%
@@ -678,6 +735,7 @@ int main(int argc, char const *argv[])
     // format_test(shortestBridge, testshortestBridge);
     // testgetImportance();
     // format_test(numIslands, testnumIslands);
-    testSurroundedRegions();
+    // testSurroundedRegions();
+    testFindJudge();
     return 0;
 }
