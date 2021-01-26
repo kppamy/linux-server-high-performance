@@ -11,10 +11,83 @@ using namespace std;
 
 vector<int> directions = {-1, 0, 1, 0, -1}; //up,right,down,left
 
+// 785. Is Graph Bipartite?
+bool isBipartite(vector<vector<int>> &graph)
+{
+    int sz=graph.size();
+    vector<int> gps(sz,-1);
+    for(int i=0;i<=sz-1;++i){
+
+        int len=graph[i].size();
+        int g0=0;
+        int g1=0;
+        for(int j=0;j<len;++j){
+            if(graph[i][j]==-1)
+                continue;
+            if(graph[i][j])
+                g1++;
+            else
+                g0++;
+        }
+        if(g0*g1!=0)
+            return false;
+        if(g0!=0){
+            if(gps[i]==0)
+                return false;
+            else
+                gps[i]=1; 
+        }else if(g1!=0)
+        {
+            if(gps[i]==1)
+                return false;
+            else
+                gps[i]=0; 
+        }else{
+            int other=-1;
+            if(gps[i]!=-1){
+                other=1-gps[i];
+            }else{
+                gps[i]=0;
+                other=1;
+            }
+            for(int j=0;j<len;++j){
+                graph[i][j]=other;
+            }
+        }
+    }
+    return true;
+}
+
+void testisBipartite(){
+    
+}
+
+// 997. Find the Town Judge
+// 144 ms, faster than 98.87%
+// 60.9 MB, less than 91.73%
+int findJudge(int N, vector<vector<int>> &trust)
+{
+    if (N == 1 && trust.empty())
+        return N;
+    vector<int> out(N + 1, 0);
+    vector<int> in(N + 1, 0);
+    for (auto &tt : trust)
+    {
+        out[tt[0]]++;
+        in[tt[1]]++;
+    }
+    for (int i = 1; i <= N; ++i)
+    {
+        if (in[i] == N - 1 && out[i] == 0)
+            return i;
+    }
+    return -1;
+}
+
 // 997. Find the Town Judge
 // 180 ms, faster than 88.43%
 // 66.5 MB, less than 35.92%
-int findJudge(int N, vector<vector<int>> &trust)
+int findJudgeStupid(int N, vector<vector<int>> &trust)
 {
     if (N == 1 && trust.empty())
         return N;
@@ -736,6 +809,6 @@ int main(int argc, char const *argv[])
     // testgetImportance();
     // format_test(numIslands, testnumIslands);
     // testSurroundedRegions();
-    testFindJudge();
+    // testFindJudge();
     return 0;
 }
