@@ -5,6 +5,224 @@
 #include <stack>
 using namespace std;
 
+
+// 345. Reverse Vowels of a String
+string reverseVowels(string s)
+{
+    string vowls = "AEIOUaeiou";
+    int len = s.size();
+    int i = 0, j = len - 1;
+    int swapi = -1;
+    int swapj = -1;
+    auto swap = [&s](int i, int swapj) {
+        char tmp = s[i];
+        s[i] = s[swapj];
+        s[swapj] = tmp;
+    };
+    while (i < j)
+    {
+        if (vowls.find(s[i]) != -1 && vowls.find(s[j]) != -1)
+        {
+            swap(i, j);
+            swapi = -1;
+            swapj = -1;
+        }
+        else if (vowls.find(s[i]) != -1)
+        {
+            if (swapj != -1)
+            {
+                swap(i, swapj);
+                swapi = -1;
+                swapj = -1;
+            }
+            else
+            {
+                swapi = i;
+            }
+        }
+        else if (vowls.find(s[j]) != -1)
+        {
+            if (swapi != -1)
+            {
+                swap(j, swapi);
+                swapi = -1;
+                swapj = -1;
+            }
+            else
+            {
+                swapj = j;
+            }
+        }
+        i++;
+        j--;
+    }
+    return s;
+}
+
+void reverseVowels()
+{
+    cout << "Euston saw I was not Sue."
+         << " reverseVowels: " << reverseVowels("Euston saw I was not Sue.") << endl;
+    cout << "hello"
+         << " reverseVowels: " << reverseVowels("hello") << endl;
+}
+
+// 58. Length of Last Word
+// 0 ms, faster than 100.00%
+// 6.4 MB, less than 98.06%
+int lengthOfLastWord(string s)
+{
+    int len = s.size();
+    int cnt = 0;
+    int j = len - 1;
+    for (; j >= 0; --j)
+    {
+        if (s[j] == ' ')
+            continue;
+        break;
+    }
+    for (; j >= 0; --j)
+    {
+        if (s[j] != ' ')
+            cnt++;
+        else
+        {
+            return cnt;
+        }
+    }
+    return cnt;
+}
+
+// 38. Count and Say
+//  4 ms, faster than 92.73%
+//  6.4 MB, less than 98.76%
+string countAndSay(int n)
+{
+    string f = "1";
+    for (int i = 2; i <= n; i++)
+    {
+        int len = f.size();
+        int cnt = 1;
+        char c = f[0];
+        string ans;
+        bool flag = false;
+        for (int j = 1; j < len; ++j)
+        {
+            if (f[j] == c)
+                cnt++;
+            else
+            {
+                ans.push_back(cnt + 0x30);
+                ans.push_back(c);
+                c = f[j];
+                cnt = 1;
+            }
+        }
+        ans.push_back(cnt + 0x30);
+        ans.push_back(c);
+        f = ans;
+    }
+    return f;
+}
+
+void testcountAndSay()
+{
+    cout << "testcountAndSay: " << 4 << " " << countAndSay(4) << endl;
+    cout << "testcountAndSay: " << 5 << " " << countAndSay(5) << endl;
+}
+
+// 13. Roman to Integer
+// 52 ms, faster than 5.30%
+// 11.5 MB, less than 5.05%
+int romanToInt(string s)
+{
+    map<char, int> dct;
+    dct['I'] = 1;
+    dct['V'] = 5;
+    dct['X'] = 10;
+    dct['L'] = 50;
+    dct['C'] = 100;
+    dct['D'] = 500;
+    dct['M'] = 1000;
+    map<string, int> unord;
+    unord["IV"] = 4;
+    unord["IX"] = 9;
+    unord["XL"] = 40;
+    unord["XC"] = 90;
+    unord["CD"] = 400;
+    unord["CM"] = 900;
+    int len = s.size();
+    int ans = 0;
+    for (int i = 0; i < len;)
+    {
+        string sub = s.substr(i, 2);
+        if (unord.find(sub) != unord.end())
+        {
+            ans += unord[sub];
+            i += 2;
+        }
+        else
+        {
+            ans += dct[s[i]];
+            i++;
+        }
+    }
+    return ans;
+}
+
+// 125. Valid Palindrome
+//  8 ms, faster than 57.44% o
+// 7.3 MB, less than 90.84%
+bool isPalindrome(string s)
+{
+    int i = 0, j = s.size() - 1;
+    auto isAlpa = [](char c) {
+        return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
+    };
+    auto isnum = [](char c) {
+        return (c >= '0' && c <= '9');
+    };
+    while (i <= j)
+    {
+        char ci = s[i];
+        char cj = s[j];
+        if (!isAlpa(ci) && !isnum(ci))
+        {
+            i++;
+        }
+        else if (!isAlpa(cj) && !isnum(cj))
+        {
+            j--;
+        }
+        else
+        {
+            bool ignorecase = isAlpa(ci) && isAlpa(cj) && abs(ci - cj) == 'a' - 'A';
+            if (ci != cj && !ignorecase)
+            {
+                return false;
+            }
+            i++;
+            j--;
+        }
+    }
+    return true;
+}
+
+void testisPalindrome()
+{
+    vector<string> cases = {
+        "Aama",
+        "0P",
+        "A man, a plan, a canal: Panama",
+        "race a car",
+        "bB",
+        "ab&b"};
+    for (auto &str : cases)
+    {
+        cout << str << " is " << (isPalindrome(str) ? " " : " not ") << "Palindrome string" << endl;
+    }
+}
+
 // 409. Longest Palindrome
 //  4 ms, faster than 83.73%
 // 6.8 MB, less than 86.37%
@@ -1327,7 +1545,7 @@ void testlongestPalindrome52()
     cout << "longestPalindrome of dddddddd  is " << longestPalindrome52("dddddddd") << endl;
 }
 
-bool isPalindrome(const string &s)
+bool isPalindromeOld(const string &s)
 {
     int len = s.size();
     int half = len / 2;
@@ -1427,6 +1645,9 @@ int main(int argc, char const *argv[])
     // testRepeatedStringMatch();
     // testcountSubstrings();
     // testCalculate();
-    testlongestPalindrome();
+    // testlongestPalindrome();
+    // testisPalindrome();
+    // testcountAndSay();
+    reverseVowels();
     return 0;
 }
