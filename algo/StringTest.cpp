@@ -5,8 +5,9 @@
 #include <stack>
 using namespace std;
 
-
 // 345. Reverse Vowels of a String
+//  8 ms, faster than 81.08%
+//  7.7 MB, less than 94.45%
 string reverseVowels(string s)
 {
     string vowls = "AEIOUaeiou";
@@ -21,38 +22,16 @@ string reverseVowels(string s)
     };
     while (i < j)
     {
-        if (vowls.find(s[i]) != -1 && vowls.find(s[j]) != -1)
+        while (i < len && vowls.find(s[i]) == -1)
         {
+            i++;
+        }
+        while (j >= 0 && vowls.find(s[j]) == -1)
+        {
+            j--;
+        }
+        if (i < j)
             swap(i, j);
-            swapi = -1;
-            swapj = -1;
-        }
-        else if (vowls.find(s[i]) != -1)
-        {
-            if (swapj != -1)
-            {
-                swap(i, swapj);
-                swapi = -1;
-                swapj = -1;
-            }
-            else
-            {
-                swapi = i;
-            }
-        }
-        else if (vowls.find(s[j]) != -1)
-        {
-            if (swapi != -1)
-            {
-                swap(j, swapi);
-                swapi = -1;
-                swapj = -1;
-            }
-            else
-            {
-                swapj = j;
-            }
-        }
         i++;
         j--;
     }
@@ -61,6 +40,9 @@ string reverseVowels(string s)
 
 void reverseVowels()
 {
+
+    cout << ".,"
+         << " reverseVowels: " << reverseVowels(".,") << endl;
     cout << "Euston saw I was not Sue."
          << " reverseVowels: " << reverseVowels("Euston saw I was not Sue.") << endl;
     cout << "hello"
