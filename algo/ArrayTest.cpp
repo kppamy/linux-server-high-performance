@@ -3,8 +3,23 @@
 
 using namespace std;
 
+// 561. Array Partition I
+// 100 ms, faster than 70.83%
+// 28.2 MB, less than 84.01%
+int arrayPairSum(vector<int> &nums)
+{
+    sort(nums.begin(), nums.end());
+    int len = nums.size();
+    int ans = 0;
+    for (int i = 0; i < len - 1; i += 2)
+    {
+        ans += min(nums[i], nums[i + 1]);
+    }
+    return ans;
+}
+
 // 1480. Running Sum of 1d Array
-//  0 ms, faster than 100.00% 
+//  0 ms, faster than 100.00%
 //   8.6 MB, less than 78.36%
 vector<int> runningSum(vector<int> &nums)
 {
