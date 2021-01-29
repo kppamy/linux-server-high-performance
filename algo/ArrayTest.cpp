@@ -3,6 +3,23 @@
 
 using namespace std;
 
+// 1732. Find the Highest Altitude
+//  0 ms, faster than 100.00%
+//  8.2 MB, less than 6.47%
+int largestAltitude(vector<int> &gain)
+{
+    int len = gain.size();
+    vector<int> pts(len + 1, INT_MAX);
+    pts[0] = 0;
+    int largest = 0;
+    for (int i = 1; i <= len; ++i)
+    {
+        pts[i] = pts[i - 1] + gain[i - 1];
+        largest = (pts[i] > largest) ? pts[i] : largest;
+    }
+    return largest;
+}
+
 // 561. Array Partition I
 // 100 ms, faster than 70.83%
 // 28.2 MB, less than 84.01%
