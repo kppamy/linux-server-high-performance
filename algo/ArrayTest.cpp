@@ -1,7 +1,24 @@
 #include "ArrayTest.h"
-#include "common.h"
+#include "../common.h"
 
 using namespace std;
+
+// 1480. Running Sum of 1d Array
+//  0 ms, faster than 100.00% 
+//   8.6 MB, less than 78.36%
+vector<int> runningSum(vector<int> &nums)
+{
+    int len = nums.size();
+    if (len == 1)
+        return nums;
+    vector<int> ans(len, INT_MIN);
+    ans[0] = nums[0];
+    for (int i = 1; i < len; ++i)
+    {
+        ans[i] = ans[i - 1] + nums[i];
+    }
+    return move(ans);
+}
 
 void ArrayTest::rotateArray(vector<int> &input, int k)
 {
@@ -100,7 +117,7 @@ void testRotateArray()
 }
 
 // |     11. Container With Most Water
-// |     
+// |
 // |     two pointers.
 // |     c++: 32 ms  python: 116 ms
 int maxArea(vector<int> &height)
