@@ -3,6 +3,34 @@
 #include <math.h>
 #include "../Timer.h"
 
+// 53. Maximum Subarray
+// 4 ms, faster than 97.71%
+// 13.2 MB, less than 82.91%
+int maxSubArray(vector<int> &nums)
+{
+    int len = nums.size();
+    int ans = INT_MIN;
+    int prev = 0;
+    for (int i = 0; i < len; ++i)
+    {
+        int nt = prev + nums[i];
+        prev = (nt > nums[i]) ? nt : nums[i];
+        ans = (ans > prev) ? ans : prev;
+    }
+    return ans;
+}
+
+my2arr testmaxSubArray()
+{
+    return {
+        {-2, 1, -3, 4, -1, 2, 1, -5, 4},
+        {-1},
+        {1},
+        {-100000},
+        {-2, -2, -2},
+    };
+}
+
 // 1025. Divisor Game
 // 0 ms, faster than 100.00%
 // 5.9 MB, less than 88.24%
@@ -525,4 +553,5 @@ int main(int argc, char const *argv[])
     // format_test(minCostClimbingStairs, testminCostClimbingStairs, printInt);
     // format_test(rob, testrob, printInt);
     // format_test(numberOfArithmeticSlices, testnumberOfArithmeticSlices, printInt);
+    format_test(maxSubArray, testmaxSubArray);
 }
