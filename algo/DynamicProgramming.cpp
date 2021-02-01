@@ -3,6 +3,34 @@
 #include <math.h>
 #include "../Timer.h"
 
+// 1025. Divisor Game
+// 0 ms, faster than 100.00%
+// 5.9 MB, less than 88.24%
+bool divisorGame(int N)
+{
+    vector<bool> dp(N + 1, false);
+    for (int i = 2; i < N + 1; ++i)
+    {
+        for (int x = 1; x < i; ++x)
+        {
+            if (i % x == 0 && !dp[i - x])
+            {
+                dp[i] = true;
+            }
+        }
+    }
+    return dp[N];
+}
+
+void testdivisorGame()
+{
+    cout << "divisorGame 2, alice win? " << divisorGame(2) << endl;
+    cout << "divisorGame 3, alice win? " << divisorGame(3) << endl;
+    cout << "divisorGame 4, alice win? " << divisorGame(4) << endl;
+    cout << "divisorGame 5, alice win? " << divisorGame(5) << endl;
+    cout << "divisorGame 1000, alice win? " << divisorGame(1000) << endl;
+}
+
 int DynamicProgramming::climbStairs(int stairs)
 {
     if (stairs == 1)
@@ -496,5 +524,5 @@ int main(int argc, char const *argv[])
     // timeit(testClimbStairs);
     // format_test(minCostClimbingStairs, testminCostClimbingStairs, printInt);
     // format_test(rob, testrob, printInt);
-    format_test(numberOfArithmeticSlices, testnumberOfArithmeticSlices, printInt);
+    // format_test(numberOfArithmeticSlices, testnumberOfArithmeticSlices, printInt);
 }
