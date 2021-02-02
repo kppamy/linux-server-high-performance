@@ -3,6 +3,128 @@
 #include <math.h>
 #include "../Timer.h"
 
+// 877. Stone Game
+//  20 ms, faster than 40.86%
+// 16.5 MB, less than 26.66%
+bool stoneGame(vector<int> &piles)
+{
+    int len = piles.size();
+    vector<vector<int>> dp(len, vector<int>(len, 0));
+    for (int i = 0; i < len; i++)
+    {
+        dp[i][i] = -piles[i];
+        for (int j = i + 1; j < len; j++)
+        {
+            int left = dp[i + 1][j];
+            int right = dp[i][j - 1];
+            if ((j - i + 1) % 2)
+            {
+                int ls = left - piles[i];
+                int rt = right - piles[j];
+                dp[i][j] = (ls < rt) ? ls : rt;
+            }
+            else
+            {
+                int ls = left + piles[i];
+                int rt = right + piles[j];
+                dp[i][j] = (ls > rt) ? ls : rt;
+            }
+        }
+    }
+    return dp[0][len - 1] > 0;
+}
+
+int fnext(vector<int> &piles, vector<vector<int>> &dp, int i, int j)
+{
+    if (i > j)
+    {
+        dp[i][j] = 0;
+        return 0;
+    }
+    if (i == j)
+    {
+        dp[i][j] = -piles[i];
+        return -piles[i];
+    }
+    // cout << "i: " << i << " j: " << j << endl;
+    int lsub = dp[i + 1][j];
+    if (lsub == INT_MIN)
+        lsub = fnext(piles, dp, i + 1, j);
+    int rsub = dp[i][j - 1];
+    if (rsub == INT_MIN)
+        rsub = fnext(piles, dp, i, j - 1);
+    int scores = 0;
+    if ((j - i + 1) % 2)
+    {
+        int left = lsub - piles[i];
+        int right = rsub - piles[j];
+        if (left < right)
+        {
+            scores = left;
+        }
+        else
+        {
+            scores = right;
+        }
+    }
+    else
+    {
+        int left = lsub + piles[i];
+        int right = rsub + piles[j];
+        if (left > right)
+        {
+            scores = left;
+        }
+        else
+        {
+            scores = right;
+        }
+    }
+    dp[i][j] = scores;
+    return scores;
+}
+
+bool stoneGameRec(vector<int> &piles)
+{
+    int i = 0, len = piles.size(), j = len - 1;
+    vector<vector<int>> dp(len, vector<int>(len, INT_MIN));
+    return fnext(piles, dp, 0, j) > 0;
+}
+
+my2arr testStoneGame()
+{
+    return {
+        {5, 3, 4, 5},
+        {7, 7, 12, 16, 41, 48, 41, 48, 11, 9, 34, 2, 44, 30, 27, 12, 11, 39, 31, 8, 23, 11, 47, 25, 15, 23, 4, 17, 11, 50, 16, 50, 38, 34, 48, 27, 16, 24, 22, 48, 50, 10, 26, 27, 9, 43, 13, 42, 46, 24},
+        {5, 4, 3, 5}};
+}
+
+// 303. Range Sum Query - Immutable
+//  24 ms, faster than 87.39%
+// 17.2 MB, less than 78.93%
+class NumArray
+{
+public:
+    NumArray(vector<int> &nums)
+    {
+        int len = nums.size();
+        dp.resize(len, 0);
+        dp[0] = nums[0];
+        for (int i = 1; i < len; ++i)
+        {
+            dp[i] = dp[i - 1] + nums[i];
+        }
+    }
+
+    int sumRange(int i, int j)
+    {
+        return dp[j] - dp[i];
+    }
+
+private:
+    vector<int> dp;
+};
+
 // 53. Maximum Subarray
 // 4 ms, faster than 97.71%
 // 13.2 MB, less than 82.91%
@@ -553,5 +675,6 @@ int main(int argc, char const *argv[])
     // format_test(minCostClimbingStairs, testminCostClimbingStairs, printInt);
     // format_test(rob, testrob, printInt);
     // format_test(numberOfArithmeticSlices, testnumberOfArithmeticSlices, printInt);
-    format_test(maxSubArray, testmaxSubArray);
+    // format_test(maxSubArray, testmaxSubArray);
+    format_test(stoneGame, testStoneGame);
 }
