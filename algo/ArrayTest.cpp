@@ -3,6 +3,30 @@
 
 using namespace std;
 
+// 1351. Count Negative Numbers in a Sorted Matrix
+// 12 ms, faster than 98.07%
+// 10.9 MB, less than 10.33%
+int countNegatives(vector<vector<int>> &grid)
+{
+    int ans = 0;
+    for (auto row : grid)
+    {
+        reverse(row.begin(),row.end());
+        ans +=  upper_bound(row.begin(), row.end(), -1)-row.begin();// all right >-1
+        // rev +=  lower_bound(row.begin(), row.end(), -1)-row.begin(); // all left <-1
+    }
+    return ans;
+}
+
+my2DCases testcountNega(){
+    return {
+        {{4,3,2,-1},{3,2,1,-1},{1,1,-1,-2},{-1,-1,-2,-3}},
+        {{3,2},{1,0}},
+        {{1,-1},{-1,-1}},
+        {{-1}}
+    };
+}
+
 // 1732. Find the Highest Altitude
 //  0 ms, faster than 100.00%
 //  8.2 MB, less than 6.47%
@@ -187,6 +211,7 @@ int main(int argc, char const *argv[])
 
     // timeit(testNiceArray);
     // testNiceArray();
-    timeit(testMaxArea);
+    // timeit(testMaxArea);
+    format_test(countNegatives,testcountNega);
     return 0;
 }
