@@ -4,8 +4,39 @@
 #include <unordered_map>
 using namespace std;
 
+// 283. Move Zeroes
+// 4 ms, faster than 95.39%
+// 9 MB, less than 63.08%
+void moveZeroes(vector<int> &nums)
+{
+    int len = nums.size();
+    if (len <= 1)
+        return;
+    int j = 0;
+    while (j < len && nums[j] != 0)
+    {
+        j++;
+    }
+    int i = j - 1;
+    while (j < len)
+    {
+        if (nums[j] != 0)
+        {
+            i++;
+            nums[i] = nums[j];
+        }
+        j++;
+    }
+    i++;
+    while (i < len)
+    {
+        nums[i] = 0;
+        i++;
+    }
+}
+
 // 1337. The K Weakest Rows in a Matrix
-// 8 ms, faster than 98.82% 
+// 8 ms, faster than 98.82%
 // 10.7 MB, less than 70.53%
 vector<int> kWeakestRows(vector<vector<int>> &mat, int k)
 {
