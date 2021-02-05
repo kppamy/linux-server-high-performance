@@ -4,6 +4,30 @@
 #include <unordered_map>
 using namespace std;
 
+// 977. Squares of a Sorted Array
+//  28 ms, faster than 96.96%
+// 25.8 MB, less than 95.88%
+vector<int> sortedSquares(vector<int> &nums)
+{
+    int i = 0, j = nums.size() - 1, idx = j;
+    vector<int> ans(j + 1, 0);
+    while (i <= j)
+    {
+        if (abs(nums[j]) > abs(nums[i]))
+        {
+            ans[idx] = nums[j] * nums[j];
+            j--;
+        }
+        else
+        {
+            ans[idx] = nums[i] * nums[i];
+            i++;
+        }
+        idx--;
+    }
+    return ans;
+}
+
 // 283. Move Zeroes
 // 4 ms, faster than 95.39%
 // 9 MB, less than 63.08%
