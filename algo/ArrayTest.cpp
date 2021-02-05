@@ -1,7 +1,148 @@
 #include "ArrayTest.h"
 #include "../common.h"
-
+#include <queue>
+#include <unordered_map>
 using namespace std;
+
+// 1337. The K Weakest Rows in a Matrix
+// 8 ms, faster than 98.82% 
+// 10.7 MB, less than 70.53%
+vector<int> kWeakestRows(vector<vector<int>> &mat, int k)
+{
+    map<int, int> da;
+    int m = mat.size();
+    int n = mat[0].size();
+    auto getpower = [&mat, n](int idx) {
+        int ones = 0;
+        int i = 0, j = n - 1;
+        while (i <= j)
+        {
+            int mid = (i + j) / 2;
+            if (mat[idx][mid])
+            {
+                ones += mid - i + 1;
+                i = mid + 1;
+            }
+            else
+            {
+                j = mid - 1;
+            }
+        }
+        return ones;
+    };
+    multimap<int, int> ans;
+    for (int i = 0; i < m; i++)
+    {
+        int power = getpower(i);
+        ans.insert(make_pair(power, i));
+    }
+    vector<int> cp;
+    for (auto &&[key, val] : ans)
+    {
+        cp.push_back(val);
+        k--;
+        if (k == 0)
+            break;
+    }
+
+    return cp;
+}
+
+// 1337. The K Weakest Rows in a Matrix
+// 12 ms, faster than 90.86%
+// 10.3 MB, less than 96.46%
+vector<int> kWeakestRowsMy(vector<vector<int>> &mat, int k)
+{
+    map<int, int> da;
+    int m = mat.size();
+    int n = mat[0].size();
+    auto getpower = [&mat, n](int idx) {
+        int ones = 0;
+        int i = 0, j = n - 1;
+        while (i <= j)
+        {
+            int mid = (i + j) / 2;
+            if (mat[idx][mid])
+            {
+                ones += mid - i + 1;
+                i = mid + 1;
+            }
+            else
+            {
+                j = mid - 1;
+            }
+        }
+        return ones;
+    };
+    vector<int> ans(m, -1);
+    for (int i = 0; i < m; i++)
+    {
+        int power = getpower(i);
+        ans[i] = power;
+    }
+    vector<int> cp;
+    cp.push_back(0);
+    for (int i = 1; i < m; i++)
+    {
+        int sz = cp.size();
+        int nl = sz;
+        while (sz > 0 && ans[i] < ans[cp[sz - 1]])
+        {
+            sz--;
+        }
+        if (sz == nl)
+            cp.push_back(i);
+        else
+        {
+            cp.push_back(cp[nl - 1]);
+            while (nl >= 2 && nl - 2 >= sz)
+            {
+                cp[nl - 1] = cp[nl - 2];
+                nl--;
+            }
+            cp[sz] = i;
+        }
+    }
+    vector<int> fin(k, 0);
+    copy(cp.begin(), cp.begin() + k, fin.begin());
+    return fin;
+}
+
+void testkWeakestRows()
+{
+
+    my2arr mat;
+    int k;
+    vector<int> ans;
+
+    mat = {{1, 1, 1, 0, 0, 0, 0}, {1, 1, 1, 1, 1, 1, 0}, {0, 0, 0, 0, 0, 0, 0}, {1, 1, 1, 0, 0, 0, 0}, {1, 1, 1, 1, 1, 1, 1}};
+    k = 4;
+    printVector(mat);
+    cout << k << " WeakestRows: " << endl;
+    ans = kWeakestRows(mat, k);
+    printVector(ans);
+
+    mat = {{1, 1, 1, 1, 1, 1}, {1, 1, 1, 1, 1, 1}, {1, 1, 1, 1, 1, 1}};
+    k = 1;
+    printVector(mat);
+    cout << k << " WeakestRows: " << endl;
+    ans = kWeakestRows(mat, k);
+    printVector(ans);
+
+    mat = {{1, 1, 0, 0, 0}, {1, 1, 1, 1, 0}, {1, 0, 0, 0, 0}, {1, 1, 0, 0, 0}, {1, 1, 1, 1, 1}};
+    k = 3;
+    printVector(mat);
+    cout << k << " WeakestRows: " << endl;
+    ans = kWeakestRows(mat, k);
+    printVector(ans);
+
+    mat = {{1, 0, 0, 0}, {1, 1, 1, 1}, {1, 0, 0, 0}, {1, 0, 0, 0}};
+    k = 2;
+    printVector(mat);
+    cout << k << " WeakestRows: " << endl;
+    ans = kWeakestRows(mat, k);
+    printVector(ans);
+}
 
 // 852. Peak Index in a Mountain Array
 // 16 ms, faster than 65.96%
@@ -242,6 +383,7 @@ int main(int argc, char const *argv[])
     // timeit(testNiceArray);
     // testNiceArray();
     // timeit(testMaxArea);
-    format_test(countNegatives, testcountNega);
+    // format_test(countNegatives, testcountNega);
+    testkWeakestRows();
     return 0;
 }
