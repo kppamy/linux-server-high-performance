@@ -6,6 +6,113 @@
 #include <queue>
 using namespace std;
 
+// 1047. Remove All Adjacent Duplicates In String
+// 12 ms, faster than 97.77%
+// 10.1 MB, less than 77.96%
+string removeDuplicates(string S)
+{
+    string out;
+    out.push_back(S[0]);
+    int i = 1, len = S.size();
+    while (i < len)
+    {
+        char cur = S[i];
+        if (out.size() > 0 && cur == out.back())
+        {
+            out.pop_back();
+        }
+        else
+        {
+            out.push_back(cur);
+        }
+        i++;
+    }
+    return out;
+}
+
+// 1047. Remove All Adjacent Duplicates In String
+//  16 ms, faster than 89.34%
+string removeDuplicatesS(string S)
+{
+    int len = S.size();
+    if (len == 1)
+        return S;
+    stack<char> sta;
+    sta.push(S[0]);
+    int i = 1;
+    while (i < len)
+    {
+        char cur = S[i];
+        if (!sta.empty() && cur == sta.top())
+        {
+            sta.pop();
+        }
+        else
+        {
+            sta.push(cur);
+        }
+        i++;
+    }
+    int sz = sta.size();
+    string out(sz, 'A');
+    // sz>0 instead of sta.empty(),  downgrade from 43.9% to 23.5% !!!!!!!!,
+    //  data relavant is far more expensive than function call
+    // while (sz>0)
+    while (!sta.empty())
+    {
+        out[sz - 1] = sta.top();
+        sta.pop();
+        sz--;
+    }
+    return out;
+}
+
+// 1021. Remove Outermost Parentheses
+//  0 ms, faster than 100.00%
+// 6.6 MB, less than 94.15%
+string removeOuterParentheses(string S)
+{
+    stack<char> sta;
+    sta.push(S[0]);
+    int i = 1, len = S.size();
+    string out = "";
+    while (i < len)
+    {
+        int sz = sta.size();
+        char cur = S[i];
+        if (cur == ')')
+        {
+            if (sz > 1)
+            {
+                out.push_back(cur);
+            }
+            sta.pop();
+        }
+        else
+        {
+            if (sz >= 1)
+            {
+                out.push_back(cur);
+            }
+            sta.push(cur);
+        }
+        i++;
+    }
+    return out;
+}
+
+void testremoveOuterParentheses()
+{
+    string S;
+    S = "(()())(())(()(()))";
+    cout << S << " removeOuterParentheses: " << removeOuterParentheses(S) << endl;
+
+    S = "(()())(())";
+    cout << S << " removeOuterParentheses: " << removeOuterParentheses(S) << endl;
+
+    S = "()() ";
+    cout << S << " removeOuterParentheses: " << removeOuterParentheses(S) << endl;
+}
 
 // 496. Next Greater Element I
 // 8 ms, faster than 93.78%
@@ -14,22 +121,23 @@ vector<int> nextGreaterElement(vector<int> &nums1, vector<int> &nums2)
     if (nums2.size() * nums1.size() == 0)
         return {};
     stack<int> next;
-    unordered_map<int,int> dct;
-    for (int i = nums2.size()-1; i >=0 ; --i)
+    unordered_map<int, int> dct;
+    for (int i = nums2.size() - 1; i >= 0; --i)
     {
-        while(!next.empty()&&next.top()<nums2[i]){
+        while (!next.empty() && next.top() < nums2[i])
+        {
             next.pop();
         }
-        dct[nums2[i]]=next.empty()?-1:next.top();
+        dct[nums2[i]] = next.empty() ? -1 : next.top();
         next.push(nums2[i]);
     }
     vector<int> ans(nums1.size(), -1);
-    for(int i=0;i<nums1.size();++i){
-        ans[i]=dct[nums1[i]];
+    for (int i = 0; i < nums1.size(); ++i)
+    {
+        ans[i] = dct[nums1[i]];
     }
     return ans;
 }
-
 
 // 503. Next Greater Element II
 // 60 ms, faster than 55.70%
@@ -604,7 +712,8 @@ int main(int argc, char const *argv[])
     // testQstack();
     // testisValidSerialization();
     // format_test(dailyTemperatures,testdailyTemperatures);
-    format_test(nextGreaterElementWrapper, testnextGreaterElement);
+    // format_test(nextGreaterElementWrapper, testnextGreaterElement);
     // format_test(nextGreaterElement, testnextGreaterElementII);
+    testremoveOuterParentheses();
     return 0;
 }
