@@ -6,15 +6,89 @@
 #include <iostream>
 using namespace std;
 
+// 938. Range Sum of BST
+// 96 ms, faster than 99.90%
+// 54.6 MB, less than 99.23%
+int rangeSumBST(TreeNode *root, int low, int high)
+{
+    vector<int> mid;
+    stack<TreeNode *> sta;
+    sta.push(root);
+    while (!sta.empty())
+    {
+        TreeNode *tp = sta.top();
+        sta.pop();
+        if (!tp->right && !tp->left)
+        {
+            mid.push_back(tp->val);
+        }
+        else
+        {
+            if (tp->right)
+            {
+                sta.push(tp->right);
+                tp->right = nullptr;
+            }
+            sta.push(tp);
+            if (tp->left)
+            {
+                sta.push(tp->left);
+                tp->left = nullptr;
+            }
+        }
+    }
+    int i = 0, len = mid.size(), j = len - 1;
+    while (i < len)
+    {
+        if (mid[i] < low)
+            i++;
+        else
+            break;
+    }
+    while (j > 0)
+    {
+        if (mid[j] > high)
+            j--;
+        else
+            break;
+    }
+
+    int ans = 0;
+    for (; i <= j; i++)
+    {
+        ans += mid[i];
+    }
+    return ans;
+}
+
+void testrangeSumBST()
+{
+    vector<int> ta;
+    int low, high;
+    TreeNode *root;
+
+    low = 7, high = 15;
+    ta = {10, 5, 15, 3, 7, 13, 18, 1, -1, 6};
+    root = buildTree(ta);
+    prettyPrintTree(root, maxDepth(root));
+    cout << "rangeSumBST: " << low << "..." << high << " " << rangeSumBST(root, low, high) << endl;
+
+    low = 6, high = 10;
+    ta = {10, 5, 15, 3, 7, -1, 18};
+    root = buildTree(ta);
+    prettyPrintTree(root, maxDepth(root));
+    cout << "rangeSumBST: " << low << "..." << high << " " << rangeSumBST(root, low, high) << endl;
+}
+
 // 437. Path Sum III
-int pathSum(TreeNode *root, int sum)
+int pathSumIII(TreeNode *root, int sum)
 {
 }
 
 // 113. Path Sum II
 // 12 ms, faster than 72.81%
 // 12.4 MB, less than 99.77%
-vector<vector<int>> pathSumII(TreeNode *root, int targetSum)
+vector<vector<int>> pathSum(TreeNode *root, int targetSum)
 {
     if (!root)
         return {};
@@ -884,6 +958,7 @@ int main(int argc, char const *argv[])
     // });
     // testTree(diameterOfBinaryTree, "diameterOfBinaryTree");
     // testhasPathSum();
-    testPathSum();
+    // testPathSum();
+    testrangeSumBST();
     return 0;
 }
