@@ -1,6 +1,42 @@
 #include "sort.h"
-#include "common.h"
+#include "../common.h"
 int INPUT_SIZE = 10;
+
+using namespace std;
+
+// 1710. Maximum Units on a Truck
+// 32 ms, faster than 99.03%
+// 16 MB, less than 93.23%
+int maximumUnits(vector<vector<int>> &boxTypes, int truckSize)
+{
+    sort(boxTypes.begin(), boxTypes.end(), [](vector<int> &boxa, vector<int> &boxb) { return boxa[1] > boxb[1]; });
+    int ans = 0;
+    int i = 0, len = boxTypes.size();
+    while (truckSize > 0 && i <len)
+    {
+        int boxes = boxTypes[i][0];
+        if (truckSize >= boxes)
+        {
+            ans += boxes * boxTypes[i][1];
+            truckSize -= boxes;
+            i++;
+        }
+        else
+        {
+            ans += truckSize * boxTypes[i][1];
+            return ans;
+        }
+    }
+    return ans;
+}
+
+void testmaximumUnits()
+{
+    my2arr boxtypes = {{1, 3}, {5, 5}, {2, 5}, {4, 2}, {4, 1}, {3, 1}, {2, 2}, {1, 3}, {2, 5}, {3, 2}};
+    int trucksize = 35;
+    printVector(boxtypes);
+    cout << "maximumUnits: " << maximumUnits(boxtypes, trucksize) << endl;
+}
 
 template <class T>
 int getArrayLen(T &array)
@@ -486,9 +522,9 @@ void wiggleSort(vector<int> &nums)
     if (len <= 1)
         return;
     // 8,1,6,3,4,5,2,7....
-    auto vindex=[&](int i)->int{
-        int even=(len%2)?(len-1-i):(len-2-i);
-        return (i%2)?i:even;
+    auto vindex = [&](int i) -> int {
+        int even = (len % 2) ? (len - 1 - i) : (len - 2 - i);
+        return (i % 2) ? i : even;
     };
 
     int start = 0;
@@ -500,11 +536,11 @@ void wiggleSort(vector<int> &nums)
         }
 
         int maxi = vindex(start), max = nums[maxi];
-        int mini = vindex(start), min = nums [mini];
+        int mini = vindex(start), min = nums[mini];
         int i = -1;
         for (int vi = start + 1; vi < len; vi++)
         {
-            i=vindex(vi);
+            i = vindex(vi);
             if (nums[i] >= max)
             {
                 max = nums[i];
@@ -516,26 +552,31 @@ void wiggleSort(vector<int> &nums)
                 mini = i;
             }
         }
-        int tmaxi=vindex(start+1);
-        int tmini=vindex(start);
-        if(maxi==tmini){
-           swap(nums[maxi],nums[mini]);
-        }else{
-            swap(nums[tmini],nums[mini]);
-            swap(nums[tmaxi],nums[maxi]);
+        int tmaxi = vindex(start + 1);
+        int tmini = vindex(start);
+        if (maxi == tmini)
+        {
+            //    swap(nums[maxi],nums[mini]);
+            swap(nums[tmaxi], nums[maxi]);
+            swap(nums[tmini], nums[mini]);
+        }
+        else
+        {
+            swap(nums[tmini], nums[mini]);
+            swap(nums[tmaxi], nums[maxi]);
         }
         start = start + 2;
     }
 }
 
-
-my2arr&& generateWiggleInputes(){
+my2arr &&generateWiggleInputes()
+{
     my2arr cases = {
         {6, 5, 5},
         {5, 6, 1},
         {2, 1},
         {1, 2},
-        {1,3,2,2,3,1},
+        {1, 3, 2, 2, 3, 1},
         // output:  [1,3,1,2,3,2]
         // expected: [2,3,1,3,1,2]
         {5, 3, 1, 2, 6, 7, 8, 5, 5},
@@ -553,15 +594,16 @@ my2arr&& generateWiggleInputes(){
 void testWiggleSort()
 {
     my2arr cases = {
-        {1,5,3,2,4,1,2,1,5,2,4,3,1,2,2,2,1},
-        // Output: [2,5,2,5,2,4,2,1,2,4,1,3,1,3,1,2,1]
+        {1, 1, 2, 2, 2, 1},
+        {1, 5, 3, 2, 4, 1, 2, 1, 5, 2, 4, 3, 1, 2, 2, 2, 1},
+        // Output:   [2,5,2,5,2,4,2,1,2,4,1,3,1,3,1,2,1]
         // Expected: [2,5,2,5,2,4,2,4,1,3,1,3,1,2,1,2,1]
-        {4,5,5,5,5,6,6,6},
+        {4, 5, 5, 5, 5, 6, 6, 6},
         {6, 5, 5},
         {5, 6, 1},
         {2, 1},
         {1, 2},
-        {1,3,2,2,3,1},
+        {1, 3, 2, 2, 3, 1},
         // output:  [1,3,1,2,3,2]
         // expected: [2,3,1,3,1,2]
         {5, 3, 1, 2, 6, 7, 8, 5, 5},
@@ -582,18 +624,20 @@ void testWiggleSort()
     }
 }
 
-
-template<typename p>
-void test_tem(p prt){
+template <typename p>
+void test_tem(p prt)
+{
     prt();
 }
 
-void fun1(){
-    cout<<"fun1"<<endl;
+void fun1()
+{
+    cout << "fun1" << endl;
 }
 
-void fun2(int a){
-    cout<<"fun2 "<<a<<endl;
+void fun2(int a)
+{
+    cout << "fun2 " << a << endl;
 }
 
 int main(int arc, const char *argv[])
@@ -604,6 +648,7 @@ int main(int arc, const char *argv[])
     // testisAnagram();
     // printf("A: %d\n", 'A');
     // printf("a: %d\n", 'a');
-    testWiggleSort();
+    // testWiggleSort();
     // format_test(wiggleSort,generateWiggleInputes,printVector);
+    testmaximumUnits();
 }
