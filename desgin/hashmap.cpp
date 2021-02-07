@@ -3,6 +3,28 @@
 #include <list>
 using namespace std;
 
+// 1748. Sum of Unique Elements
+//  0 ms, faster than 100.00%
+// 7.8 MB, less than 100.00%
+int sumOfUnique(vector<int> &nums)
+{
+    int ans = 0;
+    vector<int> dc(101, 0);
+    int len = nums.size();
+    for (int i = 0; i < len; i++)
+    {
+        int num = nums[i];
+        int cnt = dc[num];
+        cnt++;
+        dc[num] = cnt;
+        if (cnt == 1)
+            ans += num;
+        else if (cnt == 2)
+            ans -= num;
+    }
+    return ans;
+}
+
 // 771. Jewels and Stones
 // : 0 ms, faster than 100.00%
 // 6.3 MB, less than 79.84%
