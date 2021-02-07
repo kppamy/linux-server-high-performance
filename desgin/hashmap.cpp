@@ -3,6 +3,34 @@
 #include <list>
 using namespace std;
 
+// 771. Jewels and Stones
+// : 0 ms, faster than 100.00%
+// 6.3 MB, less than 79.84%
+int numJewelsInStones(string jewels, string stones)
+{
+    vector<int> cpt(26, 0);
+    vector<int> sm(26, 0);
+    int lj = jewels.size();
+    for (int i = 0; i < lj; i++)
+    {
+        char cur = jewels[i];
+        if (cur >= 'a')
+            sm[cur - 'a']++;
+        else
+            cpt[cur - 'A']++;
+    }
+    int ls = stones.size();
+    int ans = 0;
+    for (int i = 0; i < ls; i++)
+    {
+        char cur = stones[i];
+        if ((cur >= 'a' && sm[cur - 'a'] > 0) ||
+            (cur >= 'A' && cur <= 'Z' && cpt[cur - 'A'] > 0))
+            ans++;
+    }
+    return ans;
+}
+
 // 1512. Number of Good Pairs
 //  0 ms, faster than 100.00% o
 //  7.2 MB, less than 79.44%
