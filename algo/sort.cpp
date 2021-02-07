@@ -4,6 +4,36 @@ int INPUT_SIZE = 10;
 
 using namespace std;
 
+
+// 1528. Shuffle String
+string restoreString(string s, vector<int> &indices)
+{
+    int len = indices.size();
+    vector<int> rev(len, len);
+
+    for (int i = 0; i < len; i++)
+    {
+        rev[indices[i]] = i;
+    }
+    string out(len, ' ');
+    int i = 0;
+    // 3-way unrolling, 66.6%-->98.44%
+    for (; i < len - 1; i += 2)
+    {
+        out[i] = s[rev[i]];
+        out[i + 1] = s[rev[i + 1]];
+    }
+    if (i > 2 && i % 2)
+        i = i - 2;
+    while (i < len)
+    {
+        out[i] = indices[rev[i]];
+        i++;
+    }
+
+    return out;
+}
+
 // 1710. Maximum Units on a Truck
 // 32 ms, faster than 99.03%
 // 16 MB, less than 93.23%
@@ -12,7 +42,7 @@ int maximumUnits(vector<vector<int>> &boxTypes, int truckSize)
     sort(boxTypes.begin(), boxTypes.end(), [](vector<int> &boxa, vector<int> &boxb) { return boxa[1] > boxb[1]; });
     int ans = 0;
     int i = 0, len = boxTypes.size();
-    while (truckSize > 0 && i <len)
+    while (truckSize > 0 && i < len)
     {
         int boxes = boxTypes[i][0];
         if (truckSize >= boxes)
