@@ -3,6 +3,26 @@
 #include <list>
 using namespace std;
 
+// 1512. Number of Good Pairs
+//  0 ms, faster than 100.00% o
+//  7.2 MB, less than 79.44%
+int numIdenticalPairs(vector<int> &nums)
+{
+    vector<int> cnt(101, 0);
+    int len = nums.size();
+    int ans = 0;
+    for (int i = 0; i < len; i++)
+    {
+        cnt[nums[i]]++;
+        int num = cnt[nums[i]];
+        if (num > 1)
+        {
+            ans += num - 1;
+        }
+    }
+    return ans;
+}
+
 // 706. Design HashMap
 // allocat heap memory dynamically: 192 ms, faster than 22.05%;  56.7 MB, less than 44.70%
 // initialize enough memory at the begining: 164 ms, faster than 52.59% ;  54.9 MB, less than 52.43% ,
