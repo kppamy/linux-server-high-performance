@@ -1,4 +1,29 @@
 
+#include "../common.h"
+using namespace std;
+
+// 1725. Number Of Rectangles That Can Form The Largest Square
+// 36 ms, faster than 95.30%
+// 18.2 MB, less than 95.52%
+int countGoodRectangles(vector<vector<int>> &rectangles)
+{
+    int ans = 0;
+    int maxlen = 0;
+    for (auto &&rect : rectangles)
+    {
+        int min = rect[0] > rect[1] ? rect[1] : rect[0];
+        if (min == maxlen)
+        {
+            ans++;
+        }
+        else if (min > maxlen)
+        {
+            maxlen = min;
+            ans = 1;
+        }
+    }
+    return ans;
+}
 
 // 1518. Water Bottles
 // Runtime: 0 ms, faster than 100.00% of C++ online submissions for Water Bottles.
@@ -17,7 +42,6 @@ int numWaterBottles(int numBottles, int numExchange)
     return sum;
 }
 
-#include "common.h"
 void testnumWaterBottles()
 {
     int numBottles = 9, numExchange = 3;
