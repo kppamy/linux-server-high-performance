@@ -4,7 +4,64 @@
 #include <stack>
 #include <queue>
 #include <iostream>
+#include <set>
 using namespace std;
+
+// 1022. Sum of Root To Leaf Binary Numbers
+//  4 ms, faster than 91.33%
+//  9.6 MB, less than 100.00%
+int sumRootToLeaf(TreeNode *root)
+{
+    stack<TreeNode *> sta;
+    sta.push(root);
+    int ans = 0;
+    set<TreeNode *> nleaf;
+    while (!sta.empty())
+    {
+        TreeNode *tp = sta.top();
+        if (!tp->left && !tp->right)
+        {
+            if (nleaf.find(tp) == nleaf.end())
+                ans += tp->val;
+            sta.pop();
+        }
+        else
+        {
+            if (tp->left)
+            {
+                tp->left->val = (tp->val << 1) + tp->left->val;
+                nleaf.insert(tp);
+                sta.push(tp->left);
+                tp->left = nullptr;
+            }
+            if (tp->right)
+            {
+                tp->right->val = (tp->val << 1) + tp->right->val;
+                nleaf.insert(tp);
+                sta.push(tp->right);
+                tp->right = nullptr;
+            }
+        }
+    }
+    return ans;
+}
+
+void testsumRootToLeaf()
+{
+    my2arr cases = {
+        {1, 0, 1, 0, 1, 0, 1}};
+
+    for (auto &&test : cases)
+    {
+        printVector(test);
+        TreeNode *root = buildTree(test);
+        prettyPrintTree(root, maxDepth(root));
+        cout << "sumRootToLeaf: " << endl;
+        auto &&res = sumRootToLeaf(root);
+        print(res);
+        cout << endl;
+    }
+}
 
 // 938. Range Sum of BST
 // 96 ms, faster than 99.90%
@@ -83,6 +140,7 @@ void testrangeSumBST()
 // 437. Path Sum III
 int pathSumIII(TreeNode *root, int sum)
 {
+    return 0;
 }
 
 // 113. Path Sum II
@@ -528,6 +586,7 @@ const TreeNode *BinaryTree::nextValInMidOrder(const TreeNode *root, int val) con
 
         midOrder(root->right);
     }
+    return nullptr;
 }
 
 void BinaryTree::midOrder(const TreeNode *root) const
@@ -599,7 +658,7 @@ void BSTree<T>::del(TreeNodeT<T> *&root, T val)
     {
 
         //   next val in midOder
-        TreeNode *next = nextValInMidOrder(target, target->val);
+        // TreeNode *next = nextValInMidOrder(target, target->val);
     }
     else
     {
@@ -626,6 +685,7 @@ void BSTree<T>::del(TreeNodeT<T> *&root, T val)
 // two sum
 vector<int> twoSum(vector<int> &numbers, int target)
 {
+    return {};
 }
 
 #include <stack>
@@ -700,7 +760,6 @@ bool isSymmetric(TreeNode *root)
     {
         queue<TreeNode *> next;
         int sz = nodes.size();
-        int half = 0;
         int count = 0;
         while (!nodes.empty())
         {
@@ -959,6 +1018,7 @@ int main(int argc, char const *argv[])
     // testTree(diameterOfBinaryTree, "diameterOfBinaryTree");
     // testhasPathSum();
     // testPathSum();
-    testrangeSumBST();
+    // testrangeSumBST();
+    testsumRootToLeaf();
     return 0;
 }
