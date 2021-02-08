@@ -2,7 +2,53 @@
 #include "../common.h"
 using namespace std;
 
-// 1725. Number Of Rectangles That Can Form The Largest Square
+// 455. Assign Cookies
+// 28 ms, faster than 87.54%
+// 17.5 MB, less than 86.90%
+int findContentChildren(vector<int> &g, vector<int> &s)
+{
+    sort(g.begin(), g.end());
+    sort(s.begin(), s.end());
+    int i = 0, glen = g.size();
+    int j = 0, slen = s.size();
+    int ans = 0;
+    while (i < glen && j < slen)
+    {
+        if (g[i] <= s[j])
+        {
+            ans++;
+            i++;
+        }
+        j++;
+    }
+    return ans;
+}
+
+// 1716. Calculate Money in Leetcode Bank
+// 0 ms, faster than 100.00%
+// 5.9 MB, less than 76.14%
+int totalMoney(int n)
+{
+    int moday = 0;
+    int prev = 0;
+    int ans = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (i % 7 == 0)
+        {
+            moday++;
+            ans += moday;
+            prev = moday;
+        }
+        else
+        {
+            prev++;
+            ans += prev;
+        }
+    }
+    return ans;
+}
+
 // 36 ms, faster than 95.30%
 // 18.2 MB, less than 95.52%
 int countGoodRectangles(vector<vector<int>> &rectangles)
