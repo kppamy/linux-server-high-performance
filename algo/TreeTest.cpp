@@ -7,6 +7,52 @@
 #include <set>
 using namespace std;
 
+// 993. Cousins in Binary Tree
+// 4 ms, faster than 73.45%
+// 11.1 MB, less than 76.00%
+bool isCousins(TreeNode *root, int x, int y)
+{
+    queue<TreeNode *> bfs;
+    bfs.push(root);
+    int minx = x > y ? y : x;
+    int maxx = x + y - minx;
+    while (!bfs.empty())
+    {
+        int sz = bfs.size();
+        bool xf = false;
+        bool yf = false;
+
+        while (sz > 0)
+        {
+
+            TreeNode *tp = bfs.front();
+            bfs.pop();
+            sz--;
+            if (tp->left && tp->right)
+            {
+                int mmin = tp->left->val > tp->right->val ? tp->right->val : tp->left->val;
+                if (mmin == minx)
+                {
+                    int mmax = tp->left->val + tp->right->val - mmin;
+                    if (mmax == maxx)
+                        return false;
+                }
+            }
+            if (x == tp->val)
+                xf = true;
+            if (y == tp->val)
+                yf = true;
+            if (xf && yf)
+                return true;
+            if (tp->left)
+                bfs.push(tp->left);
+            if (tp->right)
+                bfs.push(tp->right);
+        }
+    }
+    return false;
+}
+
 // 617. Merge Two Binary Trees
 //  40 ms, faster than 81.67%
 // 32.7 MB, less than 99.33%
