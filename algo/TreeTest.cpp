@@ -7,6 +7,63 @@
 #include <set>
 using namespace std;
 
+// 617. Merge Two Binary Trees
+//  40 ms, faster than 81.67%
+// 32.7 MB, less than 99.33%
+TreeNode *mergeTrees(TreeNode *root1, TreeNode *root2)
+{
+    if (!root1)
+        return root2;
+    if (!root2)
+        return root1;
+    queue<TreeNode *> bfs1;
+    bfs1.push(root1);
+    queue<TreeNode *> bfs2;
+    bfs2.push(root2);
+    while (!bfs1.empty())
+    {
+        TreeNode *tp1 = bfs1.front();
+        bfs1.pop();
+        TreeNode *tp2 = bfs2.front();
+        bfs2.pop();
+        if (tp1 == tp2)
+            continue;
+        tp1->val += tp2->val;
+        if (tp1->left && tp2->left)
+        {
+            bfs1.push(tp1->left);
+            bfs2.push(tp2->left);
+        }
+        else
+        {
+            tp1->left = tp1->left ? tp1->left : tp2->left;
+            if (tp1->left)
+            {
+
+                bfs1.push(tp1->left);
+                bfs2.push(tp1->left);
+            }
+        }
+
+        if (tp1->right && tp2->right)
+        {
+            bfs1.push(tp1->right);
+            bfs2.push(tp2->right);
+        }
+        else
+        {
+            tp1->right = tp1->right ? tp1->right : tp2->right;
+            if (tp1->right)
+            {
+                bfs1.push(tp1->right);
+                bfs2.push(tp1->right);
+            }
+        }
+    }
+
+    return root1;
+}
+
 // 1022. Sum of Root To Leaf Binary Numbers
 //  4 ms, faster than 91.33%
 //  9.6 MB, less than 100.00%
