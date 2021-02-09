@@ -72,18 +72,20 @@ size_t max(size_t a, size_t b){
 }
 
 static void* first_fit(size_t asize){
-   void* start=heap_listp;
+   void* start=heap_listp + WSIZE;
    void* end = mem_heap_hi();
+   if(end-start<=asize)
+    return NULL;
    while (start<end)
    {
        size_t size = GET_SIZE(start);
        if(size<asize){
            start=NEXT_BLKP(start);
-       }else{
+       }else if(GET_ALLOC(start)!=1){
            return start;
        }
    }
-   return -1;
+   return NULL;
 }
 
 static void* find_fit(size_t asize){
@@ -160,13 +162,14 @@ static void* extend_heap(size_t words){
  */
 int mm_init(void)
 {
-    if((heap_listp=mem_sbrk(4*WSIZE))==(void*) -1)
+    if((heap_listp=mem_sbrk(6*WSIZE))==(void*) -1)
         return -1;
     PUT(heap_listp, 0);// padding
-    PUT(heap_listp+(1*WSIZE),PACK(DSIZE,1)); // prologue header
-    PUT(heap_listp+(2*WSIZE),PACK(DSIZE,1));// prologue footer
-    PUT(heap_listp+(3*WSIZE),PACK(0,1)); // epilogue header
-    heap_listp+=(2*WSIZE);
+    PUT(heap_listp + (1*WSIZE), 0);// padding
+    PUT(heap_listp+(2*WSIZE),PACK(DSIZE,1)); // prologue header
+    PUT(heap_listp+(3*WSIZE),PACK(DSIZE,1));// prologue footer
+    PUT(heap_listp+(4*WSIZE),PACK(WSIZE,1)); // epilogue header
+    heap_listp+=(3*WSIZE);
     if(extend_heap(CHUNKSIZE/WSIZE)==NULL)
         return -1;
     return 0;
@@ -178,7 +181,7 @@ int mm_init(void)
  */
 void *mm_malloc(size_t size)
 {
-    int newsize = ALIGN(size + SIZE_T_SIZE);
+    int newsize = ALIGN(size + DSIZE); // DSIZE: internal framentation
 
     char* bp;
     if((bp=find_fit(newsize))!=NULL){
@@ -186,10 +189,6 @@ void *mm_malloc(size_t size)
         return bp;
     }
 
-    void *p = mem_sbrk(newsize);
-    if (p == (void *)-1)
-        return NULL;
-    
     // no fit found
     size_t extendsize=max(newsize, CHUNKSIZE);
     if((bp=extend_heap(extendsize/WSIZE))==NULL)
