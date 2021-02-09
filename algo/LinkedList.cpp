@@ -7,8 +7,23 @@
 #include "../common.h"
 using namespace std;
 
+// 876. Middle of the Linked List
+// 0 ms, faster than 100.00%
+//  6.6 MB, less than 57.70%
+ListNode *middleNode(ListNode *head)
+{
+  ListNode *slow = head;
+  ListNode *fast = head;
+  while (fast && fast->next)
+  {
+    slow = slow->next;
+    fast = fast->next->next;
+  }
+  return slow;
+}
+
 // 160. Intersection of Two Linked Lists
-// 36 ms, faster than 95.71% 
+// 36 ms, faster than 95.71%
 // 14.5 MB, less than 88.89%
 ListNode *getIntersectionNode(ListNode *headA, ListNode *headB)
 {
