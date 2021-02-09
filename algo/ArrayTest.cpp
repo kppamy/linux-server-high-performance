@@ -4,6 +4,34 @@
 #include <unordered_map>
 using namespace std;
 
+// 35. Search Insert Position
+//  4 ms, faster than 91.97%
+// 9.6 MB, less than 93.79%
+int searchInsert(vector<int> &nums, int target)
+{
+    int start = 0, end = nums.size() - 1;
+    int mid;
+    int mn;
+    while (start <= end)
+    {
+        mid = (start + end) / 2;
+        mn = nums[mid];
+        if (mn == target)
+            return mid;
+        if (start == end)
+            break;
+        else if (target < mn)
+        {
+            end = mid - 1;
+        }
+        else
+        {
+            start = mid + 1;
+        }
+    }
+    return (mn > target) ? mid : (mid + 1);
+}
+
 // 977. Squares of a Sorted Array
 //  28 ms, faster than 96.96%
 // 25.8 MB, less than 95.88%
@@ -439,6 +467,8 @@ int main(int argc, char const *argv[])
     // testNiceArray();
     // timeit(testMaxArea);
     // format_test(countNegatives, testcountNega);
-    testkWeakestRows();
+    // testkWeakestRows();
+    vector<int> arr{1, 3};
+    searchInsert(arr, 2);
     return 0;
 }
