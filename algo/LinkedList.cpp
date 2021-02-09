@@ -7,6 +7,20 @@
 #include "../common.h"
 using namespace std;
 
+// 1290. Convert Binary Number in a Linked List to Integer
+// 0 ms, faster than 100.00%
+// 8.2 MB, less than 94.17%
+int getDecimalValue(ListNode *head)
+{
+  int ans = 0;
+  while (head)
+  {
+    ans = (ans << 1) + head->val;
+    head = head->next;
+  }
+  return ans;
+}
+
 // 876. Middle of the Linked List
 // 0 ms, faster than 100.00%
 //  6.6 MB, less than 57.70%
