@@ -6,6 +6,54 @@
 #include "../common.h"
 using namespace std;
 
+// 1576. Replace All ?'s to Avoid Consecutive Repeating Characters
+//  4 ms, faster than 38.88%
+// 6.1 MB, less than 69.07%
+string modifyString(string s)
+{
+    int i = 0, len = s.size();
+    char prev = 'a' - 1;
+    char next;
+    while (i < len - 1)
+    {
+        next = s[i + 1];
+        if (s[i] == '?' && s[i + 1] != '?')
+        {
+            if (prev == 'z' && next == 'z')
+            {
+                s[i] = 'a';
+            }
+            else if (prev != 'z' && next != 'z')
+            {
+                s[i] = 'z';
+            }
+            else
+            {
+                char nz = prev + next - 'z';
+                s[i] = (nz == 'a') ? 'b' : 'a';
+            }
+            i += 2; // process two characters once 38.88% -->100.00%
+            prev = next;
+        }
+        else if (s[i] == '?')
+        {
+            s[i] = (prev == 'z') ? 'a' : (prev + 1);
+            prev = s[i];
+            i++;
+        }
+        else
+        {
+            prev = s[i];
+            i++;
+        }
+    }
+    if (s[i] == '?')
+    {
+        s[i] = (prev == 'z') ? 'a' : (prev + 1);
+    }
+    return s;
+}
+
 // 1572. Matrix Diagonal Sum
 int diagonalSum(vector<vector<int>> &mat)
 {
