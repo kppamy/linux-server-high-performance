@@ -3,8 +3,28 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
-
+#include "../common.h"
 using namespace std;
+
+// 1572. Matrix Diagonal Sum
+int diagonalSum(vector<vector<int>> &mat)
+{
+    int m = mat.size(), n = mat[0].size();
+    int p = 0, s = n - 1;
+    int ans = 0;
+    while (p < n)
+    {
+        // if(p==s)
+        //     ans += mat[p][p];
+        // else
+        //     ans += mat[p][p] + mat[p][s];
+
+        ans += (p ^ s) ? (mat[p][p] + mat[p][s]) : mat[p][p]; // condition transfer improved from 83.% to 96.55%
+        p++;
+        s--;
+    }
+    return ans;
+}
 
 void printArr(int *arr, int len)
 {
@@ -112,7 +132,6 @@ int removeDup(vector<int> &nums)
     return j;
 }
 
-
 int square(unsigned int start, unsigned int end, unsigned int num)
 {
     //recursion faster than iteration ??
@@ -150,19 +169,24 @@ void testSqrt()
     cout << "mySqrt of 9 is " << mySqrt(9) << endl;
 }
 
+void testWhat(char **argv)
+{
+    cout << "begin algo test: " << endl;
+    reverseString(argv[1]);
+    int arr[7] = {1, 1, 1, 2, 3, 3, 4};
+    removeDup(arr, 7);
+    vector<int> vec{1, 1, 1, 2, 3, 3, 4, 4, 5, 7, 7};
+    removeDup(vec);
+    char input[7] = "123456";
+    reverseString(input, 6);
+    int a = 12345;
+    cout << "before operation: " << a << endl;
+    int res = reverseInteger(a);
+    cout << "after operation: " << res << endl;
+}
+
 int main(int argc, char **argv)
 {
-    // cout << "begin algo test: " << endl;
-    // reverseString(argv[1]);
-    // int arr[7] = {1,1,1,2,3,3,4};
-    // removeDup(arr, 7);
-    // vector<int> vec{1,1,1,2,3,3,4,4, 5, 7,7};
-    // removeDup(vec);
-    // char input[7]="123456";
-    // reverseString(input,6);
-    // int a = 12345;
-    // cout << "before operation: " << a << endl;
-    // int res = reverseInteger(a);
-    // cout << "after operation: " << res << endl;
+
     return 0;
 }
