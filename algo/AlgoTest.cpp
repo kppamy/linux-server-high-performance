@@ -6,8 +6,38 @@
 #include "../common.h"
 using namespace std;
 
+// 766. Toeplitz Matrix
+// 12 ms, faster than 92.93%
+// 17.5 MB, less than 69.36%
+bool isToeplitzMatrix(vector<vector<int>> &matrix)
+{
+    int m = matrix.size(), n = matrix[0].size();
+    int i = 0, j = 0;
+    while (j < n)
+    {
+        for (int r = i + 1, c = j + 1; r < m && c < n; r++, c++)
+        {
+            if (matrix[i][j] != matrix[r][c])
+                return false;
+        }
+        j++;
+    }
+    j = 0;
+    i = 1;
+    while (i < m)
+    {
+        for (int r = i + 1, c = j + 1; r < m && c < n; r++, c++)
+        {
+            if (matrix[i][j] != matrix[r][c])
+                return false;
+        }
+        i++;
+    }
+    return true;
+}
+
 // 1582. Special Positions in a Binary Matrix
-// 16 ms, faster than 96.38% 
+// 16 ms, faster than 96.38%
 // 12.9 MB, less than 73.97%
 int numSpecial(vector<vector<int>> &mat)
 {
@@ -19,19 +49,19 @@ int numSpecial(vector<vector<int>> &mat)
     {
         for (int j = 0; j < n; j++)
         {
-            if (mat[i][j]){
-                 rows[i]++;
-                 cols[j]++;
+            if (mat[i][j])
+            {
+                rows[i]++;
+                cols[j]++;
             }
-                
         }
     }
     int ans = 0;
-    for (int i = 0;  i < m; i++)
+    for (int i = 0; i < m; i++)
     {
-        for (int j = 0;  j < n; j++)
+        for (int j = 0; j < n; j++)
         {
-            if (mat[i][j]&&rows[i]==1&&cols[j]==1)
+            if (mat[i][j] && rows[i] == 1 && cols[j] == 1)
                 ans++;
         }
     }
