@@ -6,6 +6,38 @@
 #include "../common.h"
 using namespace std;
 
+// 1582. Special Positions in a Binary Matrix
+// 16 ms, faster than 96.38% 
+// 12.9 MB, less than 73.97%
+int numSpecial(vector<vector<int>> &mat)
+{
+    int m = mat.size(), n = mat[0].size();
+    if (m == 1 && n == 1)
+        return mat[0][0] == 1;
+    vector<int> rows(m, 0), cols(n, 0);
+    for (int i = 0; i < m; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (mat[i][j]){
+                 rows[i]++;
+                 cols[j]++;
+            }
+                
+        }
+    }
+    int ans = 0;
+    for (int i = 0;  i < m; i++)
+    {
+        for (int j = 0;  j < n; j++)
+        {
+            if (mat[i][j]&&rows[i]==1&&cols[j]==1)
+                ans++;
+        }
+    }
+
+    return ans;
+}
 // 1576. Replace All ?'s to Avoid Consecutive Repeating Characters
 //  4 ms, faster than 38.88%
 // 6.1 MB, less than 69.07%
