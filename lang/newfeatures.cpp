@@ -70,7 +70,7 @@ void reference(std::string &&str)
     std::cout << "right value" << std::endl;
 }
 
-int testRvalue()
+void testRvalueOld()
 {
     std::string lv1 = "string,"; // lv1 是一个左值
     // std::string&& r1 = s1;           // 非法, s1 在全局上下文中没有声明
@@ -88,6 +88,37 @@ int testRvalue()
     reference(rv2);                            // 输出左值，对右值的引用被推导为左值
     reference("string");                       // 输出右值
     reference(std::forward<std::string>(rv2)); // 输出右值
+}
+
+class Rvtest
+{
+public:
+    int i = 0;
+    Rvtest operator+(const Rvtest &second)
+    {
+        Rvtest tmp;
+        tmp.i = second.i + this->i;
+        return std::move(tmp);
+    }
+};
+
+Rvtest &&testRv(Rvtest &&rv)
+{
+    std::cout << "before return " << rv.i << " " << &rv.i << std::endl;
+    Rvtest &&r = std::move(rv);
+    std::cout << "return " << rv.i << " " << &rv.i << std::endl;
+    std::cout << "return " << r.i << " " << &r.i << std::endl;
+    return std::move(rv);
+}
+
+void testRvalue()
+{
+    Rvtest r1;
+    r1.i = 1;
+    Rvtest r2;
+    r2.i = 2;
+    Rvtest &&r3 = testRv(r1 + r2);
+    std::cout << "after return " << r3.i << " " << &r3.i << std::endl;
 }
 
 #include <iostream>
@@ -149,98 +180,93 @@ int testTuple()
 
     // 元组进行拆包
     std::tie(gpa, grade, name) = get_student(1);
-    std::cout << "ID: 1, "
-              << "GPA: " << gpa << ", "
-              << "成绩: " << grade << ", "
-              << "姓名: " << name << '\n';
 }
 
-#include <iostream>
-#include <memory>
+#include <thread>
+#include <future>
 
-class A;
-class B;
-
-class A
-{
-public:
-    // A 或 B 中至少有一个使用 weak_ptr
-    std::weak_ptr<B> pointer;
-    A()
-    {
-        std::cout << "A created" << std::endl;
-    }
-    ~A()
-    {
-        std::cout << "A destroyed" << std::endl;
-    }
-};
-
-class B
-{
-public:
-    std::shared_ptr<A> pointer;
-    // std::weak_ptr<A> pointer;
-
-    B()
-    {
-        std::cout << "B created " << std::endl;
-    }
-    ~B()
-    {
-        std::cout << "B destroyed" << std::endl;
-    }
-};
-
-int testPtr()
-{
-    std::shared_ptr<A> a = std::make_shared<A>();
-    std::shared_ptr<B> b = std::make_shared<B>();
-    std::cout << "pointer a cout: " << a->pointer.use_count() << std::endl;
-
-    a->pointer = b;
-    std::cout << "pointer a cout: " << a->pointer.use_count() << std::endl;
-    std::cout << "pointer b cout: " << b->pointer.use_count() << std::endl;
-
-    std::cout << "pointer a: " << &(a->pointer) << std::endl; // weak_reference不能直接cout
-    b->pointer = a;
-    std::cout << "pointer b cout: " << b->pointer.use_count() << std::endl;
-    a.reset();
-    // std::cout<<"pointer a cout: "<<a->pointer.use_count()<<std::endl; //exception
-    std::cout << "pointer b cout: " << b->pointer.use_count() << std::endl;
-
-    std::cout << "pointer b: " << (b->pointer) << std::endl;
-    // std::cout<<"pointer b: "<<&(b->pointer)<<std::endl;
-
-    return 0;
-}
-
-#include <locale.h>
-
-#include <functional>
 using namespace std;
-void eval(function<int(int)> &f)
+
+
+int func()
 {
-    cout << "int(int)" << f(3)<<endl;
+    return 1;
 }
 
-int fii(int a)
+void func2(promise<int> &&p)
 {
-    cout << "fii ";
-    return a;
+    cout << "task thread id: " << this_thread::get_id() << endl;
+    p.set_value(1);
 }
 
-float fdd(double a)
+void func3(shared_future<int> sf, int who)
 {
-    cout << "fdd ";
+    if(who==1)
+        this_thread::sleep_for(chrono::nanoseconds(1000*1000));
+    cout << "func3  thread id: " << this_thread::get_id() << " get shared " << sf.get() << " who: "<<who<<endl;
 }
 
-void testFunction()
+void testOnceCommunication(){
+   
+    {
+        std::promise<void> p;
+        auto f=p.get_future();
+        std::thread th([](std::future<void> f){
+            f.wait();
+            // getchar();
+            cout<<"1"<<endl;
+        }, move(f));
+        // getchar();
+        cout<<"A";
+        p.set_value();
+        th.join();
+    }
+
+    //  getchar();
+    {
+        std::promise<void> p;
+        auto sf=p.get_future().share();
+        std::thread th([sf](){
+            sf.wait();
+            cout<<"2"<<endl;
+        });
+    
+        cout<<"B";
+        p.set_value();
+        th.join();
+    }
+
+}
+void testThead()
 {
-    function<int(int)> func(fii);
-    eval(func);
-    func = fdd;
-    eval(func);
+    cout << "main thread id: " << this_thread::get_id() << endl;
+    {
+        // auto f=std::async(std::launch::deferred, func);// the same thread
+        auto f = std::async(func); // async or sync
+        cout << f.get() << endl;   // 未超订：隐式detach，超订隐式join
+    }
+
+    {
+        promise<int> p;
+        shared_future<int> sf = p.get_future().share();
+
+        thread t1(func3, sf, 1);
+        thread t2(func3, sf, 2);
+        p.set_value(2);
+        t1.join(); // t1 和 t2 who run first? do not know...
+        t2.join();
+    }
+
+
+    {
+        packaged_task<int()> pt(func);
+        auto f=pt.get_future();
+        async(move(pt));
+        // auto f2=async(pt);  // error!!!, 复制拷贝被禁用 
+        auto f3=async(move(pt));
+        cout<<"get result from packaged task "<<f.get()<<endl;
+        // cout<<"get result from packaged task "<<f3.get()<<endl; // wrong !!!!
+    }
 }
 
 int main(int argc, char const *argv[])
@@ -254,9 +280,14 @@ int main(int argc, char const *argv[])
     // std::system("chcp 65001");
     // setlocale(LC_ALL, "CHS");
     // testPtr();
+    // testRvalueOld();
     // testRvalue();
     // timeit(testPrintOrderM);
     // timeit(testPrintOrderFP);
-    testFunction();
+    // testFunction();
+    // testThead();
+    testOnceCommunication();
+    // getchar();
     return 0;
 }
+
