@@ -6,6 +6,28 @@
 #include "../common.h"
 using namespace std;
 
+// 1588. Sum of All Odd Length Subarrays
+//  0 ms, faster than 100.00
+// 8.2 MB, less than 97.61%
+int sumOddLengthSubarrays(vector<int> &arr)
+{
+    int len=arr.size();
+    int ans=0;
+    for (int win=1; win <= len; win+=2)
+    {
+        int end = len - win + 1;
+        for (int i = 0; i < end; i++)
+        {
+            int sube= i+win;
+            for (int j = i; j < sube; j++)
+            {
+                ans+=arr[j];
+            }
+        }
+    }
+    return ans;
+}
+
 // 766. Toeplitz Matrix
 // 12 ms, faster than 92.93%
 // 17.5 MB, less than 69.36%
