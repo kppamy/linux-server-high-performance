@@ -13,6 +13,26 @@ class TreeNode:
 
 
 class Solution:
+    # 1379. Find a Corresponding Node of a Binary Tree in a Clone of That Tree
+    # : 628 ms, faster than 60.07% o
+    #  24.1 MB, less than 56.71%
+    def getTargetCopy(self, original: TreeNode, cloned: TreeNode, target: TreeNode) -> TreeNode:
+        s1 = deque()
+        s2 = deque()
+        s1.append(original)
+        s2.append(cloned)
+        while len(s1) > 0:
+            tp1 = s1.pop()
+            tp2 = s2.pop()
+            if tp1.val == target.val:
+                return tp2
+            if tp1.left is not None:
+                s1.append(tp1.left)
+                s2.append(tp2.left)
+            if tp1.right is not None:
+                s1.append(tp1.right)
+                s2.append(tp2.right)
+
     # 897. Increasing Order Search Tree
     #  32 ms, faster than 66.58%
     # 14.3 MB, less than 47.06%
