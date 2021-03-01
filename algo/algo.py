@@ -13,6 +13,25 @@ class TreeNode:
 
 
 class Solution:
+    # 665. Non-decreasing Array
+    # 180 ms, faster than 83.86%
+    # 15.4 MB, less than 24.34%
+    def checkPossibility(self, nums: List[int]) -> bool:
+        sz = len(nums)
+        modified = False
+        for idx, val in enumerate(nums):
+            if idx < sz - 1 and nums[idx] > nums[idx + 1]:
+                if modified:
+                    return False
+                if idx > 0 and nums[idx - 1] <= nums[idx + 1]:
+                    nums[idx] = nums[idx - 1]
+                elif idx == 0:
+                    nums[idx] = nums[idx + 1] - 1
+                else:
+                    nums[idx + 1] = nums[idx]
+                modified = True
+        return True
+
     # 1379. Find a Corresponding Node of a Binary Tree in a Clone of That Tree
     # : 628 ms, faster than 60.07% o
     #  24.1 MB, less than 56.71%
