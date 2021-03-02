@@ -1,6 +1,5 @@
-import typing.List
-
 from collections import deque
+from typing import List
 
 
 # Definition for a binary tree node.
@@ -13,6 +12,48 @@ class TreeNode:
 
 
 class Solution:
+    # 5. Longest Palindromic Substring
+    # 828 ms, faster than 87.76%
+    # 14.5 MB, less than 39.86%
+    def longestPalindrome(self, s: str) -> str:
+        sz = len(s)
+        if sz <= 1:
+            return s
+        start = 0
+        maxlen = 0
+        i = 0
+        while i < sz:
+            len1 = self.expandAroundCenter(s, i, i)
+            len2 = self.expandAroundCenter(s, i, i + 1)
+            ll = max(len1, len2)
+            if ll > maxlen:
+                maxlen = ll
+                if ll % 2:
+                    start = i - ll // 2
+                else:
+                    start = i - ll // 2 + 1
+            i += 1
+        return s[start:start + maxlen]
+
+    def expandAroundCenter(self, s: str, left: int, right: int) -> int:
+        sz = len(s)
+        while left >= 0 and right < sz and s[left] == s[right]:
+            left -= 1
+            right += 1
+        return right - left - 1
+
+    # ababac
+    def kmp_jump(self, word: str):
+        sz = len(word)
+        pre = [-1] * sz
+        matched = -1
+        for i in range(1, sz):
+            while matched != -1 and word[i] != word[matched + 1]:
+                matched = pre[matched]
+            if word[i] == word[matched + 1]:
+                matched += 1
+        return pre
+
     # 665. Non-decreasing Array
     # 180 ms, faster than 83.86%
     # 15.4 MB, less than 24.34%
@@ -85,3 +126,10 @@ class Solution:
             for start in range(size - win + 1):
                 ans = ans + sum(arr[start:start + win])
         return ans
+
+
+print(Solution().longestPalindrome('aaaa'))
+print(Solution().longestPalindrome('aaa'))
+print(Solution().longestPalindrome('a'))
+print(Solution().longestPalindrome('aab'))
+print(Solution().longestPalindrome('abacaa'))
