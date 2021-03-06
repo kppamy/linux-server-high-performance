@@ -6,22 +6,49 @@
 #include "../common.h"
 using namespace std;
 
+// 1630. Arithmetic Subarrays
+//  36 ms, faster than 94.73%
+// 20.9 MB, less than 94.98%
+vector<bool> checkArithmeticSubarrays(vector<int> &nums, vector<int> &l, vector<int> &r)
+{
+    int n = nums.size(), m = l.size();
+    vector<bool> ans(m, true);
+    vector<int> tmp(n, 0);
+    for (int i = 0; i < m; i++)
+    {
+        int left = l[i], right = r[i];
+        copy(nums.begin() + left, nums.begin() + right + 1, tmp.begin());
+        sort(tmp.begin(), tmp.begin() + right - left + 1);
+        int dis = tmp[1] - tmp[0];
+        int end = right - left;
+        for (int j = 1; j < end; j++)
+        {
+            if (tmp[j + 1] - tmp[j] != dis)
+            {
+                ans[i] = false;
+                break;
+            }
+        }
+    }
+    return ans;
+}
+
 // 1588. Sum of All Odd Length Subarrays
 //  0 ms, faster than 100.00
 // 8.2 MB, less than 97.61%
 int sumOddLengthSubarrays(vector<int> &arr)
 {
-    int len=arr.size();
-    int ans=0;
-    for (int win=1; win <= len; win+=2)
+    int len = arr.size();
+    int ans = 0;
+    for (int win = 1; win <= len; win += 2)
     {
         int end = len - win + 1;
         for (int i = 0; i < end; i++)
         {
-            int sube= i+win;
+            int sube = i + win;
             for (int j = i; j < sube; j++)
             {
-                ans+=arr[j];
+                ans += arr[j];
             }
         }
     }
@@ -319,6 +346,9 @@ void testWhat(char **argv)
 
 int main(int argc, char **argv)
 {
-
+    vector<int> nums = {4, 6, 5, 9, 3, 7};
+    vector<int> l = {0, 0, 2};
+    vector<int> r = {2, 3, 5};
+    checkArithmeticSubarrays(nums, l, r);
     return 0;
 }
