@@ -3,6 +3,25 @@
 #include <math.h>
 #include "../Timer.h"
 
+// 96. Unique Binary Search Trees
+// 0 ms, faster than 100.00% 
+// 6.1 MB, less than 55.91%
+int numTrees(int n)
+{
+    vector<int> dp(n+1,0);
+    dp[0]=dp[1]=1;
+    for (int i = 2; i <= n; i++)
+    {
+        for (int root = 1; root <= i; root++)
+        {
+            int left=dp[root-1];
+            int right=dp[i-root];
+            dp[i]+=left*right;
+        }
+    }
+    return dp[n];
+}
+
 // 63. Unique Paths II
 // 0 ms, faster than 100.00%
 // 7.9 MB, less than 33.19%
