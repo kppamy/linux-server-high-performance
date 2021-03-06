@@ -187,7 +187,6 @@ int testTuple()
 
 using namespace std;
 
-
 int func()
 {
     return 1;
@@ -201,23 +200,25 @@ void func2(promise<int> &&p)
 
 void func3(shared_future<int> sf, int who)
 {
-    if(who==1)
-        this_thread::sleep_for(chrono::nanoseconds(1000*1000));
-    cout << "func3  thread id: " << this_thread::get_id() << " get shared " << sf.get() << " who: "<<who<<endl;
+    if (who == 1)
+        this_thread::sleep_for(chrono::nanoseconds(1000 * 1000));
+    cout << "func3  thread id: " << this_thread::get_id() << " get shared " << sf.get() << " who: " << who << endl;
 }
 
-void testOnceCommunication(){
-   
+void testOnceCommunication()
+{
+
     {
         std::promise<void> p;
-        auto f=p.get_future();
-        std::thread th([](std::future<void> f){
+        auto f = p.get_future();
+        std::thread th([](std::future<void> f) {
             f.wait();
             // getchar();
-            cout<<"1"<<endl;
-        }, move(f));
+            cout << "1" << endl;
+        },
+                       move(f));
         // getchar();
-        cout<<"A";
+        cout << "A";
         p.set_value();
         th.join();
     }
@@ -225,17 +226,16 @@ void testOnceCommunication(){
     //  getchar();
     {
         std::promise<void> p;
-        auto sf=p.get_future().share();
-        std::thread th([sf](){
+        auto sf = p.get_future().share();
+        std::thread th([sf]() {
             sf.wait();
-            cout<<"2"<<endl;
+            cout << "2" << endl;
         });
-    
-        cout<<"B";
+
+        cout << "B";
         p.set_value();
         th.join();
     }
-
 }
 void testThead()
 {
@@ -257,16 +257,69 @@ void testThead()
         t2.join();
     }
 
-
     {
         packaged_task<int()> pt(func);
-        auto f=pt.get_future();
+        auto f = pt.get_future();
         async(move(pt));
-        // auto f2=async(pt);  // error!!!, 复制拷贝被禁用 
-        auto f3=async(move(pt));
-        cout<<"get result from packaged task "<<f.get()<<endl;
+        // auto f2=async(pt);  // error!!!, 复制拷贝被禁用
+        auto f3 = async(move(pt));
+        cout << "get result from packaged task " << f.get() << endl;
         // cout<<"get result from packaged task "<<f3.get()<<endl; // wrong !!!!
     }
+}
+
+void testVector()
+{
+    vector<int> arr;
+    arr.resize(3);
+    cout << "capacity: " << arr.capacity() << " size: " << arr.size() << endl;
+    arr.push_back(1);
+    cout << "push 1 capacity: " << arr.capacity() << endl;
+    arr.push_back(2);
+    cout << "push 2 capacity: " << arr.capacity() << endl;
+    arr.push_back(3);
+    cout << "push 3 capacity: " << arr.capacity() << endl;
+    printVector(arr);
+    arr.resize(1);
+    cout << "resize 1 capacity: " << arr.capacity() << " size: " << arr.size() << endl;
+    arr.resize(7);
+    cout << "resize 7 capacity: " << arr.capacity() << " size: " << arr.size() << endl;
+    printVector(arr);
+
+    vector<int> rsv;
+    rsv.reserve(2);
+    cout << "reserve 2 capacity: " << rsv.capacity() << " size " << rsv.size() << endl;
+    rsv.push_back(1);
+    cout << "reserve 2, push 1 capacity: " << rsv.capacity() << " size " << rsv.size() << endl;
+    rsv.push_back(2);
+    cout << "reserve 2, push 2 capacity: " << rsv.capacity() << " size " << rsv.size() << endl;
+    rsv.push_back(3);
+    cout << "reserve 2, push 3 capacity: " << rsv.capacity() << " size " << rsv.size() << endl;
+    rsv.shrink_to_fit();
+    cout << "reserve 2, shrink: " << rsv.capacity() << " size " << rsv.size() << endl;
+    rsv.reserve(2);
+    cout << "reserve 2,  " << rsv.capacity() << " size " << rsv.size() << endl;
+    rsv.reserve(5);
+    cout << "reserve 5 " << rsv.capacity() << " size " << rsv.size() << endl;
+    printVector(rsv);
+    rsv.reserve(3);
+    cout << "reserve 3 " << rsv.capacity() << " size " << rsv.size() << endl;
+    rsv.resize(6);
+    cout << "resize 6 " << rsv.capacity() << " size " << rsv.size() << endl;
+
+    printVector(rsv);
+    auto mid = rsv.begin() + 1;
+    auto end = rsv.begin() + 2;
+    cout << "mid: " << *mid << endl;
+    cout << "last: " << *end << endl;
+    rsv.erase(rsv.begin() + 1);
+    cout << "after erase capacity: " << rsv.capacity() << " size: " << rsv.size() << endl;
+    printVector(rsv);
+    cout << "after erase mid: " << *mid << endl;
+    rsv.clear();
+    cout << "after clear capacity: " << rsv.capacity() << " size: " << rsv.size() << endl;
+    printVector(rsv);
+    // cout<<"last: "<<*end<<endl;
 }
 
 int main(int argc, char const *argv[])
@@ -286,8 +339,9 @@ int main(int argc, char const *argv[])
     // timeit(testPrintOrderFP);
     // testFunction();
     // testThead();
-    testOnceCommunication();
+    // testOnceCommunication();
     // getchar();
+
+    testVector();
     return 0;
 }
-
