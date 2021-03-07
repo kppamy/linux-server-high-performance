@@ -3,20 +3,100 @@
 #include <math.h>
 #include "../Timer.h"
 
+// 542. 01 Matrix
+//  80 ms, faster than 71.21%
+// 27.3 MB, less than 78.61%
+vector<vector<int>> updateMatrix(vector<vector<int>> &matrix)
+{
+    int m = matrix.size(), n = matrix[0].size();
+    vector<vector<int>> dp(m, vector<int>(n, INT_MAX));
+    vector<pair<int, int>> checkAgain;
+    for (int i = 0; i < m; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (matrix[i][j] == 0)
+            {
+                dp[i][j] = 0;
+            }
+            else
+            {
+                int up = -1, left = -1;
+                int mi = INT_MAX;
+                if (i >= 1)
+                {
+                    up = matrix[i - 1][j];
+                    mi = mi < dp[i - 1][j] ? mi : dp[i - 1][j];
+                }
+                if (j >= 1)
+                {
+                    left = matrix[i][j - 1];
+                    mi = mi < dp[i][j - 1] ? mi : dp[i][j - 1];
+                }
+
+                if (up * left == 0)
+                    dp[i][j] = 1;
+                else
+                {
+                    if (mi != INT_MAX)
+                        dp[i][j] = mi + 1;
+                    checkAgain.push_back(make_pair(i, j));
+                }
+            }
+        }
+    }
+
+    reverse(checkAgain.begin(), checkAgain.end());
+    for (auto &&[i, j] : checkAgain)
+    {
+        int down = -1, right = -1;
+        int mi = dp[i][j] - 1;
+        if (i < m - 1)
+        {
+            down = matrix[i + 1][j];
+            mi = mi < dp[i + 1][j] ? mi : dp[i + 1][j];
+        }
+        if (j < n - 1)
+        {
+            right = matrix[i][j + 1];
+            mi = mi < dp[i][j + 1] ? mi : dp[i][j + 1];
+        }
+        dp[i][j] = (down * right == 0) ? 1 : (mi + 1);
+    }
+    return dp;
+}
+
+void testupdateMatrix()
+{
+    my2arr arr = {{1, 1, 1, 1, 1}, {1, 1, 1, 1, 0}, {1, 1, 1, 1, 1}};
+    print(arr);
+    auto res = updateMatrix(arr);
+    print(res);
+
+    cout << endl;
+
+    {
+        my2arr arr = {{1, 1, 1, 1, 1}, {0, 1, 1, 1, 1}, {1, 1, 1, 1, 1}};
+        print(arr);
+        auto res = updateMatrix(arr);
+        print(res);
+    }
+}
+
 // 96. Unique Binary Search Trees
-// 0 ms, faster than 100.00% 
+// 0 ms, faster than 100.00%
 // 6.1 MB, less than 55.91%
 int numTrees(int n)
 {
-    vector<int> dp(n+1,0);
-    dp[0]=dp[1]=1;
+    vector<int> dp(n + 1, 0);
+    dp[0] = dp[1] = 1;
     for (int i = 2; i <= n; i++)
     {
         for (int root = 1; root <= i; root++)
         {
-            int left=dp[root-1];
-            int right=dp[i-root];
-            dp[i]+=left*right;
+            int left = dp[root - 1];
+            int right = dp[i - root];
+            dp[i] += left * right;
         }
     }
     return dp[n];
@@ -787,5 +867,6 @@ int main(int argc, char const *argv[])
     // format_test(rob, testrob, printInt);
     // format_test(numberOfArithmeticSlices, testnumberOfArithmeticSlices, printInt);
     // format_test(maxSubArray, testmaxSubArray);
-    format_test(stoneGame, testStoneGame);
+    // format_test(stoneGame, testStoneGame);
+    testupdateMatrix();
 }
