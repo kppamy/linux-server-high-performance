@@ -3,6 +3,59 @@
 #include <math.h>
 #include "../Timer.h"
 
+// 221. Maximal Square
+// 20 ms, faster than 95.44%
+// 11.7 MB, less than 41.86%
+int maximalSquare(vector<vector<char>> &matrix)
+{
+    int m = matrix.size(), n = matrix[0].size();
+    vector<vector<int>> dp(m, vector<int>(n, 0));
+    int ans = 0;
+    for (int j = 0; j < n; j++)
+    {
+        if (matrix[0][j] == '1')
+        {
+            dp[0][j] = 1;
+            ans = 1;
+        }
+    }
+
+    for (int i = 0; i < m; i++)
+    {
+        if (matrix[i][0] == '1')
+        {
+            dp[i][0] = 1;
+            ans = 1;
+        }
+    }
+
+    for (int i = 1; i < m; i++)
+    {
+        for (int j = 1; j < n; j++)
+        {
+            if (matrix[i][j] == '1')
+            {
+                int up = dp[i - 1][j];
+                int left = dp[i][j - 1];
+                int cross = dp[i - 1][j - 1];
+                int mn = up < left ? up : left;
+                mn = mn < cross ? mn : cross;
+                int wid = mn + 1;
+                dp[i][j] = wid;
+                ans = ans > wid ? ans : wid;
+            }
+        }
+    }
+    return ans * ans;
+}
+
+void testmaximalSquare()
+{
+    vector<vector<char>> arr = {{1, 0, 1, 0, 0}, {1, 0, 1, 1, 1}, {1, 1, 1, 1, 1}, {1, 0, 0, 1, 0}};
+    print(arr);
+    cout << maximalSquare(arr) << endl;
+}
+
 // 542. 01 Matrix
 //  80 ms, faster than 71.21%
 // 27.3 MB, less than 78.61%
@@ -868,5 +921,6 @@ int main(int argc, char const *argv[])
     // format_test(numberOfArithmeticSlices, testnumberOfArithmeticSlices, printInt);
     // format_test(maxSubArray, testmaxSubArray);
     // format_test(stoneGame, testStoneGame);
-    testupdateMatrix();
+    // testupdateMatrix();
+    testmaximalSquare();
 }
