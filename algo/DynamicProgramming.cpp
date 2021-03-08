@@ -3,6 +3,62 @@
 #include <math.h>
 #include "../Timer.h"
 
+// 1277. Count Square Submatrices with All Ones
+//  68 ms, faster than 71.33%
+//  26.3 MB, less than 30.18%
+int countSquares(vector<vector<int>> &matrix)
+{
+    int m = matrix.size(), n = matrix[0].size();
+    vector<vector<int>> dp(m, vector<int>(n, 0));
+    int sm = m < n ? m : n;
+    vector<int> sides(sm + 1, 0);
+    for (int j = 0; j < n; j++)
+    {
+        if (matrix[0][j])
+        {
+            dp[0][j] = 1;
+            sides[1]++;
+        }
+    }
+
+    for (int i = 1; i < m; i++)
+    {
+        if (matrix[i][0])
+        {
+            dp[i][0] = 1;
+            sides[1]++;
+        }
+    }
+
+    for (int i = 1; i < m; i++)
+    {
+        for (int j = 1; j < n; j++)
+        {
+            if (matrix[i][j])
+            {
+                int up = dp[i - 1][j];
+                int left = dp[i][j - 1];
+                int cross = dp[i - 1][j - 1];
+                int mn = up < left ? up : left;
+                mn = mn < cross ? mn : cross;
+                int wid = mn + 1;
+                dp[i][j] = wid;
+                while (wid > 0)
+                {
+                    sides[wid]++;
+                    wid--;
+                }
+            }
+        }
+    }
+    int ans = 0;
+    for (auto &&i : sides)
+    {
+        ans += i;
+    }
+    return ans;
+}
+
 // 221. Maximal Square
 // 20 ms, faster than 95.44%
 // 11.7 MB, less than 41.86%
