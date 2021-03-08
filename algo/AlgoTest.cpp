@@ -6,6 +6,45 @@
 #include "../common.h"
 using namespace std;
 
+// 29. Divide Two Integers
+// 0 ms, faster than 100.00%
+// 5.9 MB, less than 57.86%
+int divide(int dividend, int divisor)
+{
+    if (dividend == INT_MIN && divisor == -1)
+        return INT_MAX;
+    if (divisor == 1)
+        return dividend;
+    int sign = (dividend > 0 ^ divisor > 0) ? -1 : 1;
+    long dvd = labs(dividend);
+    long dvs = labs(divisor);
+    int ans = 0;
+    while (dvd >= dvs)
+    {
+        long temp = dvs, m = 1;
+        while (temp << 1 <= dvd)
+        {
+            temp = temp << 1;
+            m = m << 1;
+        }
+        dvd -= temp;
+        ans += m;
+    }
+    return ans * sign;
+}
+
+void testdivi()
+{
+    cout << "sizeof(long): " << sizeof(long) << endl;
+    cout << divide(2147483647, 2) << endl;
+    cout << divide(4, 2) << endl;
+    cout << divide(3, 2) << endl;
+    cout << divide(-7, 3) << endl;
+    cout << divide(10, -4) << endl;
+    cout << divide(10, 3) << endl;
+    cout << divide(20, 11) << endl;
+}
+
 // 1630. Arithmetic Subarrays
 //  36 ms, faster than 94.73%
 // 20.9 MB, less than 94.98%
@@ -294,8 +333,8 @@ int removeDup(vector<int> &nums)
 int square(unsigned int start, unsigned int end, unsigned int num)
 {
     //recursion faster than iteration ??
-    if (end - start == 1)
-        return start;
+    if (start - end == 1)
+        return end;
     long long mid = (start + end) / 2;
     if (mid * mid < num)
         //  try x/2, 3/4 x
@@ -346,9 +385,10 @@ void testWhat(char **argv)
 
 int main(int argc, char **argv)
 {
-    vector<int> nums = {4, 6, 5, 9, 3, 7};
-    vector<int> l = {0, 0, 2};
-    vector<int> r = {2, 3, 5};
-    checkArithmeticSubarrays(nums, l, r);
+    // vector<int> nums = {4, 6, 5, 9, 3, 7};
+    // vector<int> l = {0, 0, 2};
+    // vector<int> r = {2, 3, 5};
+    // checkArithmeticSubarrays(nums, l, r);
+    testdivi();
     return 0;
 }
