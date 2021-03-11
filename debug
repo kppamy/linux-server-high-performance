@@ -4,6 +4,9 @@ r 10.11.68.138 12345
 b 16-4-stresstest.cpp:116
 r 10.11.68.138 12345 2
 ./webserver 10.11.68.138 12345
+curl http://10.11.68.138:12345/index.html
+http://10.11.68.138:12345/index.html
+ab -n 1 -k http://10.11.68.138:12345/index.html
 ./stresstest 10.11.68.138 12345 2
 b 15-6-web-main.cpp:130
 scp 15-6-web-main.cpp 15-5-http_conn.cpp chenay@10.11.68.138:/workspace/chenay/data/

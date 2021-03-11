@@ -4,9 +4,10 @@
             "name": "Mac",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/Users/chenay/ws/programs/relacy/**",
-                "/Users/chenay/ws/programs/concurrentqueue/**",
-                "/Users/chenay/ws/programs/readerwriterqueue/**",
+                "${workspaceFolder}/os/**",
+                // "/Users/chenay/ws/programs/relacy/**",
+                // "/Users/chenay/ws/programs/concurrentqueue/**",
+                // "/Users/chenay/ws/programs/readerwriterqueue/**",
             ],
             "defines": [],
             "macFrameworkPath": [
