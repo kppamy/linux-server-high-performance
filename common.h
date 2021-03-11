@@ -1,9 +1,13 @@
+
+#ifndef COMMON_H
+#define COMMON_H
 #include <iostream>
 #include <vector>
 #include <time.h>
 #include <limits.h>
 #include <random>
 #include "Timer.h"
+#include "algo/LinkedList.h"
 
 typedef std::vector<std::vector<int>> my2arr;
 typedef std::vector<my2arr> my2DCases;
@@ -32,6 +36,10 @@ double timeit(F func, Args&& ... arg)
 
 
 void print(int n){
+    std::cout<<" "<<n<<" "<<std::endl;
+}
+
+void print(bool n){
     std::cout<<" "<<n<<" "<<std::endl;
 }
 
@@ -138,7 +146,7 @@ void format_test(F func, I inputf){
      std::cout<<"=====case===== "<<std::endl;
      printVector(item);
      auto&& res=func(item);
-     std::cout<<"result: "<<std::endl;
+     std::cout<<"==result== "<<std::endl;
      print(res);
  }
 }
@@ -262,3 +270,5 @@ std::vector<std::string> split(const std::string &input, const std::string &rege
         last;
     return {first, last};
 }
+
+#endif

@@ -1,6 +1,7 @@
+#ifndef LINKED_LIST_H
+#define LINKED_LIST_H
 #include <stddef.h>
 #include <vector>
-using namespace std;
 /**
  * Definition for singly-linked list. */
 
@@ -29,6 +30,8 @@ public:
     };
     void deleteNode(ListNode *node);
     ListNode* removeEndNthNode(ListNode *head, int n);
-    ListNode* buildCircleList(vector<int> &input, int pos);
+    ListNode* buildCircleList(std::vector<int> &input, int pos);
     bool hasCycle(ListNode *head);
 };
+
+#endif   
