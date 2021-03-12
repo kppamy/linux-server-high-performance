@@ -7,6 +7,46 @@
 #include "../common.h"
 using namespace std;
 
+// 203. Remove Linked List Elements
+// 20 ms, faster than 91.13%
+// 15 MB, less than 60.00% o
+ListNode *removeElements(ListNode *head, int val)
+{
+  ListNode *dummy = new ListNode(-1);
+  dummy->next = head;
+  ListNode *prev = dummy;
+  ListNode *current = head;
+  while (current)
+  {
+    if (current->val == val)
+    {
+      prev->next = current->next;
+    }
+    else
+      prev = current;
+    current = current->next;
+  }
+  return dummy->next;
+}
+
+// 237. Delete Node in a Linked List
+// 12 ms, faster than 88.39%
+// 7.6 MB, less than 60.20%
+void deleteNode(ListNode *node)
+{
+  ListNode *mid = node;
+  while (mid && mid->next && mid->next->next)
+  {
+    mid->val = mid->next->val;
+    mid = mid->next;
+  }
+  if (mid->next)
+  {
+    mid->val = mid->next->val;
+    mid->next = nullptr;
+  }
+}
+
 // 1290. Convert Binary Number in a Linked List to Integer
 // 0 ms, faster than 100.00%
 // 8.2 MB, less than 94.17%
@@ -254,15 +294,15 @@ ListNode *vectorToListNode(const vector<int> &list)
 {
   // Now convert that list into linked list
   ListNode *dummyRoot = new ListNode(0);
-  ListNode *ptr = dummyRoot;
+  ListNode *current = dummyRoot;
   for (int item : list)
   {
-    ptr->next = new ListNode(item);
-    ptr = ptr->next;
+    current->next = new ListNode(item);
+    current = current->next;
   }
-  ptr = dummyRoot->next;
+  current = dummyRoot->next;
   delete dummyRoot;
-  return ptr;
+  return current;
 }
 
 ListNode *vectorToCircleListNode(const vector<int> &list, int pos)
@@ -273,23 +313,23 @@ ListNode *vectorToCircleListNode(const vector<int> &list, int pos)
   }
   // Now convert that list into linked list
   ListNode *dummyRoot = new ListNode(0);
-  ListNode *ptr = dummyRoot;
+  ListNode *current = dummyRoot;
   int counter = -1;
   ListNode *circle;
   for (int item : list)
   {
-    ptr->next = new ListNode(item);
-    ptr = ptr->next;
+    current->next = new ListNode(item);
+    current = current->next;
     counter++;
     if (counter == pos)
     {
-      circle = ptr;
+      circle = current;
     }
   }
-  ptr->next = circle;
-  ptr = dummyRoot->next;
+  current->next = circle;
+  current = dummyRoot->next;
   delete dummyRoot;
-  return ptr;
+  return current;
 }
 
 void prettyPrintLinkedList(ListNode *node, int pos = 0)
@@ -463,15 +503,15 @@ ListNode *splitList(ListNode *head, ListNode *pivot)
   return lower;
 }
 
-ListNode *qSortList(ListNode *head, ListNode *tail)
+ListNode *qSortList(ListNode *head, ListNode *current)
 {
-  if (head == tail)
+  if (head == current)
     return head;
-  ListNode *pre_split = splitList(head, tail);
+  ListNode *pre_split = splitList(head, current);
   if (pre_split->next != head)
     qSortList(head, pre_split);
-  if (pre_split->next != tail)
-    qSortList(pre_split->next->next, tail);
+  if (pre_split->next != current)
+    qSortList(pre_split->next->next, current);
   return head;
 }
 
@@ -480,19 +520,19 @@ ListNode *sortList(ListNode *head)
   if (!head)
     return nullptr;
   ListNode *tmp = head;
-  ListNode *tail = head;
+  ListNode *current = head;
   while (tmp)
   {
     if (!tmp->next)
     {
-      tail = tmp;
+      current = tmp;
       break;
     }
     tmp = tmp->next;
   }
-  if (tail == head)
+  if (current == head)
     return head;
-  return qSortList(head, tail);
+  return qSortList(head, current);
 }
 
 void testsortList()
