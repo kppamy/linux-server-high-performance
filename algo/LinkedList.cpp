@@ -7,6 +7,29 @@
 #include "../common.h"
 using namespace std;
 
+// 82. Remove Duplicates from Sorted List II
+ListNode *deleteDuplicates(ListNode *head)
+{
+  ListNode *dummy = new ListNode(101);
+  dummy->next = head;
+  ListNode *prev = dummy;
+  ListNode *current = head;
+  while (current)
+  {
+    if (current->val == prev->val)
+    {
+      current = current->next;
+    }
+    else
+    {
+      prev = current;
+      current = current->next;
+    }
+  }
+
+  return dummy->next;
+}
+
 // 203. Remove Linked List Elements
 // 20 ms, faster than 91.13%
 // 15 MB, less than 60.00% o
