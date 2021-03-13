@@ -7,6 +7,32 @@
 #include "../common.h"
 using namespace std;
 
+// 21. Merge Two Sorted Lists
+// 4 ms, faster than 97.50%
+// 14.8 MB, less than 87.01%
+ListNode *mergeTwoLists(ListNode *l1, ListNode *l2)
+{
+  ListNode *dummy = new ListNode(INT_MAX);
+  ListNode *head = dummy;
+  while (l1 && l2)
+  {
+    if (l1->val <= l2->val)
+    {
+      dummy->next = l1;
+      l1 = l1->next;
+    }
+    else
+    {
+      dummy->next = l2;
+      l2 = l2->next;
+    }
+    dummy = dummy->next;
+  }
+  ListNode *left = l1 == nullptr ? l2 : l1;
+  dummy->next = left;
+  return head->next;
+}
+
 // 92. Reverse Linked List II
 // 4 ms, faster than 59.80%
 //  0 ms, faster than 100.00%
