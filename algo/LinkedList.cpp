@@ -7,6 +7,74 @@
 #include "../common.h"
 using namespace std;
 
+// 92. Reverse Linked List II
+// 4 ms, faster than 59.80%
+//  0 ms, faster than 100.00%
+//  7.5 MB, less than 72.45%
+ListNode *reverseBetween(ListNode *head, int left, int right)
+{
+  int cnt = 0;
+  ListNode *before = new ListNode(501);
+  before->next = head;
+  ListNode *dummy = before; // mind before changes
+  ListNode *after;
+  ListNode *prev;
+  ListNode *next;
+
+  // 4  1 - 2  -- 3  5 ||  2, 4
+  // 1 2 3 || 1 , 2
+  // 1 2 3 || 2 , 3
+  // 1 2  || 1 , 2
+  // 1  || 1 , 1
+  while (head)
+  {
+    cnt++;
+    if (cnt > right)
+      break;
+    if (cnt < left)
+    {
+      before = head;
+      head = head->next;
+    }
+    else
+    {
+      next = head->next;
+      head->next = prev;
+      if (cnt == left)
+      {
+        after = head;
+      }
+      prev = head;
+      if (cnt == right)
+      {
+        after->next = next;
+        before->next = head;
+      }
+      head = next;
+    }
+  }
+  return dummy->next;
+}
+
+// 206. Reverse Linked List
+// 8 ms, faster than 72.20% o
+//  8.3 MB, less than 61.62%
+ListNode *reverseList(ListNode *head)
+{
+  // 1->2->3
+  // 1<-2  3
+  ListNode *next;
+  ListNode *prev = nullptr;
+  while (head)
+  {
+    next = head->next;
+    head->next = prev;
+    prev = head;
+    head = next;
+  }
+  return prev;
+}
+
 // 82. Remove Duplicates from Sorted List II
 //  8 ms, faster than 84.54%
 // 11.2 MB, less than 82.40%
