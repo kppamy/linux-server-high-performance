@@ -6,6 +6,34 @@
 #include "../common.h"
 using namespace std;
 
+// 1539. Kth Missing Positive Number
+// 0 ms, faster than 100.00%
+// 9.4 MB, less than 99.10%
+int findKthPositive(vector<int> &arr, int k)
+{
+    int len = arr.size();
+    int pre = arr[0];
+    int missing = pre - 1;
+    if (missing >= k)
+        return k;
+    for (int i = 1; i < len; i++)
+    {
+        int cur = arr[i];
+        int dif = cur - pre;
+        if (dif != 1)
+        {
+            int more = missing + dif - 1;
+            if (more >= k)
+            {
+                return pre + k - missing;
+            }
+            missing = more;
+        }
+        pre = cur;
+    }
+    return arr[len - 1] + k - missing;
+}
+
 // 268. Missing Number
 // 16 ms, faster than 91.42%
 // 17.8 MB, less than 95.35%
