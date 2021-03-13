@@ -6,43 +6,73 @@
 #include "../common.h"
 using namespace std;
 
+// 268. Missing Number
+// 16 ms, faster than 91.42%
+// 17.8 MB, less than 95.35%
+int missingNumber(vector<int> &nums)
+{
+    int len = nums.size();
+    nums.push_back(-1);
+    for (int i = 0; i <= len;)
+    {
+        int cur = nums[i];
+        if (cur != -1 && cur != i)
+        {
+            swap(nums[i], nums[cur]);
+        }
+        else
+        {
+            i++;
+        }
+    }
+    for (int i = 0; i <= len; i++)
+    {
+        if (nums[i] == -1)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
 // 784. Letter Case Permutation
-// 8 ms, faster than 70.57% 
-//  9.2 MB, less than 96.53% 
+// 8 ms, faster than 70.57%
+//  9.2 MB, less than 96.53%
 vector<string> letterCasePermutation(string S)
 {
-    auto isLetter=[](char c){
-        return ('a'<=c && c<='z') || ('A'<=c && c<='Z');
+    auto isLetter = [](char c) {
+        return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
     };
-    int distance='a'-'A';
-    auto trans=[distance](char c){
-        if(c>='a'){
-            return c-distance;
+    int distance = 'a' - 'A';
+    auto trans = [distance](char c) {
+        if (c >= 'a')
+        {
+            return c - distance;
         }
-        return c+distance;
+        return c + distance;
     };
-    int len=S.size();
+    int len = S.size();
     vector<string> ans;
     for (int i = 0; i < len; i++)
     {
-        char c=S[i];
+        char c = S[i];
         if (isLetter(c))
         {
-            if (ans.size()==0)
+            if (ans.size() == 0)
             {
                 ans.push_back(S);
             }
-            int sz=ans.size();
-            while (sz>0)
+            int sz = ans.size();
+            while (sz > 0)
             {
-               string change=ans[sz-1];
-               change[i]=trans(c);
-               ans.push_back(change);
-               sz--;
-            }   
+                string change = ans[sz - 1];
+                change[i] = trans(c);
+                ans.push_back(change);
+                sz--;
+            }
         }
     }
-    if(ans.size()==0)
+    if (ans.size() == 0)
         ans.push_back(S);
     return ans;
 }
