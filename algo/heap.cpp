@@ -1,6 +1,36 @@
 #include "../common.h"
 #include <iostream>
+#include <map>
 using namespace std;
+
+// 347. Top K Frequent Elements
+vector<int> topKFrequent(vector<int> &nums, int k)
+{
+    // pair: repeats, num
+    int len = nums.size();
+    if (len <= 1)
+        return nums;
+    priority_queue<pair<int, int>> heap;
+    map<int, int> cnt;
+    for (int i = 0; i < len; i++)
+    {
+        cnt[nums[i]]++;
+    }
+
+    for (auto &&[val, repeates] : cnt)
+    {
+        heap.push(make_pair(repeates, val));
+    }
+    vector<int> ans;
+    while (k > 0)
+    {
+        auto &p = heap.top();
+        ans.push_back(p.second);
+        heap.pop();
+        k--;
+    }
+    return ans;
+}
 
 // 295. Find Median from Data Stream
 //  100 ms, faster than 90.62%
