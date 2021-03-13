@@ -6,6 +6,88 @@
 #include "../common.h"
 using namespace std;
 
+// 784. Letter Case Permutation
+// 8 ms, faster than 70.57% 
+//  9.2 MB, less than 96.53% 
+vector<string> letterCasePermutation(string S)
+{
+    auto isLetter=[](char c){
+        return ('a'<=c && c<='z') || ('A'<=c && c<='Z');
+    };
+    int distance='a'-'A';
+    auto trans=[distance](char c){
+        if(c>='a'){
+            return c-distance;
+        }
+        return c+distance;
+    };
+    int len=S.size();
+    vector<string> ans;
+    for (int i = 0; i < len; i++)
+    {
+        char c=S[i];
+        if (isLetter(c))
+        {
+            if (ans.size()==0)
+            {
+                ans.push_back(S);
+            }
+            int sz=ans.size();
+            while (sz>0)
+            {
+               string change=ans[sz-1];
+               change[i]=trans(c);
+               ans.push_back(change);
+               sz--;
+            }   
+        }
+    }
+    if(ans.size()==0)
+        ans.push_back(S);
+    return ans;
+}
+
+// 78. Subsets
+// 0 ms, faster than 100.00%
+// 7 MB, less than 88.15%
+vector<vector<int>> subsets(vector<int> &nums)
+{
+    int sz = nums.size();
+    vector<vector<int>> ans;
+    ans.push_back({});
+    for (int i = 0; i < sz; i++)
+    {
+        ans.push_back({nums[i]});
+        int pre = ans.size() - 1;
+        for (int j = 1; j < pre; j++)
+        {
+            vector<int> sub = ans[j];
+            sub.push_back(i);
+            ans.push_back(sub);
+        }
+    }
+    return ans;
+}
+
+void testSubsets()
+{
+    vector<int> nums = {1, 2, 3};
+}
+
+// 217. Contains Duplicate
+bool containsDuplicate(vector<int> &nums)
+{
+    int different = 0;
+    int sz = nums.size();
+    for (int i = 0; i < sz; i++)
+    {
+        int cur = 1 << i;
+        if (different & cur != 0)
+            return true;
+        different = different & cur;
+    }
+}
+
 // 29. Divide Two Integers
 // 0 ms, faster than 100.00%
 // 5.9 MB, less than 57.86%
