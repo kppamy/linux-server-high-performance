@@ -1,6 +1,76 @@
-#include "common.h"
+#include "../common.h"
 #include <iostream>
 using namespace std;
+
+// 295. Find Median from Data Stream
+//  100 ms, faster than 90.62%
+// 46.9 MB, less than 61.39%
+class MedianFinder
+{
+public:
+    /** initialize your data structure here. */
+    MedianFinder()
+    {
+    }
+
+    void reblance()
+    {
+        int sz1 = fmax.size();
+        int sz2 = smin.size();
+        if (sz1 - sz2 > 1)
+        {
+            smin.push(fmax.top());
+            fmax.pop();
+        }
+        else if (sz2 - sz1 > 1)
+        {
+            fmax.push(smin.top());
+            smin.pop();
+        }
+    }
+    void addNum(int num)
+    {
+
+        if (fmax.size() == 0)
+        {
+            fmax.push(num);
+            return;
+        }
+        if (num > fmax.top())
+        {
+            smin.push(num);
+        }
+        else
+        {
+            fmax.push(num);
+        }
+        reblance();
+    }
+
+    double findMedian()
+    {
+
+        int sz1 = fmax.size(), sz2 = smin.size();
+        if (sz1 == 0)
+        {
+            return 0;
+        }
+        if (sz1 == sz2)
+        {
+            return (fmax.top() + smin.top()) / 2.0;
+        }
+        else
+        {
+            if (sz1 > sz2)
+                return fmax.top();
+            return smin.top();
+        }
+    }
+
+private:
+    priority_queue<int> fmax;                                 // max heap in the first half
+    priority_queue<int, vector<int>, std::greater<int>> smin; // min heap in the second half
+};
 
 // 703. Kth Largest Element in a Stream
 // Runtime: 48 ms, faster than 99.74% of C++ online submissions for Kth Largest Element in a Stream.
@@ -336,9 +406,9 @@ void testfindCheapestPrice()
 
 int main(int argc, char const *argv[])
 {
-    // testKthLargest();
+    testKthLargest();
     // testArray(lastStoneWeight, "lastStoneWeight", generateArrayInput, printInt);
     // testfindKthLargest();
-    testfindCheapestPrice();
+    // testfindCheapestPrice();
     return 0;
 }
