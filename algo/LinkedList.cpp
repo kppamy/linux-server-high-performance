@@ -8,6 +8,8 @@
 using namespace std;
 
 // 82. Remove Duplicates from Sorted List II
+//  8 ms, faster than 84.54%
+// 11.2 MB, less than 82.40%
 ListNode *deleteDuplicates(ListNode *head)
 {
   ListNode *dummy = new ListNode(101);
@@ -16,17 +18,24 @@ ListNode *deleteDuplicates(ListNode *head)
   ListNode *current = head;
   while (current)
   {
-    if (current->val == prev->val)
+    // 1 2 3 3 4 4 5
+    // 1,1,1,2,3
+    // 1,1
+    // [1,2,2]
+    if (current->next != nullptr && current->val == current->next->val)
     {
-      current = current->next;
+      do
+      {
+        current = current->next;
+      } while (current->next != nullptr && current->val == current->next->val);
+      prev->next = current->next;
     }
     else
     {
-      prev = current;
-      current = current->next;
+      prev = prev->next;
     }
+    current = current->next;
   }
-
   return dummy->next;
 }
 
