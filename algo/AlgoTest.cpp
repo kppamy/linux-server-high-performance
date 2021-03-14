@@ -6,6 +6,31 @@
 #include "../common.h"
 using namespace std;
 
+// 704. Binary Search
+// 28 ms, faster than 97.65%
+//  27.5 MB, less than 94.07%
+int search(vector<int> &nums, int target)
+{
+    int len = nums.size();
+    int start = 0, end = len - 1;
+    while (start <= end)
+    {
+        int mid = (start + end) / 2;
+        int cur = nums[mid];
+        if (cur == target)
+            return mid;
+        else if (target < cur)
+        {
+            end = mid - 1;
+        }
+        else
+        {
+            start = mid + 1;
+        }
+    }
+    return -1;
+}
+
 // 1539. Kth Missing Positive Number
 // 0 ms, faster than 100.00%
 // 9.4 MB, less than 99.10%
