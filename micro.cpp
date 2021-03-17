@@ -23,6 +23,8 @@ vector<int> buildHeap(vector<int> &arr)
     }
     return arr;
 }
+
+#include <string>
 // 1th interview
 string nextInDc(string &input)
 {
@@ -49,28 +51,39 @@ string nextInDc(string &input)
     return input;
 }
 
-// 2th interview 20210315
+// 2th interview 20210315  Yang Guang
 // can pick m*n choices
 // 373. Find K Pairs with Smallest Sums
 vector<vector<int>> kSmallestPairs(vector<int> &nums1, vector<int> &nums2, int k)
 {
-    int m=nums1.size(),n=nums2.size();
-    priority_queue<int, std::greater<int>> heap;
-    heap.push(nums1[0]+nums2[0]);
-    int i=0, j=0;
-    int cnt=0;
-    int kmin;
-    while (cnt<k)
+    int m = nums1.size(), n = nums2.size();
+    if (m == 0 || n == 0 || k == 0)
+        return {};
+    auto comp = [&nums1, &nums2](pair<int, int> &a, pair<int, int> &b) { return nums1[a.first] + nums2[a.second] > nums1[b.first] + nums2[b.second]; };
+    priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(comp)> heap(comp);
+    heap.push(make_pair(0, 0));
+    int i = 0, j = 0;
+    int cnt = 0;
+    vector<vector<int>> ans;
+    k=(k<m*n)?k:(m*n);
+    while (cnt < k)
     {
-      heap.push(nums1[i+1]+nums2[j]);
-      kmin=heap.top();
-      heap.pop();
-      cnt++;
+        // can not use & here, because you release the value after
+        //   auto& [i1,i2]=heap.top();
+        auto [i1, i2] = heap.top();
+        heap.pop();
+        ans.push_back({nums1[i1], nums2[i2]});
+        heap.push(make_pair(i1 + 1, i2));
+        if (i1 == 0)
+        {
+            heap.push(make_pair(i1, i2 + 1));
+        }
+        cnt++;
     }
-    
+    return ans;
 }
 
-// 3th interview 20210315
+// 3th interview 20210315  Xu Fei
 // "ace", "ae"  false
 // "abc", "ba"-->true
 // O(m+n)
@@ -78,7 +91,7 @@ bool findOutofOrderSubstring(string a, string b)
 {
 }
 
-// 3th interview 20210315
+// 3th interview 20210315 Xu Fei
 const int NOT_FOUND = INT_MAX;
 class Mymap
 {
@@ -156,7 +169,7 @@ void testMymap()
     assert(hashMap->get(2) == 1); // returns 1
 }
 
-// 4th interview  20210315
+// 4th interview  20210315  Fan Yu
 vector<int> canFall(vector<vector<int>> &walls)
 {
     int m = walls.size();
@@ -222,7 +235,8 @@ public:
     }
 };
 
-// 5th interview  20210315
+// 5th interview  20210315 Ma Zhao Jia
+// 236. Lowest Common Ancestor of a Binary Tree
 Node *findCommonAncester(Node *root, Node *a, Node *b)
 {
     deque<Node *> aqueue;
