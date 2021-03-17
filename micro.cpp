@@ -197,12 +197,15 @@ void testMymap()
 }
 
 // 4th interview  20210315  Fan Yu
-vector<int> canFall(vector<vector<int>> &walls)
+// 1706. Where Will the Ball Fall
+//  24 ms, faster than 94.77%
+// 13.2 MB, less than 90.05%
+vector<int> findBall(vector<vector<int>> &grid)
 {
-    int m = walls.size();
+    int m = grid.size();
     if (m == 0)
         return {};
-    int n = walls[0].size();
+    int n = grid[0].size();
     vector<int> succeed(n, -1);
     for (int ball = 0; ball < n; ball++)
     {
@@ -210,10 +213,10 @@ vector<int> canFall(vector<vector<int>> &walls)
         int i = 0;
         for (; i < m; i++)
         {
-            int wall = walls[i][j];
+            int wall = grid[i][j];
             if (wall == 1)
             {
-                if (j == n - 1 || walls[i][j + 1] == -1)
+                if (j == n - 1 || grid[i][j + 1] == -1)
                 {
                     break;
                 }
@@ -224,7 +227,7 @@ vector<int> canFall(vector<vector<int>> &walls)
             }
             else
             {
-                if (j == 0 || walls[i][j - 1] == 1)
+                if (j == 0 || grid[i][j - 1] == 1)
                 {
                     break;
                 }
@@ -235,7 +238,7 @@ vector<int> canFall(vector<vector<int>> &walls)
             }
         }
         if (i == m)
-            succeed[ball] = 1;
+            succeed[ball] = j;
     }
     return succeed;
 }
