@@ -59,13 +59,13 @@ vector<vector<int>> kSmallestPairs(vector<int> &nums1, vector<int> &nums2, int k
     int m = nums1.size(), n = nums2.size();
     if (m == 0 || n == 0 || k == 0)
         return {};
-    auto comp = [&nums1, &nums2](pair<int, int> &a, pair<int, int> &b) { return nums1[a.first] + nums2[a.second] > nums1[b.first] + nums2[b.second]; };
+    auto comp = [&nums1, &nums2](pair<int, int> &s1, pair<int, int> &s2) { return nums1[s1.first] + nums2[s1.second] > nums1[s2.first] + nums2[s2.second]; };
     priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(comp)> heap(comp);
     heap.push(make_pair(0, 0));
     int i = 0, j = 0;
     int cnt = 0;
     vector<vector<int>> ans;
-    k=(k<m*n)?k:(m*n);
+    k = (k < m * n) ? k : (m * n);
     while (cnt < k)
     {
         // can not use & here, because you release the value after
@@ -86,9 +86,36 @@ vector<vector<int>> kSmallestPairs(vector<int> &nums1, vector<int> &nums2, int k
 // 3th interview 20210315  Xu Fei
 // "ace", "ae"  false
 // "abc", "ba"-->true
-// O(m+n)
-bool findOutofOrderSubstring(string a, string b)
+// O(m+n) ,  m > n
+// 567. Permutation in String
+// 304 ms, faster than 7.45%
+// 18.4 MB, less than 10.15%
+bool checkInclusion(string s1, string s2)
 {
+    int m = s2.size(), n = s1.size();
+    vector<int> dc(26, 0);
+    for (auto &&c : s1)
+    {
+        dc[c - 'a']++;
+    }
+    for (int i = 0; i <= m - n; i++)
+    {
+        int j = i;
+        auto curdc = dc;
+        int c;
+        for (; j < n + i; j++)
+        {
+            c = s2[j] - 'a';
+            if (curdc[c] == 0)
+                break;
+            curdc[c]--;
+            if (curdc[c] < 0)
+                break;
+        }
+        if (j == n + i && curdc[c] == 0)
+            return true;
+    }
+    return false;
 }
 
 // 3th interview 20210315 Xu Fei
@@ -236,8 +263,8 @@ public:
 };
 
 // 5th interview  20210315 Ma Zhao Jia
-// 236. Lowest Common Ancestor of a Binary Tree
-Node *findCommonAncester(Node *root, Node *a, Node *b)
+// 236. Lowest Common Ancestor of s1 Binary Tree
+Node *findCommonAncester(Node *root, Node *s1, Node *s2)
 {
     deque<Node *> aqueue;
     deque<Node *> bqueue;
@@ -246,11 +273,11 @@ Node *findCommonAncester(Node *root, Node *a, Node *b)
     while (!sta.empty())
     {
         Node *tp = sta.back();
-        if (tp == a)
+        if (tp == s1)
         {
             aqueue = sta;
         }
-        else if (tp == b)
+        else if (tp == s2)
         {
             bqueue = sta;
         }
@@ -284,6 +311,6 @@ Node *findCommonAncester(Node *root, Node *a, Node *b)
 
 int main(int argc, char const *argv[])
 {
-
+    checkInclusion("hello", "ooolleoooleh");
     return 0;
 }
