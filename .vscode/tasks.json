@@ -12,28 +12,27 @@
                 "-Wall",
                 "-std=c++1z",
                 "-fsanitize=address",
-                "interview.cpp"
+                // "interview.cpp"
                 // "-fno-omit-frame-pointer",
                 // "-O1",
-                // "algo/common.cpp"
+                // "algo/ArrayTest.cpp",
                 // "algo/AlgoTest.cpp",
-                // "algo/LinkedList.cpp",
-                // "algo/TreeTest.cpp",
-                // "algo/NaryTree.cpp"
-                // "algo/sort.cpp",
+                // "algo/backtracking.cpp"
+                "algo/bits.cpp"
+                // "algo/DynamicProgramming.cpp",
+                // "algo/greedy.cpp"
+                // "algo/graph.cpp"
+                // "algo/heap.cpp"
                 // "algo/lqueue.cpp"
                 // "algo/lstack.cpp"
-                // "algo/heap.cpp"
-                // "algo/greedy.cpp"
-                // "algo/DynamicProgramming.cpp",
-                // "algo/ArrayTest.cpp",
-                // "algo/StringTest.cpp"
-                // "algo/graph.cpp"
-                // "algo/backtracking.cpp"
+                // "algo/LinkedList.cpp",
                 // "algo/maxProfit.cpp"
+                // "algo/NaryTree.cpp"  
+                // "algo/sort.cpp",
+                // "algo/StringTest.cpp"
                 // "algo/Ufind.cpp"
                 // "algo/slidingWindow.cpp"
-                // "algo/bits.cpp"
+                // "algo/TreeTest.cpp",
                 // "lang/saima.cpp"
                 // "lang/todo.cpp"
                 // "lang/lamada.cpp"
@@ -66,9 +65,11 @@
                 // "desgin/pattern/Strategy.cpp"
                 // "desgin/pattern/TemplateMethod.cpp"
                 //  "desgin/pattern/Observer.cpp"
-                 // "file-test.cpp"
+                // "file-test.cpp"
                 //  "13-3-ipc_private.c"
                 // "file-test.cpp"
+                // "micro.cpp"
+                // "nvidia.cpp"
                 "-o",
                 "LeetCode"
             ],
