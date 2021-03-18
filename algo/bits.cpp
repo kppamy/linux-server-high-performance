@@ -1,7 +1,64 @@
 #include <iostream>
 #include <vector>
 #include <bitset>
+#include <map>
 using namespace std;
+
+// 477. Total Hamming Distance
+// 56 ms, faster than 73.96%
+// 19 MB, less than 94.09%
+int totalHammingDistance(vector<int> &nums)
+{
+    int len = nums.size();
+    int cnt = 0;
+    int ans = 0;
+    while (true)
+    {
+        int ones = 0;
+        int zeros = 0;
+        for (int i = 0; i < len; i++)
+        {
+            int cur = nums[i];
+            if (cur == -1)
+            {
+                zeros++;
+                continue;
+            }
+            if (cur & 1)
+                ones++;
+            else
+                zeros++;
+            cur >>= 1;
+            if (cur == 0)
+            {
+                cnt++;
+            }
+            nums[i] = (cur == 0) ? -1 : cur;
+        }
+        ans += ones * zeros;
+        if (cnt == len)
+            break;
+    }
+    return ans;
+}
+
+// 461. Hamming Distance
+// 0 ms, faster than 100.00%
+// 5.9 MB, less than 53.20%
+int hammingDistance(int x, int y)
+{
+    int dis = 0;
+    int dif = x ^ y;
+    while (dif)
+    {
+        if (dif & 1)
+        {
+            dis++;
+        }
+        dif >>= 1;
+    }
+    return dis;
+}
 
 // 190. Reverse Bits
 // 4 ms, faster than 55.64%
