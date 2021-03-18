@@ -2,7 +2,36 @@
 #include <vector>
 #include <bitset>
 #include <map>
+#include <unordered_map>
 using namespace std;
+
+// 318. Maximum Product of Word Lengths
+// : 36 ms, faster than 97.46%
+// 17.2 MB, less than 32.04% 
+int maxProduct(vector<string> &words)
+{
+    int len = words.size();
+    unordered_map<int, int> dc;
+    int ans = 0;
+    for (int i = 0; i < len; i++)
+    {
+        string wd = words[i];
+        int len1 = wd.size();
+        int mask = 0;
+        for (int j = 0; j < len1; j++)
+        {
+            mask = mask | (1 << (wd[j] - 'a'));
+        }
+        int mm = max(dc[mask], len1);
+        dc[mask]=mm;
+        for (auto &&[bits, len2] : dc)
+        {
+            if ((bits & mask)==0)
+                ans = max(ans, mm * len2);
+        }
+    }
+    return ans;
+}
 
 // 342. Power of Four
 // 0 ms, faster than 100.00%
@@ -249,5 +278,8 @@ int main(int argc, char const *argv[])
     // testreverseBits();
     cout << isPowerOfFour(16) << endl;
     cout << isPowerOfFour(8) << endl;
+
+    vector<string> ss = {"abcw", "baz", "foo", "bar", "xtfn", "abcdef"};
+    cout << maxProduct(ss) << endl;
     return 0;
 }
