@@ -4,17 +4,28 @@
 #include <map>
 using namespace std;
 
-// 762. Prime Number of Set Bits in Binary Representation
-int countPrimeSetBits(int L, int R)
+// 342. Power of Four
+// 0 ms, faster than 100.00%
+// 5.9 MB, less than 80.83%
+bool isPowerOfFour(int n)
 {
-    int cnt = 0;
-    int num = L;
-    while (num <= R)
+
+    if (n < 0)
+        return false;
+    if (n & (n - 1))
+        return false;
+    long long max4 = 1;
+    int sum = 1;
+    int cnt = 1;
+    while (cnt <= 32)
     {
-        if (isPrime(ones(num)))
-            cnt++;
+        max4 = max4 << 2;
+        sum += max4;
+        if (max4 > n) // from 36.3%->100%
+            break;
+        cnt += 2;
     }
-    return cnt;
+    return n & sum;
 }
 
 int ones(int num)
@@ -42,6 +53,19 @@ bool isPrime(int num)
         i++;
     }
     return true;
+}
+
+// 762. Prime Number of Set Bits in Binary Representation
+int countPrimeSetBits(int L, int R)
+{
+    int cnt = 0;
+    int num = L;
+    while (num <= R)
+    {
+        if (isPrime(ones(num)))
+            cnt++;
+    }
+    return cnt;
 }
 // 477. Total Hamming Distance
 // 56 ms, faster than 73.96%
@@ -188,7 +212,7 @@ void testhammingWeight()
 // 461. Hamming Distance
 //  0 ms, faster than 100.00%
 //  5.8 MB, less than 95.80%
-int hammingDistance(int x, int y)
+int hammingDistanceI(int x, int y)
 {
     int dis = 0;
     int dif = x ^ y;
@@ -222,6 +246,8 @@ int main(int argc, char const *argv[])
 
     // testhammingDistance();
     // testhammingWeight();
-    testreverseBits();
+    // testreverseBits();
+    cout << isPowerOfFour(16) << endl;
+    cout << isPowerOfFour(8) << endl;
     return 0;
 }
