@@ -4,6 +4,45 @@
 #include <map>
 using namespace std;
 
+// 762. Prime Number of Set Bits in Binary Representation
+int countPrimeSetBits(int L, int R)
+{
+    int cnt = 0;
+    int num = L;
+    while (num <= R)
+    {
+        if (isPrime(ones(num)))
+            cnt++;
+    }
+    return cnt;
+}
+
+int ones(int num)
+{
+    int cnt = 0;
+    while (num)
+    {
+        if (num % 1)
+            cnt++;
+        num >>= 1;
+    }
+    return cnt;
+}
+
+bool isPrime(int num)
+{
+    if (num <= 1)
+        return false;
+    int i = 2;
+    int mid = num / 2;
+    while (i <= mid)
+    {
+        if (num % i == 0)
+            return false;
+        i++;
+    }
+    return true;
+}
 // 477. Total Hamming Distance
 // 56 ms, faster than 73.96%
 // 19 MB, less than 94.09%
