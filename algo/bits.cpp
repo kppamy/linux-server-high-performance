@@ -5,9 +5,26 @@
 #include <unordered_map>
 using namespace std;
 
+// 338. Counting Bits
+// 0 ms, faster than 100.00% 
+// 7.9 MB, less than 75.20%
+vector<int> countBits(int num)
+{
+    vector<int> dp(num+1,0);
+    for (int i = 1; i <= num; i++)
+    {
+        if(i&1){
+            dp[i]=dp[i-1]+1;
+        }else{
+            dp[i]=dp[i>>1];
+        }
+    }
+    return dp;
+}
+
 // 318. Maximum Product of Word Lengths
 // : 36 ms, faster than 97.46%
-// 17.2 MB, less than 32.04% 
+// 17.2 MB, less than 32.04%
 int maxProduct(vector<string> &words)
 {
     int len = words.size();
@@ -23,10 +40,10 @@ int maxProduct(vector<string> &words)
             mask = mask | (1 << (wd[j] - 'a'));
         }
         int mm = max(dc[mask], len1);
-        dc[mask]=mm;
+        dc[mask] = mm;
         for (auto &&[bits, len2] : dc)
         {
-            if ((bits & mask)==0)
+            if ((bits & mask) == 0)
                 ans = max(ans, mm * len2);
         }
     }
