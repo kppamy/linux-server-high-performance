@@ -24,8 +24,44 @@ vector<int> buildHeap(vector<int> &arr)
     return arr;
 }
 
-#include <string>
+// 31. Next Permutation
+// save prev in local improve from 83.3% to 100%
+void nextPermutation(vector<int> &nums)
+{
+    int len = nums.size();
+    if (len <= 1)
+        return;
+    int i = len - 1;
+    int cur = nums[i];
+    int prev;
+    for (; i >= 1; i--)
+    {
+        prev = nums[i - 1]; // save prev in local improve from 83.3% to 100%
+        if (cur > prev)
+        {
+            break;
+        }
+        cur = prev;
+    }
+    if (i == 0)
+    {
+        reverse(nums.begin(), nums.end());
+        return;
+    }
+
+    int j = len - 1;
+    int start = nums[i - 1];
+    for (; j > i - 1; j--)
+    {
+        if (nums[j] > start)
+            break;
+    }
+    swap(nums[j], nums[i - 1]);
+    reverse(nums.begin() + i, nums.end());
+}
+
 // 1th interview
+#include <string>
 string nextInDc(string &input)
 {
     int len = input.size();
@@ -159,10 +195,11 @@ public:
     void put(int key, int val)
     {
         rehash();
-        add(key,val);
+        add(key, val);
     }
 
-    void add(int key, int val){
+    void add(int key, int val)
+    {
         auto &items = data[hash(key)];
         for (auto &&[k, v] : items)
         {
@@ -175,22 +212,23 @@ public:
         items.push_back(make_pair(key, val));
     }
 
-    void remove(int key){
-        auto & list = data[hash(key)];
-        remove_if(list.begin(),list.end(),[key,this](auto kv){return kv.first==key;});
+    void remove(int key)
+    {
+        auto &list = data[hash(key)];
+        remove_if(list.begin(), list.end(), [key, this](auto kv) { return kv.first == key; });
         // for (auto &&kv : list)
         // {
         //     if (kv.first == key){
         //         list.remove(kv);
         //         return;
-        //     }   
+        //     }
         // }
     }
     int get(int key)
     {
         auto &list = data[hash(key)];
-        auto itr=find_if(list.begin(),list.end(),[key](auto& kv){return kv.first==key;});
-        return itr==list.end()?-1:itr->second;
+        auto itr = find_if(list.begin(), list.end(), [key](auto &kv) { return kv.first == key; });
+        return itr == list.end() ? -1 : itr->second;
     }
 };
 
@@ -204,12 +242,11 @@ void testMymap()
     hashMap->put(3, 2);
     assert(hashMap->get(1) == 1); // returns 1
     assert(hashMap->get(3) == 2);
-    hashMap->put(2, 1);           // update the existing value
-    hashMap->remove(2);           // update the existing value
+    hashMap->put(2, 1);                   // update the existing value
+    hashMap->remove(2);                   // update the existing value
     assert(hashMap->get(2) == NOT_FOUND); // returns 1
-    assert(hashMap->get(1) == 1); // returns 1
-    assert(hashMap->get(3) == 2); // returns 1
-
+    assert(hashMap->get(1) == 1);         // returns 1
+    assert(hashMap->get(3) == 2);         // returns 1
 }
 
 // 4th interview  20210315  Fan Yu
