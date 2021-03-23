@@ -2,9 +2,86 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <deque>
 #include <math.h>
 #include "../common.h"
 using namespace std;
+
+// 27. Remove Element
+int removeElement(vector<int> &nums, int val)
+{
+    int len = nums.size();
+    int prev = -1;
+    int i = 0;
+    // 3,2,2,3  --- 3
+    // 0,1,2,2,3,0,4,2  -- 2
+    for (int i = 0; i < len; i++)
+    {
+        // int cur = nums[i];
+        int &cur = nums[i]; // from 50% to 100% !!!!!!!!!!!!!!!!
+        if (cur != val)
+        {
+            prev++;
+            swap(nums[prev], cur);
+        }
+    }
+    return prev + 1;
+}
+
+void testremoveElement()
+{
+    vector<int> nums = {0, 1, 2, 2, 3, 0, 4, 2};
+    cout << removeElement(nums, 2) << endl;
+    print(nums);
+}
+
+// 236. Lowest Common Ancestor of a Binary Tree
+// 12 ms, faster than 96.71%
+// 11.4 MB, less than 99.79%
+TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q)
+{
+    deque<TreeNode *> ps;
+    deque<TreeNode *> qs;
+    deque<TreeNode *> sta;
+    sta.push_back(root);
+    while (!sta.empty())
+    {
+        TreeNode *tp = sta.back();
+        if (tp == p)
+        {
+            ps = sta;
+        }
+        else if (tp == q)
+        {
+            qs = sta;
+        }
+        if (ps.size() > 0 && qs.size() > 0)
+            break;
+        if (!tp->left && !tp->right)
+            sta.pop_back();
+        else if (tp->left)
+        {
+            sta.push_back(tp->left);
+            tp->left = nullptr;
+        }
+        else
+        {
+            sta.push_back(tp->right);
+            tp->right = nullptr;
+        }
+    }
+
+    TreeNode *ancestor = root;
+    while (!qs.empty() && !ps.empty())
+    {
+        if (qs.front() != ps.front())
+            return ancestor;
+        ancestor = ps.front();
+        ps.pop_front();
+        qs.pop_front();
+    }
+    return ancestor;
+}
 
 // 704. Binary Search
 // 28 ms, faster than 97.65%
@@ -554,6 +631,6 @@ int main(int argc, char **argv)
     // vector<int> l = {0, 0, 2};
     // vector<int> r = {2, 3, 5};
     // checkArithmeticSubarrays(nums, l, r);
-    testdivi();
+    // testdivi();
     return 0;
 }
