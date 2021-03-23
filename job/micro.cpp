@@ -119,19 +119,19 @@ bool checkInclusion(string s1, string s2)
 }
 
 // 3th interview 20210315 Xu Fei
-const int NOT_FOUND = INT_MAX;
-class Mymap
+const int NOT_FOUND = -1;
+class MyHashMap
 {
 private:
     vector<list<pair<int, int>>> data;
     int capacity = 20;
 
 public:
-    Mymap()
+    MyHashMap()
     {
-        data.resize(20);
+        data.resize(capacity);
     };
-    ~Mymap() = default;
+    ~MyHashMap() = default;
 
     int hash(int key)
     {
@@ -145,12 +145,12 @@ public:
         data.resize(capacity * 2);
         for (auto &&items : data)
         {
-            for (auto &&[key, val] : items)
+            for (auto &&kv : items)
             {
-                if (key > capacity)
+                if (kv.first > capacity)
                 {
-                    // delete the old one
-                    put(key, val);
+                    items.remove(kv);
+                    add(kv.first, kv.second);
                 }
             }
         }
@@ -159,6 +159,10 @@ public:
     void put(int key, int val)
     {
         rehash();
+        add(key,val);
+    }
+
+    void add(int key, int val){
         auto &items = data[hash(key)];
         for (auto &&[k, v] : items)
         {
@@ -171,15 +175,22 @@ public:
         items.push_back(make_pair(key, val));
     }
 
+    void remove(int key){
+        auto & list = data[hash(key)];
+        remove_if(list.begin(),list.end(),[key,this](auto kv){return kv.first==key;});
+        // for (auto &&kv : list)
+        // {
+        //     if (kv.first == key){
+        //         list.remove(kv);
+        //         return;
+        //     }   
+        // }
+    }
     int get(int key)
     {
         auto &list = data[hash(key)];
-        for (auto &&kv : list)
-        {
-            if (kv.first == key)
-                return kv.second;
-        }
-        return NOT_FOUND;
+        auto itr=find_if(list.begin(),list.end(),[key](auto& kv){return kv.first==key;});
+        return itr==list.end()?-1:itr->second;
     }
 };
 
@@ -187,13 +198,18 @@ public:
 #include <iostream>
 void testMymap()
 {
-    Mymap *hashMap = new Mymap();
+    MyHashMap *hashMap = new MyHashMap();
     hashMap->put(1, 1);
     hashMap->put(2, 2);
+    hashMap->put(3, 2);
     assert(hashMap->get(1) == 1); // returns 1
-    assert(hashMap->get(3) == NOT_FOUND);
+    assert(hashMap->get(3) == 2);
     hashMap->put(2, 1);           // update the existing value
-    assert(hashMap->get(2) == 1); // returns 1
+    hashMap->remove(2);           // update the existing value
+    assert(hashMap->get(2) == NOT_FOUND); // returns 1
+    assert(hashMap->get(1) == 1); // returns 1
+    assert(hashMap->get(3) == 2); // returns 1
+
 }
 
 // 4th interview  20210315  Fan Yu
@@ -314,6 +330,7 @@ Node *findCommonAncester(Node *root, Node *s1, Node *s2)
 
 int main(int argc, char const *argv[])
 {
-    checkInclusion("hello", "ooolleoooleh");
+    // checkInclusion("hello", "ooolleoooleh");
+    testMymap();
     return 0;
 }
