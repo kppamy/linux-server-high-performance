@@ -2,7 +2,31 @@
 #include <vector>
 #include <list>
 #include <queue>
+#include <iostream>
 using namespace std;
+
+double offer(double offIndis){
+    double month= 4.8 * (1-offIndis);
+    double bd=4.8*15 + 450 *0.25*180*6.5/10000;
+    double bdall=bd+4.8*0.2*12;
+    double msyear=month*1.15*12 + month*0.022 + 1.2+ 1.5 *6.5 + 0.75;
+    double msyearHR=month*1.15*12 + 1.5 *6.5 ;
+    double disy=(bd-msyear)/bd;
+    double disall=(bdall-msyear)/bdall;
+    double dishr=(bd-msyearHR)/bd;
+    double dishrall=(bdall-msyearHR)/bdall;
+    cout<<" bd annual: "<<bd<<endl;
+    cout<<" bd annual all: "<<bdall<<endl;
+    cout<<" ms month discout "<< offIndis<< " = "<<month<<endl;
+    cout<<" ms year discout "<< disy<< " = "<<msyear<<endl;
+    cout<<" ms year discout all "<< disall<<endl;
+    cout<<" ms year discout In HR "<< dishr<< " = "<<msyearHR<<endl;
+    cout<<" ms year discout all In HR "<< dishrall<<endl;
+    cout<<"=============================================="<<endl;
+    cout<<endl;
+}
+
+
 
 // 1th interview
 vector<int> buildHeap(vector<int> &arr)
@@ -368,6 +392,11 @@ Node *findCommonAncester(Node *root, Node *s1, Node *s2)
 int main(int argc, char const *argv[])
 {
     // checkInclusion("hello", "ooolleoooleh");
-    testMymap();
+    // testMymap();
+    offer(0.05);
+    offer(0.025);
+    offer(0.0125);
+    offer(0.01);
+    offer(0);
     return 0;
 }
