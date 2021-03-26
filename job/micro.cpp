@@ -5,11 +5,38 @@
 #include <iostream>
 using namespace std;
 
+
+
+
+double prorated(double mbase,double bonus,double houseratio,
+              double houseUplimit,double eldly,double insurance, double unemployment){
+    double extrahousefund=(mbase-houseUplimit)*0.1*12;
+    double msyear=mbase*(1+bonus)*12 + extrahousefund;
+    double housefundbasic= houseUplimit* houseratio * 12 ;
+    double prerated=msyear- 0.2*12 - 0.5*12 - housefundbasic - houseUplimit*eldly*12 ; 
+    double taxes=3.192+(prerated-42)*0.3;
+    double earning=prerated -taxes + 1;
+    double housefund=housefundbasic*2+ extrahousefund;
+    double aia=earning+ housefund + 1.5*6.5;
+    cout<<" before tax  "<< msyear<< "  "<<msyear/12.<<endl;
+    cout<<" tax "<< taxes<<" "<< taxes/12.<<endl;
+    cout<<" per year after tax "<< earning<<" "<<earning/12.<<endl;
+    cout<<" house fund "<< housefund<<" "<< housefund/12.<< endl;
+    cout<<" all in all  "<< aia<< " "<<aia/12.<<endl;
+    cout<< " prerated raise: "<< msyear/24.7026<< "24.7026 "<<endl;
+    cout<<"=============================================="<<endl;
+    cout<<endl;
+}
+
+
+
+
+
 double offer(double offIndis){
-    double month= 4.8 * (1-offIndis);
+    double month= 5;
     double bd=4.8*15 + 450 *0.25*180*6.5/10000;
     double bdall=bd+4.8*0.2*12;
-    double msyear=month*1.15*12 + month*0.022 + 1.2+ 1.5 *6.5 + 0.75;
+    double msyear=month*1.15*12 + month*12*0.022 + (month- 2.9732)*0.1*12+ 1.5 *6.5 + 0.75;
     double msyearHR=month*1.15*12 + 1.5 *6.5 ;
     double disy=(bd-msyear)/bd;
     double disall=(bdall-msyear)/bdall;
@@ -26,6 +53,13 @@ double offer(double offIndis){
     cout<<endl;
 }
 
+double currentms(double year){
+    double annual=year*1.15+year*0.022+(year/12. - 2.9732)*0.1*12+0.75;
+    double stocks=1.5*6.5;
+    double ratio= stocks/annual;
+    cout<< " stocks = "<<stocks<<"  annual = "<<annual <<endl;
+    cout<< " stocks/annual = "<<ratio<<endl;
+}
 
 
 // 1th interview
@@ -393,10 +427,8 @@ int main(int argc, char const *argv[])
 {
     // checkInclusion("hello", "ooolleoooleh");
     // testMymap();
-    offer(0.05);
-    offer(0.025);
-    offer(0.0125);
-    offer(0.01);
-    offer(0);
+    // offer(-0.0417);
+    // currentms(54);
+    prorated(5,0.15,0.12,2.9732,0.08,0,0);
     return 0;
 }
