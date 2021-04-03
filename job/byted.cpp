@@ -1,5 +1,5 @@
 #include <vector>
-#include "common.h"
+#include "../common.h"
 #include <stack>
 #include <queue>
 using namespace std;
@@ -168,9 +168,8 @@ string convertToTitle(int columnNumber)
     return ans;
 }
 
-int main()
+void testSeriDeser()
 {
-
     {
         string tree = "2 1 99999 3 99999 4";
         Codec des;
@@ -228,4 +227,37 @@ int main()
         string out = cod.serialize(root);
         cout << out << endl;
     }
+}
+
+class A{
+    private:
+    int val=0;
+    public:
+    void func(){
+        cout<<"I am okay func"<<endl;
+    }
+    int getVal(){
+        return val;
+    }
+    virtual void vfunc(){
+                cout<<"I am okay virtual func"<<endl;
+    }
+};
+
+void testMemFunc(){
+    A* ptr = new A();
+    delete ptr;
+    ptr->func();
+    // ptr->getVal(); // crash
+    // ptr->vfunc(); //crash
+
+    ptr=nullptr;
+    ptr->func();
+    ptr->vfunc();
+}
+
+int main()
+{
+    testMemFunc();
+    return 0;
 }
