@@ -7,6 +7,24 @@
 #include "../common.h"
 using namespace std;
 
+// 628. Maximum Product of Three Numbers
+// 28 ms, faster than 97.97%
+//  27.7 MB, less than 54.53%
+int maximumProduct(vector<int> &nums)
+{
+    sort(nums.begin(), nums.end());
+    int len = nums.size();
+    int ft = nums[0], sd = nums[1], last = nums[len - 1];
+    if (last <= 0 || ft >= 0)
+        return nums[len - 1] * nums[len - 2] * nums[len - 3];
+    else if (ft < 0 && sd < 0)
+    {
+        return max(ft * sd, nums[len - 2] * nums[len - 3]) * nums[len - 1];
+    }
+    else
+        return nums[len - 1] * nums[len - 2] * nums[len - 3];
+}
+
 // 27. Remove Element
 int removeElement(vector<int> &nums, int val)
 {
