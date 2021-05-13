@@ -314,13 +314,63 @@ void testPassReturn()
 #include <string.h>
 void testSizet()
 {
-    const char* t = "fsfsdf";
+    const char *t = "fsfsdf";
     // for (size_t i = strlen(t) - 1; i >= 0; i--) //infinite loop
-    for (size_t i = strlen(t) - 1; i-- > 0; )
+    for (size_t i = strlen(t) - 1; i-- > 0;)
     {
         cout << i << endl;
     }
+}
 
+class rtest
+{
+public:
+    int val;
+    rtest(int n)
+    {
+        cout << "constructor: " << n << endl;
+        n = val;
+    }
+    rtest()
+    {
+        cout << " default constructor: " << endl;
+    }
+};
+
+pair<vector<int> &&, int> testPair()
+{
+    pair<int, int> p(3, 4);
+    cout << p.first << "  " << p.second << endl;
+    pair<int, int> p2(p);
+    cout << p2.first << "  " << p2.second << endl;
+
+    p2 = p;
+    cout << p2.first << "  " << p2.second << endl;
+
+    vector<int> a = {0};
+    cout << &a << endl;
+    return pair<vector<int>, int>{{0}, 2};
+}
+
+rtest &&testReturnRval()
+{
+    rtest r{1};
+    cout << "before return " << &r << endl;
+    return move(r);
+}
+
+void testRvPara(rtest &&r)
+{
+    cout << "after transfter " << &r << endl;
+}
+
+void testRvalue()
+{
+    rtest r = testReturnRval();
+    cout << r.val << " " << &r << endl;
+    rtest r2(2);
+    cout << "before transfter " << &r2 << endl;
+    testRvPara(move(r2));
 }
 
 int main(int argc, char const *argv[])

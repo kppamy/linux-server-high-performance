@@ -134,8 +134,10 @@ private:
     std::vector<int> buffer;
     int capacity{0};
     int output{0};
-    atomic<int> wx{0};
-    atomic<int> rx{0};
+    // atomic<int> wx{0};
+    int wx{0};
+    // atomic<int> rx{0};
+    int rx{0};
     atomic<size_t> size{0};
 
 public:
@@ -177,7 +179,7 @@ public:
             if (sz > 0)
             {
                 int res = buffer[rx];
-                assert(res < output);
+                assert(sz < output);
                 rx++;
                 size.fetch_sub(1, memory_order_release);
                 if (rx == capacity)
@@ -399,14 +401,18 @@ void testSPSCLockFreeMy()
     c.join();
 }
 
+#include<shared_mutex>
+
 class SProducerMConsumer
 {
 private:
     std::vector<int> buffer;
     int capacity{0};
     int output{0};
-    ReadWriteLock lck;
+    // ReadWriteLock lck;
+    std::shared_mutex stx;
     std::atomic<int> size{0};
+    std::scoped_lock slck;
 
 public:
     SProducerMConsumer(int op, int cap) : capacity(cap), output(op)
@@ -422,7 +428,8 @@ public:
         auto start = chrono::system_clock::now();
         while (i < output)
         {
-            lck.lockWrite();
+            // lck.lockWrite();
+            std::unique_lock<std::shared_mutex> wlck(stx);
             if (size.load(std::memory_order_acquire) < capacity)
             {
                 buffer[size] = i;
@@ -435,9 +442,11 @@ public:
             else
             {
                 assert(size >= capacity);
-                size.store(0, memory_order_acquire);
+                this_thread::yield();
+                // size.store(0, memory_order_acquire);
+
             }
-            lck.unlockWrite();
+            // lck.unlockWrite();
         }
         auto end = chrono::system_clock::now();
         Log::info(this_thread::get_id(), "Writer consumes " + std::to_string((end - start).count() / 1000) + " ms");
@@ -449,11 +458,14 @@ public:
         auto start = chrono::system_clock::now();
         while (j < output)
         {
-            lck.lockRead();
-            if (size.load(std::memory_order_release) > 0)
+            // lck.lockRead();
+            std::shared_lock<std::shared_mutex> rlck(stx);
+            int rx=size.load(std::memory_order_release) - 1;
+            if ( rx >= 0)
             {
                 assert(size > 0);
-                int res = buffer[size - 1];
+                int res = buffer[rx];
+                size --;
                 j++;
                 if (j % 10000 == 0)
                 {
@@ -463,8 +475,9 @@ public:
             else
             {
                 assert(size <= 0);
+                this_thread::yield();
             }
-            lck.unlockRead();
+            // lck.unlockRead();
         }
         auto end = chrono::system_clock::now();
         Log::info(this_thread::get_id(), "Reader consumes " + std::to_string((end - start).count() / 1000) + " ms");
@@ -476,8 +489,7 @@ void testReadWriteLock()
     int capacity = 100;
     SProducerMConsumer pc(500000, capacity);
     auto add = [&]() {
-        pc.produce();
-    };
+        pc.produce();/k.nkl,. l]hhl=]-\- -b v n ,};
     auto sub = [&]() {
         pc.consume();
     };
@@ -514,9 +526,9 @@ void testReadWriteLock()
 int main(int argc, char const *argv[])
 {
     double summary(0.0);
-    int times = 100;
+    int times = 20;
     int i = 0;
-    while (i < 1)
+    while (i < times)
     {
         // timeit(testSPSCTextBook);//1326.73 ms
         // timeit(testMPMCLockFree); // 12178.5 ms, 5 producers, 5 consumers

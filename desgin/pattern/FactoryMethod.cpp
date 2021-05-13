@@ -46,7 +46,7 @@ public:
 #include<memory>
 int main(int argc, char const *argv[])
 {
-    unique_ptr<Factory> fm(new ConcreteFactory());
+    unique_ptr<Factory> fm=make_unique<ConcreteFactory>();
     unique_ptr<Product> pro(fm->createProduct());
     return 0;
 }

@@ -4,6 +4,8 @@
 using namespace std;
 
 // 347. Top K Frequent Elements
+// 20 ms, faster than 64.06%
+// 13.8 MB, less than 65.73%
 vector<int> topKFrequent(vector<int> &nums, int k)
 {
     // pair: repeats, num

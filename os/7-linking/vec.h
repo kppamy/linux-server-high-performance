@@ -5,7 +5,7 @@
 extern "C"{
 #endif
 
-int addcnt;
+int addcnt=1;
 void addvec(int* x, int* y, int* z, int n);
 
 #ifdef __cplusplus

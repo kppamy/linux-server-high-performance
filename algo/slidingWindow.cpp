@@ -1,6 +1,7 @@
 #include <vector>
 #include "../common.h"
 #include <iostream>
+#include <deque>
 using namespace std;
 
 // 395. Longest Substring with At Least K Repeating Characters
@@ -77,18 +78,38 @@ void testlongestSubstring()
 }
 
 // 239. Sliding Window Maximum
+// : 424 ms, faster than 46.16%
+// 115 MB, less than 41.40% o
 vector<int> maxSlidingWindow(vector<int> &nums, int k)
 {
+    deque<int> win;
+    vector<int> ans(nums.size() - k + 1, 0);
+    for (int i = 0; i < nums.size(); i++)
+    {
+        while (!win.empty() && (i - win.front() + 1 > k))
+        {
+            win.pop_front();
+        }
+        while (!win.empty() && nums[i] > nums[win.back()])
+        {
+            win.pop_back();
+        }
+        win.push_back(i);
+        if (i >= k - 1)
+            ans[i - k + 1] = nums[win.front()];
+    }
+    return ans;
 }
 
 vector<int> maxSlidingWindowWrapper(my2arr &nums)
 {
-    maxSlidingWindow(nums[0], nums[1][0]);
+    return maxSlidingWindow(nums[0], nums[1][0]);
 }
 
 my2DCases testmaxSlidingWindow()
 {
     return {
+        {{1, 3, 1, 2, 0, 5}, {3}},
         {{1, 3, -1, -3, 5, 3, 6, 7}, {3}},
         {{1}, {1}},
         {{1, -1}, {1}},
@@ -99,7 +120,7 @@ my2DCases testmaxSlidingWindow()
 
 int main(int argc, char const *argv[])
 {
-    testlongestSubstring();
-    // format_test(maxSlidingWindowWrapper, testmaxSlidingWindow);
+    // testlongestSubstring();
+    format_test(maxSlidingWindowWrapper, testmaxSlidingWindow);
     return 0;
 }

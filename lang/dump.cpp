@@ -6,18 +6,23 @@
 #include "stdio.h"
 #include <iostream>
 #include "stdlib.h"
-              using namespace std;
+using namespace std;
 class base
 {
+private:
+    int father;
+
 public:
     base();
     virtual void test();
-
 private:
     char *basePStr;
 };
 class dumpTest : public base
 {
+private:
+    int child;
+
 public:
     void test();
 

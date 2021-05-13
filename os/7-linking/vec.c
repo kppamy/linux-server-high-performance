@@ -1,4 +1,5 @@
 #include "vec.h"
+
 void addvec(int* x, int* y, int* z, int n){
     addcnt++;
     for (int i = 0; i < n; i++)
@@ -6,3 +7,7 @@ void addvec(int* x, int* y, int* z, int n){
         z[i] = x[i] + y[i];
     }
 }
+
+
+
+// gcc --shared -fpic -o libvector.so vec.c 

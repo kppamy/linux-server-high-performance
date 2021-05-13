@@ -14,52 +14,81 @@ vector<int> directions = {-1, 0, 1, 0, -1}; //up,right,down,left
 // 785. Is Graph Bipartite?
 bool isBipartite(vector<vector<int>> &graph)
 {
-    int sz=graph.size();
-    vector<int> gps(sz,-1);
-    for(int i=0;i<=sz-1;++i){
-
-        int len=graph[i].size();
-        int g0=0;
-        int g1=0;
-        for(int j=0;j<len;++j){
-            if(graph[i][j]==-1)
-                continue;
-            if(graph[i][j])
-                g1++;
-            else
-                g0++;
-        }
-        if(g0*g1!=0)
-            return false;
-        if(g0!=0){
-            if(gps[i]==0)
-                return false;
-            else
-                gps[i]=1; 
-        }else if(g1!=0)
+    int sz = graph.size();
+    vector<int> gps(sz, -1);
+    for (int i = 0; i <= sz - 1; ++i)
+    {
+        int len = graph[i].size();
+        if (gps[i] != -1)
         {
-            if(gps[i]==1)
-                return false;
-            else
-                gps[i]=0; 
-        }else{
-            int other=-1;
-            if(gps[i]!=-1){
-                other=1-gps[i];
-            }else{
-                gps[i]=0;
-                other=1;
+            for (int j = 0; j < len; ++j)
+            {
+                if (gps[graph[i][j]] == gps[i])
+                    return false;
+                if (gps[graph[i][j]] == -1)
+                {
+                    gps[graph[i][j]] = 1 - gps[i];
+                }
             }
-            for(int j=0;j<len;++j){
-                graph[i][j]=other;
+        }
+        else
+        {
+            int who = -1;
+            for (int j = 0; j < len; ++j)
+            {
+                if (gps[graph[i][j]] != -1)
+                {
+                    who = gps[graph[i][j]];
+                    break;
+                }
+            }
+
+            if (who != -1)
+            {
+                for (int j = 0; j < len; ++j)
+                {
+                   if (gps[graph[i][j]] ==-1)
+                        gps[graph[i][j]]=who;
+                    else if (gps[graph[i][j]] != who)
+                    {
+                        return false;
+                    };
+
+                }
+                gps[i] = 1 - who;
+            }
+            else
+            {
+                gps[i] = 0;
+                for (int j = 0; j < len; ++j)
+                {
+                    gps[graph[i][j]] = 1;
+                }
             }
         }
     }
     return true;
 }
 
-void testisBipartite(){
+void testisBipartite()
+{
+    my2arr gh;
     
+    gh = {{3},{2,4},{1},{0,4},{1,3}};
+    printVector(gh);
+    cout << " isBipartite " << isBipartite(gh) << endl;
+
+    gh = {{1}, {0, 3}, {3}, {1, 2}};
+    printVector(gh);
+    cout << " isBipartite " << isBipartite(gh) << endl;
+
+    gh = {{1, 3}, {0, 2}, {1, 3}, {0, 2}};
+    printVector(gh);
+    cout << " isBipartite " << isBipartite(gh) << endl;
+
+    gh = {{1, 2, 3}, {0, 2}, {0, 1, 3}, {0, 2}};
+    printVector(gh);
+    cout << " isBipartite " << isBipartite(gh) << endl;
 }
 
 // 997. Find the Town Judge
@@ -810,5 +839,6 @@ int main(int argc, char const *argv[])
     // format_test(numIslands, testnumIslands);
     // testSurroundedRegions();
     // testFindJudge();
+    testisBipartite();
     return 0;
 }

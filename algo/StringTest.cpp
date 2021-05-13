@@ -5,6 +5,186 @@
 #include <stack>
 using namespace std;
 
+// 224. Basic Calculator
+int calculate(string s)
+{
+    int len = s.size();
+    int i = 0;
+    int ans = 0;
+    auto getNum = [](string &s, int &i) {
+        string num = "";
+        while (true)
+        {
+            char c = s[i];
+            if (c == ' ')
+                i++;
+            else if (c >= '0' && c <= '9')
+            {
+                num += c;
+            }
+            else
+            {
+                break;
+            }
+        }
+        return num;
+    };
+    auto string2int = [](string num) {
+        int len = num.size();
+        int ans = 0;
+        for (int i = 0; i < len; i++)
+        {
+            ans = num[i] - '0' + ans * 10;
+        }
+        return ans;
+    };
+    stack<string> sta;
+    while (i < len)
+    {
+        char c = s[i];
+        switch (c)
+        {
+        case ' ':
+            i++;
+            break;
+        case '+':
+        case '-':
+        case '(':
+            sta.push("" + c);
+            i++;
+            break;
+        case ')':
+
+            string sub = "";
+            while (sta.top() != "(")
+            {
+                string tp = sta.top();
+                sta.pop();
+                sub = sub + tp;
+            }
+            sta.pop();
+
+            break;
+        default:
+            sta.push(getNum(s, i));
+            break;
+        }
+    }
+}
+
+// 696. Count Binary Substrings
+// 24 ms, faster than 84.75%
+// 10.4 MB, less than 92.91%
+int countBinarySubstrings(string s)
+{
+    // "00110011"
+    // "10101"
+    int len = s.size();
+    int i = 0, j = 1;
+    int sum = 0;
+    int prev = 0;
+    for (int i = 0; i < len; i++)
+    {
+        char c = s[i];
+        int cnt = 1;
+        while (i < len - 1 && s[i + 1] == c)
+        {
+            i++;
+            cnt++;
+        }
+        sum += min(prev, cnt);
+        prev = cnt;
+    }
+
+    return sum;
+}
+
+// 1143. Longest Common Subsequence
+int longestCommonSubsequence(string text1, string text2)
+{
+    // "bl", "yby"
+    int len1 = text1.size(), len2 = text2.size();
+    int i = 0, j = 0;
+    int cnt = 0;
+    while (i < len1 && j < len2)
+    {
+        if (text1[i] == text2[j])
+        {
+            j++;
+            cnt++;
+        }
+        i++;
+    }
+    return cnt;
+}
+
+vector<int> jump(string &a)
+{
+    // ababc
+    // aa
+    int len = a.size();
+    vector<int> pref(len, 0);
+    int i = 1;
+    int matched = 0; // letters matched before index i
+    while (i < len)
+    {
+        while (matched != 0 && a[matched] != a[i])
+        {
+            matched = pref[matched];
+        }
+        if (a[matched] == a[i])
+        {
+            matched++;
+        }
+        pref[i] = matched;
+        i++;
+    }
+    return pref;
+}
+
+int firstOccurrence(string &a, string &b)
+{
+    auto &pref = jump(a);
+    int lena = a.size();
+    int len = b.size();
+    int matched = 0;
+    int i = 0;
+    while (i < len)
+    {
+        while (matched != 0 && a[matched] != b[i])
+        {
+            matched = pref[matched];
+        }
+        if (a[matched] == b[i])
+        {
+            matched++;
+        }
+        if (matched == lena)
+            return (i - lena + 1);
+        i++;
+    }
+    return -1;
+}
+
+// 686. Repeated String Match
+int repeatedStringMatch(string a, string b)
+{
+    int lena = a.size();
+    int lenb = b.size();
+    string ra = "";
+    int rpt = 1;
+    while (true)
+    {
+        ra = ra + a;
+        if (firstOccurrence(b, ra) != -1)
+            return rpt;
+        if (ra.size() > lena + lenb - 1)
+            return -1;
+        rpt++;
+    }
+    return -1;
+}
+
 // 516. Longest Palindromic Subsequence
 // 76 ms, faster than 64.16%
 // 72.8 MB, less than 5.69%
@@ -23,7 +203,7 @@ int longestPalindromeSubseq(string s)
     {
         for (int j = i + 2; j < len; j++)
         {
-            dp[i][j] = (s[i] == s[j]) ?(dp[i + 1][j - 1] + 2):(max(dp[i + 1][j], dp[i][j - 1]));
+            dp[i][j] = (s[i] == s[j]) ? (dp[i + 1][j - 1] + 2) : (max(dp[i + 1][j], dp[i][j - 1]));
         }
     }
     return dp[0][len - 1];
@@ -1207,7 +1387,7 @@ bool ends_with(const string &a, const string &b)
 // 696. Count Binary Substrings
 // Runtime: 24 ms, faster than 97.23% of C++ online submissions for Count Binary Substrings.
 // Memory Usage: 14.4 MB, less than 5.55% of C++ online submissions for Count Binary Substrings.
-int countBinarySubstrings(string s)
+int countBinarySubstringsI(string s)
 {
     vector<int> counter;
     int len = s.size();

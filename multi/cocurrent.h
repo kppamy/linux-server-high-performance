@@ -123,7 +123,7 @@ private:
 	std::atomic<int> readers{0};
 	std::atomic<int> writer{0};
 	std::condition_variable cv;
-	std::mutex mtx;	
+	std:: mtx;	
 private:
 	ReadWriteLock(const ReadWriteLock&)=delete;
 	ReadWriteLock& operator=(const ReadWriteLock&)=delete;
@@ -157,6 +157,7 @@ public:
 		cv.notify_all();
 	}
 };
+
 
 class Log
 {

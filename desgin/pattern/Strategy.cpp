@@ -22,7 +22,7 @@ public:
     {
         cout << "childA delete" << endl;
     }
-    void implement() override
+    void implement()
     {
         cout << "child A strategy" << endl;
     }

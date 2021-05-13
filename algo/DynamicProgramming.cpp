@@ -8,20 +8,20 @@
 //  26.3 MB, less than 30.18%
 int countSquares(vector<vector<int>> &matrix)
 {
-    int m = matrix.size(), n = matrix[0].size();
-    vector<vector<int>> dp(m, vector<int>(n, 0));
-    int sm = m < n ? m : n;
+    int sz = matrix.size(), n = matrix[0].size();
+    vector<vector<int>> dp(sz, vector<int>(n, 0));
+    int sm = sz < n ? sz : n;
     vector<int> sides(sm + 1, 0);
-    for (int j = 0; j < n; j++)
+    for (int x = 0; x < n; x++)
     {
-        if (matrix[0][j])
+        if (matrix[0][x])
         {
-            dp[0][j] = 1;
+            dp[0][x] = 1;
             sides[1]++;
         }
     }
 
-    for (int i = 1; i < m; i++)
+    for (int i = 1; i < sz; i++)
     {
         if (matrix[i][0])
         {
@@ -30,19 +30,19 @@ int countSquares(vector<vector<int>> &matrix)
         }
     }
 
-    for (int i = 1; i < m; i++)
+    for (int i = 1; i < sz; i++)
     {
-        for (int j = 1; j < n; j++)
+        for (int x = 1; x < n; x++)
         {
-            if (matrix[i][j])
+            if (matrix[i][x])
             {
-                int up = dp[i - 1][j];
-                int left = dp[i][j - 1];
-                int cross = dp[i - 1][j - 1];
+                int up = dp[i - 1][x];
+                int left = dp[i][x - 1];
+                int cross = dp[i - 1][x - 1];
                 int mn = up < left ? up : left;
                 mn = mn < cross ? mn : cross;
                 int wid = mn + 1;
-                dp[i][j] = wid;
+                dp[i][x] = wid;
                 while (wid > 0)
                 {
                     sides[wid]++;
@@ -64,19 +64,19 @@ int countSquares(vector<vector<int>> &matrix)
 // 11.7 MB, less than 41.86%
 int maximalSquare(vector<vector<char>> &matrix)
 {
-    int m = matrix.size(), n = matrix[0].size();
-    vector<vector<int>> dp(m, vector<int>(n, 0));
+    int sz = matrix.size(), n = matrix[0].size();
+    vector<vector<int>> dp(sz, vector<int>(n, 0));
     int ans = 0;
-    for (int j = 0; j < n; j++)
+    for (int x = 0; x < n; x++)
     {
-        if (matrix[0][j] == '1')
+        if (matrix[0][x] == '1')
         {
-            dp[0][j] = 1;
+            dp[0][x] = 1;
             ans = 1;
         }
     }
 
-    for (int i = 0; i < m; i++)
+    for (int i = 0; i < sz; i++)
     {
         if (matrix[i][0] == '1')
         {
@@ -85,19 +85,19 @@ int maximalSquare(vector<vector<char>> &matrix)
         }
     }
 
-    for (int i = 1; i < m; i++)
+    for (int i = 1; i < sz; i++)
     {
-        for (int j = 1; j < n; j++)
+        for (int x = 1; x < n; x++)
         {
-            if (matrix[i][j] == '1')
+            if (matrix[i][x] == '1')
             {
-                int up = dp[i - 1][j];
-                int left = dp[i][j - 1];
-                int cross = dp[i - 1][j - 1];
+                int up = dp[i - 1][x];
+                int left = dp[i][x - 1];
+                int cross = dp[i - 1][x - 1];
                 int mn = up < left ? up : left;
                 mn = mn < cross ? mn : cross;
                 int wid = mn + 1;
-                dp[i][j] = wid;
+                dp[i][x] = wid;
                 ans = ans > wid ? ans : wid;
             }
         }
@@ -117,16 +117,16 @@ void testmaximalSquare()
 // 27.3 MB, less than 78.61%
 vector<vector<int>> updateMatrix(vector<vector<int>> &matrix)
 {
-    int m = matrix.size(), n = matrix[0].size();
-    vector<vector<int>> dp(m, vector<int>(n, INT_MAX));
+    int sz = matrix.size(), n = matrix[0].size();
+    vector<vector<int>> dp(sz, vector<int>(n, INT_MAX));
     vector<pair<int, int>> checkAgain;
-    for (int i = 0; i < m; i++)
+    for (int i = 0; i < sz; i++)
     {
-        for (int j = 0; j < n; j++)
+        for (int x = 0; x < n; x++)
         {
-            if (matrix[i][j] == 0)
+            if (matrix[i][x] == 0)
             {
-                dp[i][j] = 0;
+                dp[i][x] = 0;
             }
             else
             {
@@ -134,43 +134,43 @@ vector<vector<int>> updateMatrix(vector<vector<int>> &matrix)
                 int mi = INT_MAX;
                 if (i >= 1)
                 {
-                    up = matrix[i - 1][j];
-                    mi = mi < dp[i - 1][j] ? mi : dp[i - 1][j];
+                    up = matrix[i - 1][x];
+                    mi = mi < dp[i - 1][x] ? mi : dp[i - 1][x];
                 }
-                if (j >= 1)
+                if (x >= 1)
                 {
-                    left = matrix[i][j - 1];
-                    mi = mi < dp[i][j - 1] ? mi : dp[i][j - 1];
+                    left = matrix[i][x - 1];
+                    mi = mi < dp[i][x - 1] ? mi : dp[i][x - 1];
                 }
 
                 if (up * left == 0)
-                    dp[i][j] = 1;
+                    dp[i][x] = 1;
                 else
                 {
                     if (mi != INT_MAX)
-                        dp[i][j] = mi + 1;
-                    checkAgain.push_back(make_pair(i, j));
+                        dp[i][x] = mi + 1;
+                    checkAgain.push_back(make_pair(i, x));
                 }
             }
         }
     }
 
     reverse(checkAgain.begin(), checkAgain.end());
-    for (auto &&[i, j] : checkAgain)
+    for (auto &&[i, x] : checkAgain)
     {
         int down = -1, right = -1;
-        int mi = dp[i][j] - 1;
-        if (i < m - 1)
+        int mi = dp[i][x] - 1;
+        if (i < sz - 1)
         {
-            down = matrix[i + 1][j];
-            mi = mi < dp[i + 1][j] ? mi : dp[i + 1][j];
+            down = matrix[i + 1][x];
+            mi = mi < dp[i + 1][x] ? mi : dp[i + 1][x];
         }
-        if (j < n - 1)
+        if (x < n - 1)
         {
-            right = matrix[i][j + 1];
-            mi = mi < dp[i][j + 1] ? mi : dp[i][j + 1];
+            right = matrix[i][x + 1];
+            mi = mi < dp[i][x + 1] ? mi : dp[i][x + 1];
         }
-        dp[i][j] = (down * right == 0) ? 1 : (mi + 1);
+        dp[i][x] = (down * right == 0) ? 1 : (mi + 1);
     }
     return dp;
 }
@@ -216,8 +216,8 @@ int numTrees(int n)
 // 7.9 MB, less than 33.19%
 int uniquePathsWithObstacles(vector<vector<int>> &obstacleGrid)
 {
-    int m = obstacleGrid.size(), n = obstacleGrid[0].size();
-    vector<vector<int>> dp(m, vector<int>(n, 0));
+    int sz = obstacleGrid.size(), n = obstacleGrid[0].size();
+    vector<vector<int>> dp(sz, vector<int>(n, 0));
     for (int i = 0; i < n; i++)
     {
         if (obstacleGrid[0][i] == 0)
@@ -225,7 +225,7 @@ int uniquePathsWithObstacles(vector<vector<int>> &obstacleGrid)
         else
             break;
     }
-    for (int i = 0; i < m; i++)
+    for (int i = 0; i < sz; i++)
     {
         if (obstacleGrid[i][0] == 0)
             dp[i][0] = 1;
@@ -233,40 +233,40 @@ int uniquePathsWithObstacles(vector<vector<int>> &obstacleGrid)
             break;
     }
 
-    for (int i = 1; i < m; i++)
+    for (int i = 1; i < sz; i++)
     {
-        for (int j = 1; j < n; j++)
+        for (int x = 1; x < n; x++)
         {
-            if (obstacleGrid[i][j] == 0)
-                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            if (obstacleGrid[i][x] == 0)
+                dp[i][x] = dp[i - 1][x] + dp[i][x - 1];
         }
     }
-    return dp[m - 1][n - 1];
+    return dp[sz - 1][n - 1];
 }
 
 // 62. Unique Paths
 //  0 ms, faster than 100.00%
 //  6.4 MB, less than 37.91%
-int uniquePaths(int m, int n)
+int uniquePaths(int sz, int n)
 {
-    vector<vector<int>> dp(m, vector<int>(n, 0));
+    vector<vector<int>> dp(sz, vector<int>(n, 0));
     for (int i = 0; i < n; i++)
     {
         dp[0][i] = 1;
     }
-    for (int i = 0; i < m; i++)
+    for (int i = 0; i < sz; i++)
     {
         dp[i][0] = 1;
     }
 
-    for (int i = 1; i < m; i++)
+    for (int i = 1; i < sz; i++)
     {
-        for (int j = 1; j < n; j++)
+        for (int x = 1; x < n; x++)
         {
-            dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            dp[i][x] = dp[i - 1][x] + dp[i][x - 1];
         }
     }
-    return dp[m - 1][n - 1];
+    return dp[sz - 1][n - 1];
 }
 
 // 64. Minimum Path Sum
@@ -274,33 +274,83 @@ int uniquePaths(int m, int n)
 // 10.2 MB, less than 35.67%
 int minPathSum(vector<vector<int>> &grid)
 {
-    int m = grid.size(), n = grid[0].size();
-    vector<vector<int>> dp(m, vector<int>(n, 0));
+    int sz = grid.size(), n = grid[0].size();
+    vector<vector<int>> dp(sz, vector<int>(n, 0));
     dp[0][0] = grid[0][0];
     for (int i = 1; i < n; i++)
     {
         dp[0][i] = dp[0][i - 1] + grid[0][i];
     }
 
-    for (int i = 1; i < m; i++)
+    for (int i = 1; i < sz; i++)
     {
         dp[i][0] = dp[i - 1][0] + grid[i][0];
     }
 
-    for (int i = 1; i < m; i++)
+    for (int i = 1; i < sz; i++)
     {
-        for (int j = 1; j < n; j++)
+        for (int x = 1; x < n; x++)
         {
 
-            dp[i][j] = min(dp[i - 1][j], dp[i][j - 1]) + grid[i][j];
+            dp[i][x] = min(dp[i - 1][x], dp[i][x - 1]) + grid[i][x];
         }
     }
-    return dp[m - 1][n - 1];
+    return dp[sz - 1][n - 1];
 }
 
 // 1140. Stone Game II
 int stoneGameII(vector<int> &piles)
 {
+    int sz=piles.size();
+    int m=1;
+    int left = sz;
+    int bobs=0;
+    int alices=0;
+    int turn=1;
+    auto update=[&](int i,int mix){
+        int me=0;
+         for(int j=i;j<i+mix;j++)
+              me+=piles[j];
+        if(turn%2){
+           alices+=me;
+        }else
+          bobs+=me;
+    };
+    for (int i = 0; i < sz; )
+    {
+        int mm=2*m;
+        if(left<=mm){
+            update(i,left);
+            return alices;
+        }
+        int mix;
+        int mincost=INT_MAX;
+        for (int x = 1; x <=mm ; x++)
+        {
+            int nextm = max(x,m);
+            int end = min(2 * nextm + i,sz-1);
+            int sums=0;
+            for (int j =i+x; j <= end ; j++){
+                sums+=piles[j];
+            }
+            if(mincost>sums){
+                mincost=sums;
+                mix = x;
+                m=nextm;
+            }
+        }
+        update(i,mix);
+        turn++;
+        i=i+mix;
+        left-=mix;
+    }
+    return  alices;
+}
+
+my2arr teststoneGameII(){
+    return {
+        {1,2,3,4,5,100}
+    };
 }
 
 // 877. Stone Game
@@ -313,51 +363,51 @@ bool stoneGame(vector<int> &piles)
     for (int i = 0; i < len; i++)
     {
         dp[i][i] = -piles[i];
-        for (int j = i + 1; j < len; j++)
+        for (int x = i + 1; x < len; x++)
         {
-            int left = dp[i + 1][j];
-            int right = dp[i][j - 1];
-            if ((j - i + 1) % 2)
+            int left = dp[i + 1][x];
+            int right = dp[i][x - 1];
+            if ((x - i + 1) % 2)
             {
                 int ls = left - piles[i];
-                int rt = right - piles[j];
-                dp[i][j] = (ls < rt) ? ls : rt;
+                int rt = right - piles[x];
+                dp[i][x] = (ls < rt) ? ls : rt;
             }
             else
             {
                 int ls = left + piles[i];
-                int rt = right + piles[j];
-                dp[i][j] = (ls > rt) ? ls : rt;
+                int rt = right + piles[x];
+                dp[i][x] = (ls > rt) ? ls : rt;
             }
         }
     }
     return dp[0][len - 1] > 0;
 }
 
-int fnext(vector<int> &piles, vector<vector<int>> &dp, int i, int j)
+int fnext(vector<int> &piles, vector<vector<int>> &dp, int i, int x)
 {
-    if (i > j)
+    if (i > x)
     {
-        dp[i][j] = 0;
+        dp[i][x] = 0;
         return 0;
     }
-    if (i == j)
+    if (i == x)
     {
-        dp[i][j] = -piles[i];
+        dp[i][x] = -piles[i];
         return -piles[i];
     }
-    // cout << "i: " << i << " j: " << j << endl;
-    int lsub = dp[i + 1][j];
+    // cout << "i: " << i << " x: " << x << endl;
+    int lsub = dp[i + 1][x];
     if (lsub == INT_MIN)
-        lsub = fnext(piles, dp, i + 1, j);
-    int rsub = dp[i][j - 1];
+        lsub = fnext(piles, dp, i + 1, x);
+    int rsub = dp[i][x - 1];
     if (rsub == INT_MIN)
-        rsub = fnext(piles, dp, i, j - 1);
+        rsub = fnext(piles, dp, i, x - 1);
     int scores = 0;
-    if ((j - i + 1) % 2)
+    if ((x - i + 1) % 2)
     {
         int left = lsub - piles[i];
-        int right = rsub - piles[j];
+        int right = rsub - piles[x];
         if (left < right)
         {
             scores = left;
@@ -370,7 +420,7 @@ int fnext(vector<int> &piles, vector<vector<int>> &dp, int i, int j)
     else
     {
         int left = lsub + piles[i];
-        int right = rsub + piles[j];
+        int right = rsub + piles[x];
         if (left > right)
         {
             scores = left;
@@ -380,15 +430,15 @@ int fnext(vector<int> &piles, vector<vector<int>> &dp, int i, int j)
             scores = right;
         }
     }
-    dp[i][j] = scores;
+    dp[i][x] = scores;
     return scores;
 }
 
 bool stoneGameRec(vector<int> &piles)
 {
-    int i = 0, len = piles.size(), j = len - 1;
+    int i = 0, len = piles.size(), x = len - 1;
     vector<vector<int>> dp(len, vector<int>(len, INT_MIN));
-    return fnext(piles, dp, 0, j) > 0;
+    return fnext(piles, dp, 0, x) > 0;
 }
 
 my2arr testStoneGame()
@@ -416,9 +466,9 @@ public:
         }
     }
 
-    int sumRange(int i, int j)
+    int sumRange(int i, int x)
     {
-        return dp[j] - dp[i];
+        return dp[x] - dp[i];
     }
 
 private:
@@ -657,14 +707,14 @@ int waysToChange(int n)
         return n;
     static int mod = 1000000007;
     static int coins[4] = {25, 10, 5, 1}; //i
-    vector<int> res(n + 1, 0);            // res[j] 前i-1 个硬币组成j的方案数, res[0,...,j-1] 表示前i个硬币组成j的方案数
+    vector<int> res(n + 1, 0);            // res[x] 前i-1 个硬币组成j的方案数, res[0,...,x-1] 表示前i个硬币组成j的方案数
     res[0] = 1;
     for (int i = 0; i <= 3; i++)
     {
-        int j;
-        for (j = coins[i]; j <= n; j++)
+        int x;
+        for (x = coins[i]; x <= n; x++)
         {
-            res[j] = (res[j] + res[j - coins[i]]) % mod;
+            res[x] = (res[x] + res[x - coins[i]]) % mod;
         }
     }
 
@@ -674,50 +724,50 @@ int waysToChange(int n)
 // 392. 判断子序列
 bool isSubsequence(string s, string t)
 {
-    int m = s.size();
+    int sz = s.size();
     int n = t.size();
-    if (m > n)
+    if (sz > n)
         return false;
-    // f[i][j] 表示s.sub(0,i) 是t.sub(0,j)的子串
-    vector<vector<bool>> f(m, vector<bool>(n, false));
+    // f[i][x] 表示s.sub(0,i) 是t.sub(0,x)的子串
+    vector<vector<bool>> f(sz, vector<bool>(n, false));
     f[0][0] = 1;
     f[1][0] = 0;
     f[0][1] = 1;
 
-    for (int i = 1; i < m; i++)
+    for (int i = 1; i < sz; i++)
     {
-        for (int j = i; j < n - m + i + 1; j++)
+        for (int x = i; x < n - sz + i + 1; x++)
         {
-            if (s[i] == t[j])
+            if (s[i] == t[x])
             {
-                f[i][j] = f[i - 1][j - 1];
+                f[i][x] = f[i - 1][x - 1];
             }
             else
             {
-                f[i][j] = f[i][j - 1];
+                f[i][x] = f[i][x - 1];
             }
         }
     }
-    return f[m - 1][n - 1];
+    return f[sz - 1][n - 1];
 }
 
 // 392. 判断子序列
 bool isSubsequence(string s, string t, bool two_pointer)
 {
-    int m = s.size();
+    int sz = s.size();
     int n = t.size();
-    if (m > n)
+    if (sz > n)
         return false;
-    int i = 0, j = 0;
-    while (i < m && j < n)
+    int i = 0, x = 0;
+    while (i < sz && x < n)
     {
-        if (s[i] == t[j])
+        if (s[i] == t[x])
         {
             i++;
         }
-        j++;
+        x++;
     }
-    return i == m;
+    return i == sz;
 }
 
 void testwaysToChange()
@@ -750,18 +800,18 @@ int findTargetSumWays(vector<int> &nums, int S)
     ways[0][-1 * nums[0] + MAX] = 1 + ways[0][-1 * nums[0] + MAX];
     for (int i = 1; i < len; i++)
     {
-        for (int j = -MAX; j <= MAX; j++)
+        for (int x = -MAX; x <= MAX; x++)
         {
 
-            if ((j - nums[i] + MAX) >= 0 && (j + nums[i]) <= MAX)
-                ways[i % 2][j + MAX] = ways[1 - i % 2][j - nums[i] + MAX] + ways[1 - i % 2][j + nums[i] + MAX];
-            else if (j - nums[i] + MAX < 0 && (j + nums[i]) <= MAX)
+            if ((x - nums[i] + MAX) >= 0 && (x + nums[i]) <= MAX)
+                ways[i % 2][x + MAX] = ways[1 - i % 2][x - nums[i] + MAX] + ways[1 - i % 2][x + nums[i] + MAX];
+            else if (x - nums[i] + MAX < 0 && (x + nums[i]) <= MAX)
             {
-                ways[i % 2][j + MAX] = ways[1 - i % 2][j + nums[i] + MAX];
+                ways[i % 2][x + MAX] = ways[1 - i % 2][x + nums[i] + MAX];
             }
-            else if (j - nums[i] + MAX >= 0 && j + nums[i] > MAX)
+            else if (x - nums[i] + MAX >= 0 && x + nums[i] > MAX)
             {
-                ways[i % 2][j + MAX] = ways[1 - i % 2][j - nums[i] + MAX];
+                ways[i % 2][x + MAX] = ways[1 - i % 2][x - nums[i] + MAX];
             }
         }
     }
@@ -794,21 +844,21 @@ void testFindTargetSumWays()
 
 // knapsack problems
 // 474. Ones and Zeroes
-int findMaxForm(vector<string> &strs, int m, int n)
+int findMaxForm(vector<string> &strs, int sz, int n)
 {
     return 0;
 }
 
-void exchange(vector<vector<int>> &intervals, int i, int j)
+void exchange(vector<vector<int>> &intervals, int i, int x)
 {
-    if (i == j)
+    if (i == x)
     {
         return;
     }
     vector<int> tmp;
     tmp = intervals[i];
-    intervals[i] = intervals[j];
-    intervals[j] = tmp;
+    intervals[i] = intervals[x];
+    intervals[x] = tmp;
 }
 
 void sortBegnings(vector<vector<int>> &intervals, int start, int end)
@@ -927,32 +977,32 @@ void testShuffleArray()
     dp.shuffleArray(arr);
 }
 
-int getMaxLinked(vector<vector<int>> ma, int m, int n)
+int getMaxLinked(vector<vector<int>> ma, int sz, int n)
 {
-    vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+    vector<vector<int>> dp(sz + 1, vector<int>(n + 1, 0));
     auto max = [](int a, int b) -> int {
         return (a >= b) ? a : b;
     };
-    for (int i = 1; i <= m; i++)
+    for (int i = 1; i <= sz; i++)
     {
-        for (int j = 1; j <= n; j++)
+        for (int x = 1; x <= n; x++)
         {
             int t1 = 0, t2 = 0, t3 = 0, t4 = 0;
-            if (ma[i - 1][j - 1] == 1)
+            if (ma[i - 1][x - 1] == 1)
             {
-                t1 = dp[i - 1][j] + 1;
-                t3 = dp[i][j - 1] + 1;
+                t1 = dp[i - 1][x] + 1;
+                t3 = dp[i][x - 1] + 1;
             }
             else
             {
-                t2 = dp[i - 1][j];
-                t4 = dp[i][j - 1];
+                t2 = dp[i - 1][x];
+                t4 = dp[i][x - 1];
             }
-            dp[i][j] = max(max(max(t1, t2), t3), t4);
+            dp[i][x] = max(max(max(t1, t2), t3), t4);
         }
     }
 
-    return dp[m][n];
+    return dp[sz][n];
 }
 
 void testML()
@@ -978,5 +1028,6 @@ int main(int argc, char const *argv[])
     // format_test(maxSubArray, testmaxSubArray);
     // format_test(stoneGame, testStoneGame);
     // testupdateMatrix();
-    testmaximalSquare();
+    // testmaximalSquare();
+    format_test(stoneGameII,teststoneGameII);
 }
